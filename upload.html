@@ -103,10 +103,18 @@
                         <!-- Preview items will be added here -->
                     </div>
                 </div>
+                <!-- Description Box -->
+                <div class="mt-8">
+                    <label for="description" class="block text-sm font-medium text-gray-700">Item Description</label>
+                    <div class="mt-1">
+                        <textarea id="description" name="description" rows="4" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Describe your item in detail..."></textarea>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">This description will be used for the AI voiceover if enabled.</p>
+                </div>
 
                 <!-- AI Video Options -->
-                <div class="mt-8 border-t border-gray-200 pt-6">
-                    <h3 class="text-lg font-medium text-gray-900">AI Video Creation</h3>
+                <div class="mt-6 border-t border-gray-200 pt-6">
+<h3 class="text-lg font-medium text-gray-900">AI Video Creation</h3>
                     <p class="mt-1 text-sm text-gray-500">Let us create an engaging video from your images</p>
                     
                     <div class="mt-4 space-y-4">
@@ -168,7 +176,45 @@
     </div>
 
     <script>
-        feather.replace();
+        // Add click handler for next button
+        nextBtn.addEventListener("click", async () => {
+            const formData = new FormData();
+            const files = fileInput.files;
+            const description = document.getElementById("description")?.value || "No description";
+            const style = document.getElementById("ai-style").value;
+            const music = document.getElementById("ai-music").value;
+            const enableVoiceover = document.getElementById("enable-voiceover").checked;
+
+            for (let file of files) formData.append("images", file);
+            formData.append("description", description);
+            formData.append("style", style);
+            formData.append("music", music);
+            formData.append("enableVoiceover", enableVoiceover);
+
+            nextBtn.disabled = true;
+            nextBtn.textContent = "Processing...";
+
+            try {
+                const res = await fetch("/api/generate-video", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await res.json();
+                if (data.videoUrl) {
+                    alert("Video created! 🎬 " + data.videoUrl);
+                } else {
+                    alert("Failed to create video.");
+                }
+            } catch (error) {
+                alert("Error creating video: " + error.message);
+            }
+
+            nextBtn.disabled = false;
+            nextBtn.textContent = "Next: Add Details";
+        });
+
+feather.replace();
 
         const uploadArea = document.getElementById('upload-area');
         const fileInput = document.getElementById('file-input');
