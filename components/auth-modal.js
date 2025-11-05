@@ -68,14 +68,23 @@ class AuthModal extends HTMLElement {
         }
         .close-btn {
           position: absolute;
-          top: 1rem;
-          right: 1rem;
+          top: 0.5rem;
+          right: 0.5rem;
           background: none;
           border: none;
           font-size: 1.5rem;
           cursor: pointer;
+          padding: 0.5rem;
+          z-index: 10;
         }
-      </style>
+
+        @media (min-width: 640px) {
+          .close-btn {
+            top: 1rem;
+            right: 1rem;
+          }
+        }
+</style>
       <div class="modal-backdrop">
         <div class="modal-content">
           <button class="close-btn">&times;</button>
