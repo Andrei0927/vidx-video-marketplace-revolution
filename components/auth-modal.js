@@ -11,11 +11,12 @@ class AuthModal extends HTMLElement {
           bottom: 0;
           background-color: rgba(0, 0, 0, 0.5);
           display: flex;
-          justify-content: center;
-          align-items: center;
+          justify-content: flex-end;
+          align-items: flex-start;
           z-index: 1000;
+          padding: 1rem;
         }
-        .modal-content {
+.modal-content {
           background: white;
           border-radius: 0.5rem;
           width: 90%;
@@ -127,10 +128,21 @@ class AuthModal extends HTMLElement {
     `;
 
     this.shadowRoot.querySelector('.close-btn').addEventListener('click', () => {
-      this.remove();
-    });
+          this.closeModal();
+        });
 
-    this.shadowRoot.querySelectorAll('.tab').forEach(tab => {
+        // Close when clicking outside
+        this.shadowRoot.querySelector('.modal-backdrop').addEventListener('click', (e) => {
+          if (e.target === this.shadowRoot.querySelector('.modal-backdrop')) {
+            this.closeModal();
+          }
+        });
+
+        // Prevent clicks inside modal from closing it
+        this.shadowRoot.querySelector('.modal-content').addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+this.shadowRoot.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         this.shadowRoot.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
@@ -156,9 +168,9 @@ class AuthModal extends HTMLElement {
     // TODO: Implement actual login logic
     console.log('Login attempt with:', email, password);
     localStorage.setItem('authToken', 'sample-token');
-    this.remove();
+    this.closeModal();
     window.location.reload();
-  }
+}
 
   handleRegister() {
     const name = this.shadowRoot.querySelector('#register-name').value;
@@ -169,8 +181,13 @@ class AuthModal extends HTMLElement {
     // TODO: Implement actual registration logic
     console.log('Register attempt with:', name, email, password, confirm);
     localStorage.setItem('authToken', 'sample-token');
-    this.remove();
+    this.closeModal();
     window.location.reload();
+}
+  }
+
+  closeModal() {
+    this.remove();
   }
 }
 
