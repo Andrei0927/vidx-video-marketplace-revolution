@@ -93,6 +93,7 @@
                         <span id="nav-username" class="hidden ml-2 text-sm font-medium"></span>
                         <i data-feather="user" class="h-5 w-5"></i>
                     </button>
+                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
                 </div>
 </div>
         </div>
@@ -372,6 +373,11 @@
                                 } else {
                                     nameEl.classList.add('hidden');
                                 }
+                                        // Ensure the user menu is hidden when logged out
+                                        const userMenuEl = document.getElementById('user-menu');
+                                        if (userMenuEl && !avatar && !name) {
+                                            userMenuEl.classList.add('hidden');
+                                        }
                             } catch (err) {
                                 console.error('updateNavAuthUI error', err);
                             }
@@ -385,21 +391,53 @@
                     return !!(localStorage.getItem('sessionToken') || localStorage.getItem('authToken') || localStorage.getItem('userId'));
                 };
 
-                // Handle user button click: go to profile when logged in, otherwise show auth modal
-                document.getElementById('user-btn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                // Handle user button click: toggle user menu when logged in, otherwise show auth modal
+                (function() {
+                    const userBtnEl = document.getElementById('user-btn');
+                    const userMenuEl = document.getElementById('user-menu');
 
-                    if (isLoggedIn()) {
-                        // Navigate to profile page. Assumes `profile.html` exists — adjust if you use a different route.
-                        window.location.href = 'profile.html';
-                        return;
-                    }
+                    if (!userBtnEl || !userMenuEl) return;
 
-                    // Not logged in -> show auth modal (default login tab)
-                    const modal = document.createElement('auth-modal');
-                    document.body.appendChild(modal);
-                });
+                    userBtnEl.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (!isLoggedIn()) {
+                            // Not logged in -> show auth modal (default login tab)
+                            const modal = document.createElement('auth-modal');
+                            document.body.appendChild(modal);
+                            return;
+                        }
+
+                        // Toggle menu visibility
+                        userMenuEl.classList.toggle('hidden');
+                    });
+
+                    // Close menu when clicking outside (works with shadow DOM via composedPath)
+                    document.addEventListener('click', (ev) => {
+                        try {
+                            const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
+                            if (!path) return;
+                            if (path.includes(userMenuEl) || path.includes(userBtnEl)) return;
+                        } catch (err) {
+                            // fall back to simple checks
+                            const target = ev.target;
+                            if (userMenuEl.contains(target) || userBtnEl.contains(target)) return;
+                        }
+                        userMenuEl.classList.add('hidden');
+                    });
+
+                    // Close on Escape
+                    document.addEventListener('keydown', (ev) => {
+                        if (ev.key === 'Escape') userMenuEl.classList.add('hidden');
+                    });
+
+                    // When the component dispatches a logout event, hide the menu and refresh nav
+                    userMenuEl.addEventListener('user-logout', () => {
+                        userMenuEl.classList.add('hidden');
+                        updateNavAuthUI();
+                    });
+                })();
 
                 // Handle New Ad button: if logged in -> upload, otherwise open register tab in auth modal
                 const newAdBtn = document.getElementById('new-ad-btn');
