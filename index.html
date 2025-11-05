@@ -41,10 +41,10 @@
                         <i data-feather="plus" class="mr-2"></i>
                         New Ad
                     </button>
-                    <button class="ml-4 p-2 rounded-full hover:bg-gray-100">
+                    <button id="user-btn" class="ml-4 p-2 rounded-full hover:bg-gray-100">
                         <i data-feather="user"></i>
                     </button>
-                </div>
+</div>
             </div>
         </div>
     </nav>
@@ -257,10 +257,10 @@
             </div>
         </div>
     </footer>
-
-    <script>
+  <script src="components/auth-modal.js"></script>
+  <script>
         // Initialize Vanta.js background
-        VANTA.NET({
+VANTA.NET({
             el: "#vanta-bg",
             mouseControls: true,
             touchControls: true,
@@ -275,9 +275,19 @@
             maxDistance: 20.00,
             spacing: 15.00
         });
-
         // Initialize feather icons
         feather.replace();
-    </script>
+
+        // Handle user button click
+        document.getElementById('user-btn').addEventListener('click', () => {
+          const token = localStorage.getItem('authToken');
+          if (token) {
+            // TODO: Show user dropdown
+            console.log('User is logged in');
+          } else {
+            document.body.appendChild(document.createElement('auth-modal'));
+          }
+        });
+</script>
 </body>
 </html>
