@@ -2,18 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VidX - Discover Products Through Video</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VidX - Discover Products Through Video</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            width: 100%;
+            overflow-x: hidden;
+        }
         .category-card:hover .category-icon {
             transform: scale(1.1);
             transition: all 0.3s ease;
         }
-        .video-card {
+        .max-w-7xl {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (min-width: 640px) {
+            .max-w-7xl {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+        }
+.video-card {
             transition: all 0.3s ease;
         }
         .video-card:hover {
