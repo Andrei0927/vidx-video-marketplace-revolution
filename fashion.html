@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Automotive - VidX</title>
+    <title>Fashion - VidX</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -48,13 +48,13 @@
                         <i data-feather="video" class="text-indigo-600 h-8 w-8"></i>
                         <span class="ml-2 text-xl font-bold text-gray-900">VidX</span>
                     </a>
-</div>
+                </div>
                 <div class="flex items-center">
                     <a href="upload.html" class="bg-indigo-600 text-white px-4 py-2 rounded-full flex items-center hover:bg-indigo-700 transition">
                         <i data-feather="plus" class="mr-2"></i>
                         New Ad
                     </a>
-<button class="ml-4 p-2 rounded-full hover:bg-gray-100">
+                    <button class="ml-4 p-2 rounded-full hover:bg-gray-100">
                         <i data-feather="user"></i>
                     </button>
                 </div>
@@ -66,8 +66,8 @@
     <div class="bg-white py-6 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center">
-                <i data-feather="car" class="h-8 w-8 text-indigo-600"></i>
-                <h1 class="ml-3 text-2xl font-bold text-gray-900">Automotive</h1>
+                <i data-feather="shopping-bag" class="h-8 w-8 text-indigo-600"></i>
+                <h1 class="ml-3 text-2xl font-bold text-gray-900">Fashion</h1>
             </div>
         </div>
     </div>
@@ -86,19 +86,19 @@
                         <div class="p-2">
                             <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                 <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Cars</span>
+                                <span class="ml-2">Clothing</span>
                             </label>
                             <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                 <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Motorcycles</span>
+                                <span class="ml-2">Shoes</span>
                             </label>
                             <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                 <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Trucks</span>
+                                <span class="ml-2">Bags</span>
                             </label>
                             <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                 <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Parts</span>
+                                <span class="ml-2">Accessories</span>
                             </label>
                         </div>
                     </div>
@@ -128,81 +128,66 @@
                     </div>
                 </div>
 
-                <!-- Year Filter -->
+                <!-- Size Filter -->
                 <div class="relative">
-                    <button id="year-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
-                        <span>Year</span>
+                    <button id="size-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
+                        <span>Size</span>
                         <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
                     </button>
-                    <div id="year-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
-                        <div class="p-4">
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm text-gray-500">From</span>
-                                <span class="text-sm text-gray-500">To</span>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <input type="number" placeholder="From" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                <span class="text-gray-500">-</span>
-                                <input type="number" placeholder="To" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                            </div>
-                            <button class="mt-4 w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">
-                                Apply
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Condition Filter -->
-                <div class="relative">
-                    <button id="condition-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
-                        <span>Condition</span>
-                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
-                    </button>
-                    <div id="condition-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
-                        <div class="p-2">
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">New</span>
-                            </label>
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Used</span>
-                            </label>
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Damaged</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Location Filter -->
-                <div class="relative">
-                    <button id="location-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
-                        <span>Location</span>
-                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
-                    </button>
-                    <div id="location-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
+                    <div id="size-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
                         <div class="p-2">
                             <div class="px-3 py-2">
-                                <input type="text" placeholder="Search location" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                <input type="text" placeholder="Search size" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                             </div>
                             <div class="max-h-60 overflow-y-auto">
                                 <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                     <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Bucharest</span>
+                                    <span class="ml-2">XS</span>
                                 </label>
                                 <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                     <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Cluj-Napoca</span>
+                                    <span class="ml-2">S</span>
                                 </label>
                                 <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                     <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Timișoara</span>
+                                    <span class="ml-2">M</span>
                                 </label>
                                 <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                                     <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Iași</span>
+                                    <span class="ml-2">L</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Filter -->
+                <div class="relative">
+                    <button id="brand-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
+                        <span>Brand</span>
+                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
+                    </button>
+                    <div id="brand-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
+                        <div class="p-2">
+                            <div class="px-3 py-2">
+                                <input type="text" placeholder="Search brand" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div class="max-h-60 overflow-y-auto">
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600">
+                                    <span class="ml-2">Nike</span>
+                                </label>
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600">
+                                    <span class="ml-2">Adidas</span>
+                                </label>
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600">
+                                    <span class="ml-2">Zara</span>
+                                </label>
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600">
+                                    <span class="ml-2">H&M</span>
                                 </label>
                             </div>
                         </div>
@@ -232,25 +217,25 @@
                 <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" src="http://static.photos/people/200x200/1" alt="">
+                            <img class="h-10 w-10 rounded-full" src="http://static.photos/people/200x200/3" alt="">
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-white font-medium">John Doe</h3>
-                            <p class="text-gray-300 text-sm">2 days ago</p>
+                            <h3 class="text-white font-medium">FashionQueen</h3>
+                            <p class="text-gray-300 text-sm">3 hours ago</p>
                         </div>
                     </div>
-                    <h2 class="mt-2 text-xl font-bold text-white">BMW X5 2019 - Full Option</h2>
-                    <p class="mt-1 text-gray-300">27,000 km | Automatic | Diesel</p>
+                    <h2 class="mt-2 text-xl font-bold text-white">Designer Handbag - Limited Edition</h2>
+                    <p class="mt-1 text-gray-300">Authentic | Never Used | With Dust Bag</p>
                     <div class="mt-4 flex items-center justify-between">
-                        <span class="text-xl font-bold text-white">€35,900</span>
+                        <span class="text-xl font-bold text-white">€450</span>
                         <div class="flex space-x-4">
                             <button class="flex items-center text-white">
                                 <i data-feather="heart" class="h-6 w-6"></i>
-                                <span class="ml-1">124</span>
+                                <span class="ml-1">56</span>
                             </button>
                             <button class="flex items-center text-white">
                                 <i data-feather="message-square" class="h-6 w-6"></i>
-                                <span class="ml-1">23</span>
+                                <span class="ml-1">8</span>
                             </button>
                             <button class="flex items-center text-white">
                                 <i data-feather="share-2" class="h-6 w-6"></i>
