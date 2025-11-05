@@ -4,82 +4,137 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>My Profile - VidX</title>
+  <script>
+    // Apply dark mode before page renders
+    if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
   </style>
 </head>
-<body class="bg-gray-50 dark:bg-dark-50 p-6">
-  <div class="max-w-3xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">My Profile</h1>
-
-    <!-- Section 1: Personal information -->
-    <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
-      <h2 class="text-lg font-semibold mb-4">Personal information</h2>
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label class="block text-sm text-gray-600">Name</label>
-          <input id="name" class="mt-1 block w-full border rounded px-3 py-2" value="Test">
+<body class="bg-gray-50 dark:bg-dark-50">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 flex items-center">
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200 flex items-center">
+                        <img id="nav-avatar" src="" alt="" class="hidden h-6 w-6 rounded-full object-cover">
+                        <span id="nav-username" class="hidden ml-2 text-sm font-medium"></span>
+                        <i data-feather="user" class="h-5 w-5"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-        <div>
-          <label class="block text-sm text-gray-600">Username</label>
-          <input id="username" class="mt-1 block w-full border rounded px-3 py-2" value="test">
-        </div>
-        <div>
-          <label class="block text-sm text-gray-600">Email address</label>
-          <input id="email" class="mt-1 block w-full border rounded px-3 py-2" value="test@example.com">
-        </div>
-      </div>
-      <div class="mt-4">
-        <button id="save-profile" class="bg-indigo-600 text-white px-4 py-2 rounded">Save</button>
-      </div>
-    </section>
+    </nav>
+    <div class="max-w-3xl mx-auto py-8">
+        <h1 class="text-2xl font-bold mb-4">My Profile</h1>
 
-    <!-- Section 2: Password reset -->
-    <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
-      <h2 class="text-lg font-semibold mb-4">Password</h2>
-      <p class="text-sm text-gray-600">Click the button below to reset your password. (Demo: no email will be sent.)</p>
-      <div class="mt-4">
-        <button id="reset-password" class="bg-yellow-500 text-white px-4 py-2 rounded">Reset password</button>
-      </div>
-    </section>
+        <!-- Section 1: Personal information -->
+        <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-4">Personal information</h2>
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label class="block text-sm text-gray-600">Name</label>
+              <input id="name" class="mt-1 block w-full border rounded px-3 py-2" value="Test">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Username</label>
+              <input id="username" class="mt-1 block w-full border rounded px-3 py-2" value="test">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600">Email address</label>
+              <input id="email" class="mt-1 block w-full border rounded px-3 py-2" value="test@example.com">
+            </div>
+          </div>
+          <div class="mt-4">
+            <button id="save-profile" class="bg-indigo-600 text-white px-4 py-2 rounded">Save</button>
+          </div>
+        </section>
 
-    <!-- Section 3: Payment information -->
-    <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
-      <h2 class="text-lg font-semibold mb-4">Payment information</h2>
-      <p class="text-sm text-gray-600">No payment method on file. You can add card details here (demo only).</p>
-      <div class="mt-4 grid grid-cols-1 gap-3">
-        <input id="card-number" placeholder="Card number" class="mt-1 block w-full border rounded px-3 py-2">
-        <div class="grid grid-cols-2 gap-2">
-          <input id="card-exp" placeholder="MM/YY" class="mt-1 block w-full border rounded px-3 py-2">
-          <input id="card-cvc" placeholder="CVC" class="mt-1 block w-full border rounded px-3 py-2">
-        </div>
-        <button id="save-payment" class="bg-indigo-600 text-white px-4 py-2 rounded">Save payment info</button>
-      </div>
-    </section>
+        <!-- Section 2: Password reset -->
+        <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-4">Password</h2>
+          <p class="text-sm text-gray-600">Click the button below to reset your password. (Demo: no email will be sent.)</p>
+          <div class="mt-4">
+            <button id="reset-password" class="bg-yellow-500 text-white px-4 py-2 rounded">Reset password</button>
+          </div>
+        </section>
 
-    <div class="text-sm text-gray-500">Demo account: <strong>Test &lt;test@example.com&gt;</strong></div>
-  </div>
+        <!-- Section 3: Payment information -->
+        <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-4">Payment information</h2>
+          <p class="text-sm text-gray-600">No payment method on file. You can add card details here (demo only).</p>
+          <div class="mt-4 grid grid-cols-1 gap-3">
+            <input id="card-number" placeholder="Card number" class="mt-1 block w-full border rounded px-3 py-2">
+            <div class="grid grid-cols-2 gap-2">
+              <input id="card-exp" placeholder="MM/YY" class="mt-1 block w-full border rounded px-3 py-2">
+              <input id="card-cvc" placeholder="CVC" class="mt-1 block w-full border rounded px-3 py-2">
+            </div>
+            <button id="save-payment" class="bg-indigo-600 text-white px-4 py-2 rounded">Save payment info</button>
+          </div>
+        </section>
 
-  <script>
-    // Basic demo handlers: persist changes to localStorage for the demo
-    document.getElementById('save-profile').addEventListener('click', () => {
-      const name = document.getElementById('name').value;
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      localStorage.setItem('userName', name);
-      localStorage.setItem('userUsername', username);
-      localStorage.setItem('userEmail', email);
-      alert('Profile saved (demo)');
-    });
-
-    document.getElementById('reset-password').addEventListener('click', () => {
-      alert('Password reset initiated (demo)');
-    });
-
-    document.getElementById('save-payment').addEventListener('click', () => {
-      alert('Payment info saved (demo)');
-    });
-  </script>
+        <div class="text-sm text-gray-500 mt-8">Demo account: <strong>John Doe &lt;john@example.com&gt;</strong><br>Password: <strong>demo1234</strong></div>
+    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.theme = isDark ? 'dark' : 'light';
+            });
+        }
+        // Feather icons
+        if (window.feather && typeof feather.replace === 'function') {
+            feather.replace();
+        }
+        // Update nav avatar/name
+        (function updateNavAuthUI(){
+            try {
+                const avatar = localStorage.getItem('userAvatar');
+                const name = localStorage.getItem('userName');
+                const avatarEl = document.getElementById('nav-avatar');
+                const nameEl = document.getElementById('nav-username');
+                const userBtn = document.getElementById('user-btn');
+                const iconSvg = userBtn && userBtn.querySelector('svg');
+                if (avatar) {
+                    avatarEl.src = avatar;
+                    avatarEl.classList.remove('hidden');
+                    if (iconSvg) iconSvg.classList.add('hidden');
+                } else {
+                    avatarEl.classList.add('hidden');
+                    if (iconSvg) iconSvg.classList.remove('hidden');
+                }
+                if (name) {
+                    nameEl.innerText = name;
+                    nameEl.classList.remove('hidden');
+                } else {
+                    nameEl.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error('Error updating nav auth UI:', e);
+            }
+        })();
+    </script>
 </body>
 </html>

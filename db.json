@@ -2,9 +2,9 @@
   "users": [
     {
       "id": 1,
-      "name": "Demo User",
+      "name": "John Doe",
       "email": "demo@example.com",
-      "password": "$2a$10$d7jH8YoVz.nhZ7U4YZdxZO8bqWVfnKCG9A6xHnEzQwkKN8P96Iz2q"
+      "password": "demo1234"
     },
     {
       "id": 2,
@@ -19,6 +19,12 @@
       "userId": 2,
       "token": "5d3lkb4aew8mhmhoa6s",
       "createdAt": "2025-11-05T21:07:32.116Z"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "token": "eiabb4slerhmhmjiv91",
+      "createdAt": "2025-11-05T21:59:18.709Z"
     }
   ],
   "profiles": [

@@ -147,5 +147,13 @@ class AuthService {
   }
 }
 
-// Export as a singleton
-export default new AuthService();
+// Export as a singleton and attach to window for legacy callers/components
+const authServiceInstance = new AuthService();
+try {
+  // attach to window for components loaded as non-module consumers
+  if (typeof window !== 'undefined') window.authService = authServiceInstance;
+} catch (err) {
+  // ignore in non-browser environments
+}
+
+export default authServiceInstance;
