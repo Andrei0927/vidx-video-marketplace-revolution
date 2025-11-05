@@ -1,0 +1,1368 @@
+// Single, clean AuthModal web component implementation// Single, clean AuthModal web component implementation
+
+// Dark-mode awareness via :host-context(.dark)// Dark-mode awareness via :host-context(.dark)
+
+
+
+class AuthModal extends HTMLElement {class AuthModal extends HTMLElement {
+
+  constructor() {  constructor() {
+
+    super();
+
+    this.attachShadow({ mode: 'open' });    super();
+
+  }    this.attachShadow({ mode: 'open' });
+
+  }
+
+  connectedCallback() {
+
+    this.render();  connectedCallback() {
+
+    this.setupEventListeners();    this.render();
+
+  }    this.setupEventListeners();
+
+  }
+
+  render() {
+
+    this.shadowRoot.innerHTML = `
+
+      <style>
+
+        :host { all: initial; }  render() {
+
+        :host * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+            this.shadowRoot.innerHTML = `
+
+        .modal-backdrop {
+
+          position: fixed;      <style>  connectedCallback() {  connectedCallback() {
+
+          inset: 0;
+
+          background: rgba(0,0,0,0.5);        :host { all: initial; }
+
+          display: flex;
+
+          align-items: center;        :host * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }    this.render();    this.render();
+
+          justify-content: center;
+
+          z-index: 10000;        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+
+        }
+
+        .modal-content { background: #fff; color: #111827; width: 92%; max-width: 420px; border-radius: 10px; padding: 20px; box-shadow: 0 10px 30px rgba(2,6,23,0.2); position: relative; }    this.setupEventListeners();    this.setupEventListeners();
+
+        .modal-content {
+
+          background: #fff;        :host-context(.dark) .modal-content { background: #242526; color: #E4E6EB; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+
+          color: #111827;
+
+          width: 92%;        .tabs { display:flex; gap:8px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; margin-bottom:14px; }  }  }
+
+          max-width: 420px;
+
+          border-radius: 10px;        :host-context(.dark) .tabs { border-bottom-color:#3A3B3C; }
+
+          padding: 20px;
+
+          box-shadow: 0 10px 30px rgba(2,6,23,0.2);        .tab { padding:6px 10px; cursor:pointer; font-weight:600; }
+
+          position: relative;
+
+        }        .tab.active { border-bottom:2px solid #6366f1; color:#6366f1; }
+
+        
+
+        :host-context(.dark) .modal-content {        :host-context(.dark) .tab.active { border-bottom-color:#818cf8; color:#818cf8; }  render() {  render() {
+
+          background: #242526;
+
+          color: #E4E6EB;        .form-group { margin-bottom:12px; }
+
+          box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+
+        }        label { display:block; margin-bottom:6px; font-size:13px; }    this.shadowRoot.innerHTML = `    this.shadowRoot.innerHTML = `
+
+
+
+        .tabs {        input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; color:#111827; }
+
+          display: flex;
+
+          gap: 8px;        input::placeholder { color:#9CA3AF; }      <style>      <style>
+
+          border-bottom: 1px solid #e5e7eb;
+
+          padding-bottom: 8px;        :host-context(.dark) input { background:#242526; border-color:#3A3B3C; color:#E4E6EB; }
+
+          margin-bottom: 14px;
+
+        }        :host-context(.dark) input::placeholder { color:#6B7280; }        :host { all: initial; }        :host { all: initial; }
+
+        
+
+        :host-context(.dark) .tabs {        .btn { width:100%; padding:10px 12px; border-radius:8px; background:#6366f1; color:#fff; border:none; cursor:pointer; font-weight:600; }
+
+          border-bottom-color: #3A3B3C;
+
+        }        .btn:hover { filter:brightness(.95); }        :host * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }        :host * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+
+
+        .tab {        :host-context(.dark) .btn { background:#818cf8; }
+
+          padding: 6px 10px;
+
+          cursor: pointer;        .close-btn { position:absolute; top:-10px; right:-10px; width:28px; height:28px; border-radius:50%; border:1px solid #e5e7eb; background:#fff; color:#6b7280; display:flex; align-items:center; justify-content:center; cursor:pointer; }        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+
+          font-weight: 600;
+
+          color: inherit;        :host-context(.dark) .close-btn { background:#242526; border-color:#3A3B3C; color:#9CA3AF; }
+
+          transition: color 0.3s ease;
+
+        }      </style>        .modal-content { background: #fff; color: #111827; width: 92%; max-width: 420px; border-radius: 10px; padding: 20px; box-shadow: 0 10px 30px rgba(2,6,23,0.2); position: relative; }        .modal-content { background: #fff; color: #111827; width: 92%; max-width: 420px; border-radius: 10px; padding: 20px; box-shadow: 0 10px 30px rgba(2,6,23,0.2); position: relative; }
+
+        
+
+        .tab.active {      <div class="modal-backdrop">
+
+          border-bottom: 2px solid #6366f1;
+
+          color: #6366f1;        <div class="modal-content" role="dialog" aria-modal="true">        :host-context(.dark) .modal-content { background: #242526; color: #E4E6EB; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }        :host-context(.dark) .modal-content { background: #242526; color: #E4E6EB; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+
+        }
+
+                  <button class="close-btn" aria-label="Close">×</button>
+
+        :host-context(.dark) .tab.active {
+
+          border-bottom-color: #818cf8;          <div class="tabs">        .tabs { display:flex; gap:8px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; margin-bottom:14px; }        .tabs { display:flex; gap:8px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; margin-bottom:14px; }
+
+          color: #818cf8;
+
+        }            <div class="tab active" data-tab="login">Login</div>
+
+
+
+        .form-group {            <div class="tab" data-tab="register">Register</div>        :host-context(.dark) .tabs { border-bottom-color:#3A3B3C; }        :host-context(.dark) .tabs { border-bottom-color:#3A3B3C; }
+
+          margin-bottom: 12px;
+
+        }          </div>
+
+
+
+        label {          <div id="login-form">        .tab { padding:6px 10px; cursor:pointer; font-weight:600; }        .tab { padding:6px 10px; cursor:pointer; font-weight:600; }
+
+          display: block;
+
+          margin-bottom: 6px;            <div class="form-group">
+
+          font-size: 13px;
+
+          color: inherit;              <label for="login-email">Email</label>        .tab.active { border-bottom:2px solid #6366f1; color:#6366f1; }        .tab.active { border-bottom:2px solid #6366f1; color:#6366f1; }
+
+        }
+
+              <input id="login-email" type="email" placeholder="you@email.com">
+
+        input {
+
+          width: 100%;            </div>        :host-context(.dark) .tab.active { border-bottom-color:#818cf8; color:#818cf8; }        :host-context(.dark) .tab.active { border-bottom-color:#818cf8; color:#818cf8; }
+
+          padding: 8px 10px;
+
+          border-radius: 6px;            <div class="form-group">
+
+          border: 1px solid #d1d5db;
+
+          background: #fff;              <label for="login-password">Password</label>        .form-group { margin-bottom:12px; }        .form-group { margin-bottom:12px; }
+
+          color: #111827;
+
+          transition: background-color 0.3s ease, border-color 0.3s ease;              <input id="login-password" type="password" placeholder="••••••••">
+
+        }
+
+            </div>        label { display:block; margin-bottom:6px; font-size:13px; }        label { display:block; margin-bottom:6px; font-size:13px; }
+
+        input::placeholder {
+
+          color: #9CA3AF;            <button id="login-btn" class="btn">Login</button>
+
+        }
+
+          </div>        input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; color:#111827; }        input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; color:#111827; }
+
+        :host-context(.dark) input {
+
+          background: #242526;          <div id="register-form" style="display:none;">
+
+          border-color: #3A3B3C;
+
+          color: #E4E6EB;            <div class="form-group">        input::placeholder { color:#9CA3AF; }        input::placeholder { color:#9CA3AF; }
+
+        }
+
+              <label for="register-name">Name</label>
+
+        :host-context(.dark) input::placeholder {
+
+          color: #6B7280;              <input id="register-name" type="text" placeholder="Your name">        :host-context(.dark) input { background:#242526; border-color:#3A3B3C; color:#E4E6EB; }        :host-context(.dark) input { background:#242526; border-color:#3A3B3C; color:#E4E6EB; }
+
+        }
+
+            </div>
+
+        button.btn {
+
+          width: 100%;            <div class="form-group">        :host-context(.dark) input::placeholder { color:#6B7280; }        :host-context(.dark) input::placeholder { color:#6B7280; }
+
+          padding: 10px 12px;
+
+          border-radius: 8px;              <label for="register-email">Email</label>
+
+          background: #6366f1;
+
+          color: white;              <input id="register-email" type="email" placeholder="you@email.com">        .btn { width:100%; padding:10px 12px; border-radius:8px; background:#6366f1; color:#fff; border:none; cursor:pointer; font-weight:600; }        .btn { width:100%; padding:10px 12px; border-radius:8px; background:#6366f1; color:#fff; border:none; cursor:pointer; font-weight:600; }
+
+          border: none;
+
+          cursor: pointer;            </div>
+
+          font-weight: 600;
+
+          transition: background-color 0.15s ease;            <div class="form-group">        .btn:hover { filter:brightness(.95); }        .btn:hover { filter:brightness(.95); }
+
+        }
+
+              <label for="register-password">Password</label>
+
+        button.btn:hover {
+
+          background: #4f46e5;              <input id="register-password" type="password" placeholder="••••••••">        :host-context(.dark) .btn { background:#818cf8; }        :host-context(.dark) .btn { background:#818cf8; }
+
+        }
+
+            </div>
+
+        :host-context(.dark) button.btn {
+
+          background: #818cf8;            <div class="form-group">        .close-btn { position:absolute; top:-10px; right:-10px; width:28px; height:28px; border-radius:50%; border:1px solid #e5e7eb; background:#fff; color:#6b7280; display:flex; align-items:center; justify-content:center; cursor:pointer; }        .close-btn { position:absolute; top:-10px; right:-10px; width:28px; height:28px; border-radius:50%; border:1px solid #e5e7eb; background:#fff; color:#6b7280; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+
+        }
+
+              <label for="register-confirm">Confirm</label>
+
+        :host-context(.dark) button.btn:hover {
+
+          background: #6366f1;              <input id="register-confirm" type="password" placeholder="••••••••">        :host-context(.dark) .close-btn { background:#242526; border-color:#3A3B3C; color:#9CA3AF; }        :host-context(.dark) .close-btn { background:#242526; border-color:#3A3B3C; color:#9CA3AF; }
+
+        }
+
+            </div>
+
+        .close-btn {
+
+          position: absolute;            <button id="register-btn" class="btn">Register</button>      </style>      </style>
+
+          top: -10px;
+
+          right: -10px;          </div>
+
+          width: 28px;
+
+          height: 28px;        </div>      <div class="modal-backdrop">      <div class="modal-backdrop">
+
+          border-radius: 50%;
+
+          border: 1px solid #e5e7eb;      </div>
+
+          background: #fff;
+
+          color: #6b7280;    `;        <div class="modal-content" role="dialog" aria-modal="true">        <div class="modal-content" role="dialog" aria-modal="true">
+
+          cursor: pointer;
+
+          display: flex;  }
+
+          align-items: center;
+
+          justify-content: center;          <button class="close-btn" aria-label="Close">×</button>          <button class="close-btn" aria-label="Close">×</button>
+
+          transition: all 0.3s ease;
+
+        }  setupEventListeners() {
+
+
+
+        .close-btn:hover {    const closeBtn = this.shadowRoot.querySelector('.close-btn');          <div class="tabs">          <div class="tabs">
+
+          color: #374151;
+
+          background: #f3f4f6;    const backdrop = this.shadowRoot.querySelector('.modal-backdrop');
+
+        }
+
+    const tabs = this.shadowRoot.querySelectorAll('.tab');            <div class="tab active" data-tab="login">Login</div>            <div class="tab active" data-tab="login">Login</div>
+
+        :host-context(.dark) .close-btn {
+
+          background: #242526;
+
+          border-color: #3A3B3C;
+
+          color: #9CA3AF;    closeBtn?.addEventListener('click', () => this.closeModal());            <div class="tab" data-tab="register">Register</div>            <div class="tab" data-tab="register">Register</div>
+
+        }
+
+    backdrop?.addEventListener('click', (e) => { if (e.target === backdrop) this.closeModal(); });
+
+        :host-context(.dark) .close-btn:hover {
+
+          color: #E4E6EB;          </div>          </div>
+
+          background: #3A3B3C;
+
+        }    tabs.forEach(t => t.addEventListener('click', (e) => {
+
+      </style>
+
+      tabs.forEach(x => x.classList.remove('active'));          <div id="login-form">          <div id="login-form">
+
+      <div class="modal-backdrop">
+
+        <div class="modal-content" role="dialog" aria-modal="true">      e.currentTarget.classList.add('active');
+
+          <button class="close-btn" aria-label="Close">×</button>
+
+                const isLogin = e.currentTarget.dataset.tab === 'login';            <div class="form-group">            <div class="form-group">
+
+          <div class="tabs">
+
+            <div class="tab active" data-tab="login">Login</div>      this.shadowRoot.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+
+            <div class="tab" data-tab="register">Register</div>
+
+          </div>      this.shadowRoot.getElementById('register-form').style.display = isLogin ? 'none' : 'block';              <label for="login-email">Email</label>              <label for="login-email">Email</label>
+
+
+
+          <div id="login-form">    }));
+
+            <div class="form-group">
+
+              <label for="login-email">Email</label>              <input id="login-email" type="email" placeholder="you@email.com">              <input id="login-email" type="email" placeholder="you@email.com">
+
+              <input type="email" id="login-email" placeholder="your@email.com" />
+
+            </div>    const loginBtn = this.shadowRoot.getElementById('login-btn');
+
+            <div class="form-group">
+
+              <label for="login-password">Password</label>    const registerBtn = this.shadowRoot.getElementById('register-btn');            </div>            </div>
+
+              <input type="password" id="login-password" placeholder="••••••••" />
+
+            </div>
+
+            <button class="btn" id="login-btn">Login</button>
+
+          </div>    loginBtn?.addEventListener('click', () => this.handleLogin());            <div class="form-group">            <div class="form-group">
+
+
+
+          <div id="register-form" style="display: none;">    registerBtn?.addEventListener('click', () => this.handleRegister());
+
+            <div class="form-group">
+
+              <label for="register-name">Name</label>              <label for="login-password">Password</label>              <label for="login-password">Password</label>
+
+              <input type="text" id="register-name" placeholder="Your name" />
+
+            </div>    this._escHandler = (e) => { if (e.key === 'Escape') this.closeModal(); };
+
+            <div class="form-group">
+
+              <label for="register-email">Email</label>    document.addEventListener('keydown', this._escHandler);              <input id="login-password" type="password" placeholder="••••••••">              <input id="login-password" type="password" placeholder="••••••••">
+
+              <input type="email" id="register-email" placeholder="your@email.com" />
+
+            </div>  }
+
+            <div class="form-group">
+
+              <label for="register-password">Password</label>            </div>            </div>
+
+              <input type="password" id="register-password" placeholder="••••••••" />
+
+            </div>  handleLogin() {
+
+            <div class="form-group">
+
+              <label for="register-confirm">Confirm Password</label>    const email = this.shadowRoot.getElementById('login-email').value.trim();            <button id="login-btn" class="btn">Login</button>            <button id="login-btn" class="btn">Login</button>
+
+              <input type="password" id="register-confirm" placeholder="••••••••" />
+
+            </div>    const password = this.shadowRoot.getElementById('login-password').value;
+
+            <button class="btn" id="register-btn">Register</button>
+
+          </div>    if (!email || !password) { alert('Please fill in all fields'); return; }          </div>          </div>
+
+        </div>
+
+      </div>    localStorage.setItem('authToken', 'sample-token');
+
+    `;
+
+  }    this.closeModal();          <div id="register-form" style="display:none;">          <div id="register-form" style="display:none;">
+
+
+
+  setupEventListeners() {    window.location.reload();
+
+    const closeBtn = this.shadowRoot.querySelector('.close-btn');
+
+    const modalBackdrop = this.shadowRoot.querySelector('.modal-backdrop');  }            <div class="form-group">            <div class="form-group">
+
+    const tabs = this.shadowRoot.querySelectorAll('.tab');
+
+    const loginBtn = this.shadowRoot.querySelector('#login-btn');
+
+    const registerBtn = this.shadowRoot.querySelector('#register-btn');
+
+  handleRegister() {              <label for="register-name">Name</label>              <label for="register-name">Name</label>
+
+    closeBtn?.addEventListener('click', () => this.closeModal());
+
+    modalBackdrop?.addEventListener('click', (e) => {    const name = this.shadowRoot.getElementById('register-name').value.trim();
+
+      if (e.target === modalBackdrop) {
+
+        this.closeModal();    const email = this.shadowRoot.getElementById('register-email').value.trim();              <input id="register-name" type="text" placeholder="Your name">              <input id="register-name" type="text" placeholder="Your name">
+
+      }
+
+    });    const password = this.shadowRoot.getElementById('register-password').value;
+
+
+
+    tabs.forEach(tab => {    const confirm = this.shadowRoot.getElementById('register-confirm').value;            </div>            </div>
+
+      tab.addEventListener('click', () => {
+
+        tabs.forEach(t => t.classList.remove('active'));    if (!name || !email || !password || !confirm) { alert('Please fill in all fields'); return; }
+
+        tab.classList.add('active');
+
+            if (password !== confirm) { alert('Passwords do not match'); return; }            <div class="form-group">            <div class="form-group">
+
+        const isLogin = tab.dataset.tab === 'login';
+
+        this.shadowRoot.querySelector('#login-form').style.display = isLogin ? 'block' : 'none';    localStorage.setItem('authToken', 'sample-token');
+
+        this.shadowRoot.querySelector('#register-form').style.display = isLogin ? 'none' : 'block';
+
+      });    localStorage.setItem('userName', name);              <label for="register-email">Email</label>              <label for="register-email">Email</label>
+
+    });
+
+    this.closeModal();
+
+    loginBtn?.addEventListener('click', () => this.handleLogin());
+
+    registerBtn?.addEventListener('click', () => this.handleRegister());    window.location.reload();              <input id="register-email" type="email" placeholder="you@email.com">              <input id="register-email" type="email" placeholder="you@email.com">
+
+
+
+    // Setup escape key handler  }
+
+    this._escHandler = (e) => {
+
+      if (e.key === 'Escape') this.closeModal();            </div>            </div>
+
+    };
+
+    document.addEventListener('keydown', this._escHandler);  closeModal() {
+
+  }
+
+    document.removeEventListener('keydown', this._escHandler);            <div class="form-group">            <div class="form-group">
+
+  handleLogin() {
+
+    const email = this.shadowRoot.querySelector('#login-email').value.trim();    this.remove();
+
+    const password = this.shadowRoot.querySelector('#login-password').value;
+
+      }              <label for="register-password">Password</label>              <label for="register-password">Password</label>
+
+    if (!email || !password) {
+
+      alert('Please fill in all fields');}
+
+      return;
+
+    }              <input id="register-password" type="password" placeholder="••••••••">              <input id="register-password" type="password" placeholder="••••••••">
+
+
+
+    // Simulate login - in real app, call your auth API hereif (!customElements.get('auth-modal')) customElements.define('auth-modal', AuthModal);
+
+    localStorage.setItem('isLoggedIn', 'true');
+
+    localStorage.setItem('userEmail', email);            </div>            </div>
+
+    this.closeModal();
+
+    window.location.reload();            <div class="form-group">            <div class="form-group">
+
+  }
+
+              <label for="register-confirm">Confirm</label>              <label for="register-confirm">Confirm</label>
+
+  handleRegister() {
+
+    const name = this.shadowRoot.querySelector('#register-name').value.trim();              <input id="register-confirm" type="password" placeholder="••••••••">              <input id="register-confirm" type="password" placeholder="••••••••">
+
+    const email = this.shadowRoot.querySelector('#register-email').value.trim();
+
+    const password = this.shadowRoot.querySelector('#register-password').value;            </div>            </div>
+
+    const confirm = this.shadowRoot.querySelector('#register-confirm').value;
+
+                <button id="register-btn" class="btn">Register</button>            <button id="register-btn" class="btn">Register</button>
+
+    if (!name || !email || !password || !confirm) {
+
+      alert('Please fill in all fields');          </div>          </div>
+
+      return;
+
+    }        </div>        </div>
+
+    
+
+    if (password !== confirm) {      </div>      </div>
+
+      alert('Passwords do not match');
+
+      return;    `;    `;
+
+    }
+
+  }  }
+
+    // Simulate registration - in real app, call your auth API here
+
+    localStorage.setItem('isLoggedIn', 'true');
+
+    localStorage.setItem('userEmail', email);
+
+    localStorage.setItem('userName', name);  setupEventListeners() {  setupEventListeners() {
+
+    this.closeModal();
+
+    window.location.reload();    const closeBtn = this.shadowRoot.querySelector('.close-btn');    const closeBtn = this.shadowRoot.querySelector('.close-btn');
+
+  }
+
+    const backdrop = this.shadowRoot.querySelector('.modal-backdrop');    const backdrop = this.shadowRoot.querySelector('.modal-backdrop');
+
+  disconnectedCallback() {
+
+    document.removeEventListener('keydown', this._escHandler);    const tabs = this.shadowRoot.querySelectorAll('.tab');    const tabs = this.shadowRoot.querySelectorAll('.tab');
+
+  }
+
+
+
+  closeModal() {
+
+    document.removeEventListener('keydown', this._escHandler);    closeBtn?.addEventListener('click', () => this.closeModal());    closeBtn?.addEventListener('click', () => this.closeModal());
+
+    this.remove();
+
+  }    backdrop?.addEventListener('click', (e) => { if (e.target === backdrop) this.closeModal(); });    backdrop?.addEventListener('click', (e) => { if (e.target === backdrop) this.closeModal(); });
+
+}
+
+
+
+// Register the custom element
+
+if (!customElements.get('auth-modal')) {    tabs.forEach(t => t.addEventListener('click', (e) => {    tabs.forEach(t => t.addEventListener('click', (e) => {
+
+  customElements.define('auth-modal', AuthModal);
+
+}      tabs.forEach(x => x.classList.remove('active'));      tabs.forEach(x => x.classList.remove('active'));
+
+      e.currentTarget.classList.add('active');      e.currentTarget.classList.add('active');
+
+      const isLogin = e.currentTarget.dataset.tab === 'login';      const isLogin = e.currentTarget.dataset.tab === 'login';
+
+      this.shadowRoot.getElementById('login-form').style.display = isLogin ? 'block' : 'none';      this.shadowRoot.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+
+      this.shadowRoot.getElementById('register-form').style.display = isLogin ? 'none' : 'block';      this.shadowRoot.getElementById('register-form').style.display = isLogin ? 'none' : 'block';
+
+    }));    }));
+
+
+
+    const loginBtn = this.shadowRoot.getElementById('login-btn');    const loginBtn = this.shadowRoot.getElementById('login-btn');
+
+    const registerBtn = this.shadowRoot.getElementById('register-btn');    const registerBtn = this.shadowRoot.getElementById('register-btn');
+
+
+
+    loginBtn?.addEventListener('click', () => this.handleLogin());    loginBtn?.addEventListener('click', () => this.handleLogin());
+
+    registerBtn?.addEventListener('click', () => this.handleRegister());    registerBtn?.addEventListener('click', () => this.handleRegister());
+
+
+
+    this._escHandler = (e) => { if (e.key === 'Escape') this.closeModal(); };    this._escHandler = (e) => { if (e.key === 'Escape') this.closeModal(); };
+
+    document.addEventListener('keydown', this._escHandler);    document.addEventListener('keydown', this._escHandler);
+
+  }  }
+
+
+
+  handleLogin() {  handleLogin() {
+
+    const email = this.shadowRoot.getElementById('login-email').value.trim();    const email = this.shadowRoot.getElementById('login-email').value.trim();
+
+    const password = this.shadowRoot.getElementById('login-password').value;    const password = this.shadowRoot.getElementById('login-password').value;
+
+    if (!email || !password) { alert('Please fill in all fields'); return; }    if (!email || !password) { alert('Please fill in all fields'); return; }
+
+    localStorage.setItem('authToken', 'sample-token');    localStorage.setItem('authToken', 'sample-token');
+
+    this.closeModal();    this.closeModal();
+
+    window.location.reload();    window.location.reload();
+
+  }  }
+
+
+
+  handleRegister() {  handleRegister() {
+
+    const name = this.shadowRoot.getElementById('register-name').value.trim();    const name = this.shadowRoot.getElementById('register-name').value.trim();
+
+    const email = this.shadowRoot.getElementById('register-email').value.trim();    const email = this.shadowRoot.getElementById('register-email').value.trim();
+
+    const password = this.shadowRoot.getElementById('register-password').value;    const password = this.shadowRoot.getElementById('register-password').value;
+
+    const confirm = this.shadowRoot.getElementById('register-confirm').value;    const confirm = this.shadowRoot.getElementById('register-confirm').value;
+
+    if (!name || !email || !password || !confirm) { alert('Please fill in all fields'); return; }    if (!name || !email || !password || !confirm) { alert('Please fill in all fields'); return; }
+
+    if (password !== confirm) { alert('Passwords do not match'); return; }    if (password !== confirm) { alert('Passwords do not match'); return; }
+
+    localStorage.setItem('authToken', 'sample-token');    localStorage.setItem('authToken', 'sample-token');
+
+    localStorage.setItem('userName', name);    localStorage.setItem('userName', name);
+
+    this.closeModal();    this.closeModal();
+
+    window.location.reload();    window.location.reload();
+
+  }  }
+
+
+
+  closeModal() {  closeModal() {
+
+    document.removeEventListener('keydown', this._escHandler);    document.removeEventListener('keydown', this._escHandler);
+
+    this.remove();    this.remove();
+
+  }  }
+
+}}
+
+
+
+if (!customElements.get('auth-modal')) customElements.define('auth-modal', AuthModal);if (!customElements.get('auth-modal')) customElements.define('auth-modal', AuthModal);
+
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+  }
+
+  render() {
+    // Simple, robust styles. Dark mode handled by :host-context(.dark)
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host { all: initial; }
+        :host * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+        .modal-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+        }
+
+        .modal-content {
+          background: #ffffff;
+          color: #111827;
+          width: 92%;
+          max-width: 420px;
+          border-radius: 10px;
+          padding: 20px;
+          box-shadow: 0 10px 30px rgba(2,6,23,0.2);
+        }
+
+        :host-context(.dark) .modal-content {
+          background: #242526;
+          color: #E4E6EB;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .tabs { display: flex; gap: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 14px; }
+        :host-context(.dark) .tabs { border-bottom-color: #3A3B3C; }
+
+        .tab { padding: 6px 10px; cursor: pointer; font-weight: 600; color: inherit; }
+        .tab.active { border-bottom: 2px solid #6366f1; color: #6366f1; }
+        :host-context(.dark) .tab.active { border-bottom-color: #818cf8; color: #818cf8; }
+
+        .form-group { margin-bottom: 12px; }
+        label { display:block; margin-bottom:6px; font-size:13px; }
+
+        input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; color:#111827; }
+        input::placeholder { color:#9CA3AF; }
+        :host-context(.dark) input { background:#242526; border-color:#3A3B3C; color:#E4E6EB; }
+        :host-context(.dark) input::placeholder { color:#6B7280; }
+
+        .btn { width:100%; padding:10px 12px; border-radius:8px; background:#6366f1; color:#fff; border:none; cursor:pointer; font-weight:600; }
+        .btn:hover { filter:brightness(.95); }
+        :host-context(.dark) .btn { background:#818cf8; }
+
+        .close-btn { position:absolute; top:-10px; right:-10px; width:28px; height:28px; border-radius:50%; border:1px solid #e5e7eb; background:#fff; color:#6b7280; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        :host-context(.dark) .close-btn { background:#242526; border-color:#3A3B3C; color:#9CA3AF; }
+      </style>
+
+      <div class="modal-backdrop">
+        <div class="modal-content" role="dialog" aria-modal="true">
+          <button class="close-btn" aria-label="Close">×</button>
+          <div class="tabs">
+            <div class="tab active" data-tab="login">Login</div>
+            <div class="tab" data-tab="register">Register</div>
+          </div>
+
+          <div id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input id="login-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" placeholder="••••••••">
+            </div>
+            <button id="login-btn" class="btn">Login</button>
+          </div>
+
+          <div id="register-form" style="display:none;">
+            <div class="form-group">
+              <label for="register-name">Name</label>
+              <input id="register-name" type="text" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input id="register-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <input id="register-password" type="password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label for="register-confirm">Confirm</label>
+              <input id="register-confirm" type="password" placeholder="••••••••">
+            </div>
+            <button id="register-btn" class="btn">Register</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  setupEventListeners() {
+    const closeBtn = this.shadowRoot.querySelector('.close-btn');
+    const backdrop = this.shadowRoot.querySelector('.modal-backdrop');
+    const tabs = this.shadowRoot.querySelectorAll('.tab');
+
+    closeBtn?.addEventListener('click', () => this.closeModal());
+    backdrop?.addEventListener('click', (e) => { if (e.target === backdrop) this.closeModal(); });
+
+    tabs.forEach(t => t.addEventListener('click', (e) => {
+      tabs.forEach(x => x.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      const isLogin = e.currentTarget.dataset.tab === 'login';
+      this.shadowRoot.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+      this.shadowRoot.getElementById('register-form').style.display = isLogin ? 'none' : 'block';
+    }));
+
+    const loginBtn = this.shadowRoot.getElementById('login-btn');
+    const registerBtn = this.shadowRoot.getElementById('register-btn');
+
+    loginBtn?.addEventListener('click', () => this.handleLogin());
+    registerBtn?.addEventListener('click', () => this.handleRegister());
+
+    // close on Esc
+    this._escHandler = (e) => { if (e.key === 'Escape') this.closeModal(); };
+    document.addEventListener('keydown', this._escHandler);
+  }
+
+  handleLogin() {
+    const email = this.shadowRoot.getElementById('login-email').value.trim();
+    const password = this.shadowRoot.getElementById('login-password').value;
+    if (!email || !password) { alert('Please fill in all fields'); return; }
+    localStorage.setItem('authToken', 'sample-token');
+    this.closeModal();
+    window.location.reload();
+  }
+
+  handleRegister() {
+    const name = this.shadowRoot.getElementById('register-name').value.trim();
+    const email = this.shadowRoot.getElementById('register-email').value.trim();
+    const password = this.shadowRoot.getElementById('register-password').value;
+    const confirm = this.shadowRoot.getElementById('register-confirm').value;
+    if (!name || !email || !password || !confirm) { alert('Please fill in all fields'); return; }
+    if (password !== confirm) { alert('Passwords do not match'); return; }
+    localStorage.setItem('authToken', 'sample-token');
+    localStorage.setItem('userName', name);
+    this.closeModal();
+    window.location.reload();
+  }
+
+  closeModal() {
+    document.removeEventListener('keydown', this._escHandler);
+    this.remove();
+  }
+}
+
+customElements.define('auth-modal', AuthModal);
+
+// --- Clean replacement below to ensure no duplicate/corrupt code remains ---
+// Overwrite entire file content with a single, well-formed AuthModal class.
+
+/* eslint-disable */
+class AuthModal extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host { all: initial; }
+        :host * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        .modal-content { background: #fff; color: #111827; width: 92%; max-width: 420px; border-radius: 10px; padding: 20px; box-shadow: 0 10px 30px rgba(2,6,23,0.2); position: relative; }
+        :host-context(.dark) .modal-content { background: #242526; color: #E4E6EB; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+
+        .tabs { display:flex; gap:8px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; margin-bottom:14px; }
+        :host-context(.dark) .tabs { border-bottom-color:#3A3B3C; }
+
+        .tab { padding:6px 10px; cursor:pointer; font-weight:600; }
+        .tab.active { border-bottom:2px solid #6366f1; color:#6366f1; }
+        :host-context(.dark) .tab.active { border-bottom-color:#818cf8; color:#818cf8; }
+
+        .form-group { margin-bottom:12px; }
+        label { display:block; margin-bottom:6px; font-size:13px; }
+
+        input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; color:#111827; }
+        input::placeholder { color:#9CA3AF; }
+        :host-context(.dark) input { background:#242526; border-color:#3A3B3C; color:#E4E6EB; }
+        :host-context(.dark) input::placeholder { color:#6B7280; }
+
+        .btn { width:100%; padding:10px 12px; border-radius:8px; background:#6366f1; color:#fff; border:none; cursor:pointer; font-weight:600; }
+        .btn:hover { filter:brightness(.95); }
+        :host-context(.dark) .btn { background:#818cf8; }
+
+        .close-btn { position:absolute; top:-10px; right:-10px; width:28px; height:28px; border-radius:50%; border:1px solid #e5e7eb; background:#fff; color:#6b7280; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+        :host-context(.dark) .close-btn { background:#242526; border-color:#3A3B3C; color:#9CA3AF; }
+      </style>
+
+      <div class="modal-backdrop">
+        <div class="modal-content" role="dialog" aria-modal="true">
+          <button class="close-btn" aria-label="Close">×</button>
+          <div class="tabs">
+            <div class="tab active" data-tab="login">Login</div>
+            <div class="tab" data-tab="register">Register</div>
+          </div>
+
+          <div id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input id="login-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" placeholder="••••••••">
+            </div>
+            <button id="login-btn" class="btn">Login</button>
+          </div>
+
+          <div id="register-form" style="display:none;">
+            <div class="form-group">
+              <label for="register-name">Name</label>
+              <input id="register-name" type="text" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input id="register-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <input id="register-password" type="password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label for="register-confirm">Confirm</label>
+              <input id="register-confirm" type="password" placeholder="••••••••">
+            </div>
+            <button id="register-btn" class="btn">Register</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  setupEventListeners() {
+    const closeBtn = this.shadowRoot.querySelector('.close-btn');
+    const backdrop = this.shadowRoot.querySelector('.modal-backdrop');
+    const tabs = this.shadowRoot.querySelectorAll('.tab');
+
+    closeBtn?.addEventListener('click', () => this.closeModal());
+    backdrop?.addEventListener('click', (e) => { if (e.target === backdrop) this.closeModal(); });
+
+    tabs.forEach(t => t.addEventListener('click', (e) => {
+      tabs.forEach(x => x.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      const isLogin = e.currentTarget.dataset.tab === 'login';
+      this.shadowRoot.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+      this.shadowRoot.getElementById('register-form').style.display = isLogin ? 'none' : 'block';
+    }));
+
+    const loginBtn = this.shadowRoot.getElementById('login-btn');
+    const registerBtn = this.shadowRoot.getElementById('register-btn');
+
+    loginBtn?.addEventListener('click', () => this.handleLogin());
+    registerBtn?.addEventListener('click', () => this.handleRegister());
+
+    this._escHandler = (e) => { if (e.key === 'Escape') this.closeModal(); };
+    document.addEventListener('keydown', this._escHandler);
+  }
+
+  handleLogin() {
+    const email = this.shadowRoot.getElementById('login-email').value.trim();
+    const password = this.shadowRoot.getElementById('login-password').value;
+    if (!email || !password) { alert('Please fill in all fields'); return; }
+    localStorage.setItem('authToken', 'sample-token');
+    this.closeModal();
+    window.location.reload();
+  }
+
+  handleRegister() {
+    const name = this.shadowRoot.getElementById('register-name').value.trim();
+    const email = this.shadowRoot.getElementById('register-email').value.trim();
+    const password = this.shadowRoot.getElementById('register-password').value;
+    const confirm = this.shadowRoot.getElementById('register-confirm').value;
+    if (!name || !email || !password || !confirm) { alert('Please fill in all fields'); return; }
+    if (password !== confirm) { alert('Passwords do not match'); return; }
+    localStorage.setItem('authToken', 'sample-token');
+    localStorage.setItem('userName', name);
+    this.closeModal();
+    window.location.reload();
+  }
+
+  closeModal() {
+    document.removeEventListener('keydown', this._escHandler);
+    this.remove();
+  }
+}
+
+// Ensure single define (idempotent guard)
+if (!customElements.get('auth-modal')) customElements.define('auth-modal', AuthModal);
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
+
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+    this.observeDarkMode();
+  }
+    const isDark = document.documentElement.classList.contains('dark');
+    const theme = isDark ? 'dark' : 'light';
+  observeDarkMode() {
+    // Create observer for dark mode changes
+    // Add constructable stylesheets support for better dark mode handling
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(\`
+      :host(.dark) .modal-content {
+        background: var(--bg-dark);
+        color: var(--text-dark);
+      }
+      :host(.dark) .tabs {
+        border-bottom-color: var(--border-dark);
+      }
+      :host(.dark) .tab.active {
+        border-bottom-color: var(--indigo-dark);
+        color: var(--indigo-dark);
+      }
+      :host(.dark) input {
+        background: var(--bg-dark);
+        border-color: var(--border-dark);
+        color: var(--text-dark);
+      }
+      :host(.dark) input::placeholder {
+        color: #6B7280;
+      }
+      :host(.dark) button {
+        background-color: var(--indigo-dark);
+      }
+      :host(.dark) button:hover {
+        background-color: #6366f1;
+      }
+      :host(.dark) .close-btn {
+        background: var(--bg-dark);
+        border-color: var(--border-dark);
+        color: #9CA3AF;
+      }
+      :host(.dark) .close-btn:hover {
+        color: var(--text-dark);
+        background: var(--hover-dark);
+      }
+    \`);
+    
+    this.shadowRoot.adoptedStyleSheets = [sheet];
+    this.shadowRoot.innerHTML = `
+      <style>
+    const isDark = document.documentElement.classList.contains('dark');
+    const theme = isDark ? 'dark' : 'light';
+        :host {
+          color-scheme: light dark;
+        }
+        
+        .modal-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+        
+          background: ${theme === 'dark' ? '#242526' : '#ffffff'};
+          color: ${theme === 'dark' ? '#E4E6EB' : '#374151'};
+          border-radius: 0.5rem;
+          width: 90%;
+          max-width: 400px;
+          padding: 2rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, ${theme === 'dark' ? '0.3' : '0.1'});
+          position: relative;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          position: relative;
+          transition: all 0.3s ease;
+        }
+          border-bottom: 1px solid ${theme === 'dark' ? '#3A3B3C' : '#e5e7eb'};
+        :host-context(html.dark) .modal-content,
+        :host(.dark) .modal-content {
+          background: #242526;
+          color: #E4E6EB;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        
+          display: flex;
+          border-bottom: 1px solid var(--border-light);
+          margin-bottom: 1.5rem;
+          border-bottom: 2px solid ${theme === 'dark' ? '#818cf8' : '#6366f1'};
+          color: ${theme === 'dark' ? '#818cf8' : '#6366f1'};
+        
+        :host-context(.dark) .tabs {
+          border-bottom-color: var(--border-dark);
+        }
+        
+        .tab {
+          padding: 0.5rem 1rem;
+          cursor: pointer;
+          font-weight: 500;
+          color: inherit;
+          transition: color 0.3s ease, border-color 0.3s ease;
+          color: ${theme === 'dark' ? '#E4E6EB' : '#374151'};
+        
+        .tab.active {
+          border-bottom: 2px solid var(--indigo-light);
+          color: var(--indigo-light);
+        }
+          border: 1px solid ${theme === 'dark' ? '#3A3B3C' : '#d1d5db'};
+        :host-context(.dark) .tab.active {
+          background: ${theme === 'dark' ? '#242526' : '#ffffff'};
+          color: ${theme === 'dark' ? '#E4E6EB' : '#374151'};
+          border-bottom-color: var(--indigo-dark);
+          color: var(--indigo-dark);
+        }
+          color: ${theme === 'dark' ? '#6B7280' : '#9CA3AF'};
+        .form-group {
+          margin-bottom: 1rem;
+        }
+        
+        label {
+          background-color: ${theme === 'dark' ? '#818cf8' : '#6366f1'};
+          margin-bottom: 0.5rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: inherit;
+          transition: color 0.3s ease;
+          transition: background-color 0.15s ease;
+        }
+        
+        input {
+          background-color: ${theme === 'dark' ? '#6366f1' : '#4f46e5'};
+          padding: 0.5rem;
+          border: 1px solid var(--border-light);
+          border-radius: 0.375rem;
+          background: var(--bg-light);
+          color: var(--text-light);
+          transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+          background: ${theme === 'dark' ? '#242526' : '#ffffff'};
+          border: 1px solid ${theme === 'dark' ? '#3A3B3C' : '#e5e7eb'};
+        :host-context(.dark) input {
+          background: var(--bg-dark);
+          border-color: var(--border-dark);
+          color: var(--text-dark);
+        }
+        
+        :host-context(.dark) input::placeholder {
+          color: #6B7280;
+          color: ${theme === 'dark' ? '#9CA3AF' : '#6B7280'};
+          box-shadow: 0 1px 3px rgba(0, 0, 0, ${theme === 'dark' ? '0.3' : '0.1'});
+        button {
+          width: 100%;
+          padding: 0.75rem;
+          background-color: var(--indigo-light);
+          color: white;
+          color: ${theme === 'dark' ? '#E4E6EB' : '#374151'};
+          background: ${theme === 'dark' ? '#3A3B3C' : '#f3f4f6'};
+          cursor: pointer;
+          font-weight: 500;
+          transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+          background-color: #4f46e5;
+        }
+        
+        :host-context(.dark) button {
+          background-color: var(--indigo-dark);
+        }
+        
+        :host-context(.dark) button:hover {
+          background-color: #6366f1;
+        }
+        
+        .close-btn {
+          position: absolute;
+          top: -10px;
+          right: -10px;
+          background: var(--bg-light);
+          border: 1px solid var(--border-light);
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          font-size: 1rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6b7280;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          padding: 0;
+          line-height: 1;
+          transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+          color: var(--text-light);
+          background: var(--hover-light);
+        }
+        
+        :host-context(.dark) .close-btn {
+          background: var(--bg-dark);
+          border-color: var(--border-dark);
+          color: #9CA3AF;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        :host-context(.dark) .close-btn:hover {
+          color: var(--text-dark);
+          background: var(--hover-dark);
+        }
+      </style>
+      <div class="modal-backdrop">
+        <div class="modal-content">
+          <button class="close-btn">&times;</button>
+          <div class="tabs">
+            <div class="tab active" data-tab="login">Login</div>
+            <div class="tab" data-tab="register">Register</div>
+          </div>
+          <div id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+            <button id="login-btn">Login</button>
+          </div>
+          <div id="register-form" style="display: none;">
+            <div class="form-group">
+              <label for="register-name">Name</label>
+              <input type="text" id="register-name" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input type="email" id="register-email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <input type="password" id="register-password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label for="register-confirm">Confirm Password</label>
+              <input type="password" id="register-confirm" placeholder="••••••••">
+            </div>
+            <button id="register-btn">Register</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  setupEventListeners() {
+    const closeBtn = this.shadowRoot.querySelector(".close-btn");
+    const modalBackdrop = this.shadowRoot.querySelector(".modal-backdrop");
+    const modalContent = this.shadowRoot.querySelector(".modal-content");
+    const tabs = this.shadowRoot.querySelectorAll(".tab");
+    const loginBtn = this.shadowRoot.querySelector("#login-btn");
+    const registerBtn = this.shadowRoot.querySelector("#register-btn");
+
+    closeBtn.addEventListener("click", () => this.closeModal());
+
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) {
+        this.closeModal();
+      }
+    });
+
+    modalContent.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        
+        const isLogin = tab.dataset.tab === "login";
+        this.shadowRoot.querySelector("#login-form").style.display = isLogin ? "block" : "none";
+        this.shadowRoot.querySelector("#register-form").style.display = isLogin ? "none" : "block";
+      });
+    });
+
+    loginBtn.addEventListener("click", () => this.handleLogin());
+    registerBtn.addEventListener("click", () => this.handleRegister());
+  }
+
+  handleLogin() {
+    const email = this.shadowRoot.querySelector("#login-email").value;
+    const password = this.shadowRoot.querySelector("#login-password").value;
+    
+        // Watch for theme changes
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+              this.render(); // Re-render when theme changes
+            }
+          });
+        });
+
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class']
+        });
+    if (!email || !password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    localStorage.setItem("authToken", "sample-token");
+    this.closeModal();
+    window.location.reload();
+  }
+
+  handleRegister() {
+    const name = this.shadowRoot.querySelector("#register-name").value;
+    const email = this.shadowRoot.querySelector("#register-email").value;
+    const password = this.shadowRoot.querySelector("#register-password").value;
+    const confirm = this.shadowRoot.querySelector("#register-confirm").value;
+    
+    if (!name || !email || !password || !confirm) {
+      alert("Please fill in all fields");
+      return;
+    }
+    
+    if (password !== confirm) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    localStorage.setItem("authToken", "sample-token");
+    localStorage.setItem("userName", name);
+    this.closeModal();
+    window.location.reload();
+  }
+
+  closeModal() {
+    this.remove();
+  }
+}
+
+customElements.define("auth-modal", AuthModal);
