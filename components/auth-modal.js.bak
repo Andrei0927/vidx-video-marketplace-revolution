@@ -1,15 +1,10 @@
 class AuthModal extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
-    this.render();
-    this.setupEventListeners();
-  }
-
-  render() {
     this.shadowRoot.innerHTML = `
       <style>
         .modal-backdrop {
@@ -20,18 +15,18 @@ class AuthModal extends HTMLElement {
           bottom: 0;
           background-color: rgba(0, 0, 0, 0.5);
           display: flex;
-          justify-content: center;
-          align-items: center;
+          justify-content: flex-end;
+          align-items: flex-start;
           z-index: 1000;
+          padding: 1rem;
         }
-        .modal-content {
+.modal-content {
           background: white;
           border-radius: 0.5rem;
           width: 90%;
           max-width: 400px;
           padding: 2rem;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          position: relative;
         }
         .tabs {
           display: flex;
@@ -78,28 +73,23 @@ class AuthModal extends HTMLElement {
         }
         .close-btn {
           position: absolute;
-          top: -10px;
-          right: -10px;
-          background: white;
-          border: 1px solid #e5e7eb;
-          border-radius: 50%;
-          width: 24px;
-          height: 24px;
-          font-size: 1rem;
+          top: 0.5rem;
+          right: 0.5rem;
+          background: none;
+          border: none;
+          font-size: 1.5rem;
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #6b7280;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          padding: 0;
-          line-height: 1;
+          padding: 0.5rem;
+          z-index: 10;
         }
-        .close-btn:hover {
-          color: #374151;
-          background: #f3f4f6;
+
+        @media (min-width: 640px) {
+          .close-btn {
+            top: 1rem;
+            right: 1rem;
+          }
         }
-      </style>
+</style>
       <div class="modal-backdrop">
         <div class="modal-content">
           <button class="close-btn">&times;</button>
@@ -140,77 +130,80 @@ class AuthModal extends HTMLElement {
         </div>
       </div>
     `;
-  }
 
-  setupEventListeners() {
-    const closeBtn = this.shadowRoot.querySelector(".close-btn");
-    const modalBackdrop = this.shadowRoot.querySelector(".modal-backdrop");
-    const modalContent = this.shadowRoot.querySelector(".modal-content");
-    const tabs = this.shadowRoot.querySelectorAll(".tab");
-    const loginBtn = this.shadowRoot.querySelector("#login-btn");
-    const registerBtn = this.shadowRoot.querySelector("#register-btn");
+    this.shadowRoot.querySelector('.close-btn').addEventListener('click', () => {
+          this.closeModal();
+        });
 
-    closeBtn.addEventListener("click", () => this.closeModal());
+        // Close when clicking outside
+        this.shadowRoot.querySelector('.modal-backdrop').addEventListener('click', (e) => {
+          if (e.target === this.shadowRoot.querySelector('.modal-backdrop')) {
+            this.closeModal();
+          }
+        });
 
-    modalBackdrop.addEventListener("click", (e) => {
-      if (e.target === modalBackdrop) {
-        this.closeModal();
-      }
-    });
-
-    modalContent.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
-
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
+        // Prevent clicks inside modal from closing it
+        this.shadowRoot.querySelector('.modal-content').addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+this.shadowRoot.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        this.shadowRoot.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
         
-        const isLogin = tab.dataset.tab === "login";
-        this.shadowRoot.querySelector("#login-form").style.display = isLogin ? "block" : "none";
-        this.shadowRoot.querySelector("#register-form").style.display = isLogin ? "none" : "block";
+        if (tab.dataset.tab === 'login') {
+          this.shadowRoot.querySelector('#login-form').style.display = 'block';
+          this.shadowRoot.querySelector('#register-form').style.display = 'none';
+        } else {
+          this.shadowRoot.querySelector('#login-form').style.display = 'none';
+          this.shadowRoot.querySelector('#register-form').style.display = 'block';
+        }
       });
     });
 
-    loginBtn.addEventListener("click", () => this.handleLogin());
-    registerBtn.addEventListener("click", () => this.handleRegister());
+    this.shadowRoot.querySelector('#login-btn').addEventListener('click', () => this.handleLogin());
+    this.shadowRoot.querySelector('#register-btn').addEventListener('click', () => this.handleRegister());
   }
-
   handleLogin() {
-    const email = this.shadowRoot.querySelector("#login-email").value;
-    const password = this.shadowRoot.querySelector("#login-password").value;
+    const email = this.shadowRoot.querySelector('#login-email').value;
+    const password = this.shadowRoot.querySelector('#login-password').value;
     
+    // Basic validation
     if (!email || !password) {
-      alert("Please fill in all fields");
+      alert('Please fill in all fields');
       return;
     }
 
-    localStorage.setItem("authToken", "sample-token");
+    // Store token and redirect
+    localStorage.setItem('authToken', 'sample-token');
     this.closeModal();
-    window.location.reload();
+    window.location.href = 'index.html';
   }
-
   handleRegister() {
-    const name = this.shadowRoot.querySelector("#register-name").value;
-    const email = this.shadowRoot.querySelector("#register-email").value;
-    const password = this.shadowRoot.querySelector("#register-password").value;
-    const confirm = this.shadowRoot.querySelector("#register-confirm").value;
+    const name = this.shadowRoot.querySelector('#register-name').value;
+    const email = this.shadowRoot.querySelector('#register-email').value;
+    const password = this.shadowRoot.querySelector('#register-password').value;
+    const confirm = this.shadowRoot.querySelector('#register-confirm').value;
     
+    // Validation
     if (!name || !email || !password || !confirm) {
-      alert("Please fill in all fields");
+      alert('Please fill in all fields');
       return;
     }
     
     if (password !== confirm) {
-      alert("Passwords do not match");
+      alert('Passwords do not match');
       return;
     }
 
-    localStorage.setItem("authToken", "sample-token");
-    localStorage.setItem("userName", name);
+    // Store token and redirect
+    localStorage.setItem('authToken', 'sample-token');
+    localStorage.setItem('userName', name);
     this.closeModal();
-    window.location.reload();
+    window.location.href = 'index.html';
+  }
+}
+
   }
 
   closeModal() {
@@ -218,4 +211,4 @@ class AuthModal extends HTMLElement {
   }
 }
 
-customElements.define("auth-modal", AuthModal);
+customElements.define('auth-modal', AuthModal);

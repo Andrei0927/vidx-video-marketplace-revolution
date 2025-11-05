@@ -298,11 +298,15 @@ VANTA.NET({
         feather.replace();
         // Handle user button click
         document.getElementById('user-btn').addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
           const token = localStorage.getItem('authToken');
           if (token) {
             // Create and position dropdown
             const dropdown = document.createElement('user-dropdown');
-            const btnRect = e.target.getBoundingClientRect();
+            const button = e.currentTarget;
+            const btnRect = button.getBoundingClientRect();
             dropdown.style.position = 'fixed';
             dropdown.style.top = `${btnRect.bottom + window.scrollY}px`;
             dropdown.style.right = `${window.innerWidth - btnRect.right}px`;
@@ -310,7 +314,7 @@ VANTA.NET({
             
             // Close dropdown when clicking outside
             const clickHandler = (event) => {
-              if (!dropdown.contains(event.target) && event.target !== e.target) {
+              if (!dropdown.contains(event.target) && event.target !== button) {
                 dropdown.remove();
                 document.removeEventListener('click', clickHandler);
               }
@@ -319,8 +323,8 @@ VANTA.NET({
               document.addEventListener('click', clickHandler);
             }, 0);
           } else {
-            e.stopPropagation();
-            document.body.appendChild(document.createElement('auth-modal'));
+            const modal = document.createElement('auth-modal');
+            document.body.appendChild(modal);
           }
         });
 </script>
