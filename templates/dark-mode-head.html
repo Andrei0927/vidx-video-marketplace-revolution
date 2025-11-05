@@ -1,0 +1,31 @@
+<!-- Dark mode essentials - Add to head section -->
+<script>
+    // Add dark mode class if needed before page loads to prevent flash
+    if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    dark: {
+                        50: '#18191A',
+                        100: '#242526',
+                        200: '#3A3B3C',
+                        300: '#4E4F50',
+                        400: '#6B6C6D',
+                        500: '#B0B3B8',
+                        600: '#E4E6EB',
+                        700: '#F5F6F7'
+                    }
+                }
+            }
+        }
+    };
+</script>
+<link rel="stylesheet" href="/css/dark-mode.css">
+<!-- End dark mode essentials -->

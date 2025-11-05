@@ -4,9 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Automotive - VidX</title>
+    <script>
+        // Add dark mode class if needed before page loads
+        if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link rel="stylesheet" href="/css/dark-mode.css">
     <style>
         .scroll-container {
             scrollbar-width: thin;
@@ -38,24 +66,28 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="index.html" class="flex-shrink-0 flex items-center">
-                        <i data-feather="video" class="text-indigo-600 h-8 w-8"></i>
-                        <span class="ml-2 text-xl font-bold text-gray-900">VidX</span>
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
                     </a>
-</div>
-                <div class="flex items-center">
-                    <a href="upload.html" class="bg-indigo-600 text-white px-4 py-2 rounded-full flex items-center hover:bg-indigo-700 transition">
-                        <i data-feather="plus" class="mr-2"></i>
-                        New Ad
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="upload.html" class="bg-indigo-600 dark:bg-indigo-500 text-white h-7 sm:h-8 px-3 sm:px-4 rounded-full flex items-center hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm sm:text-base whitespace-nowrap">
+                        <i data-feather="plus" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2"></i>
+                        <span>New Ad</span>
                     </a>
-<button class="ml-4 p-2 rounded-full hover:bg-gray-100">
-                        <i data-feather="user"></i>
+                    <button id="theme-toggle" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="user" class="h-5 w-5"></i>
                     </button>
                 </div>
             </div>
@@ -63,42 +95,42 @@
     </nav>
 
     <!-- Category Header -->
-    <div class="bg-white py-6 shadow-sm">
+    <div class="bg-white dark:bg-dark-100 py-6 shadow-sm dark:shadow-dark-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center">
-                <i data-feather="car" class="h-8 w-8 text-indigo-600"></i>
-                <h1 class="ml-3 text-2xl font-bold text-gray-900">Automotive</h1>
+                <i data-feather="car" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                <h1 class="ml-3 text-2xl font-bold text-gray-900 dark:text-dark-600">Automotive</h1>
             </div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white shadow-sm sticky top-0 z-10">
+    <div class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex space-x-4 overflow-x-auto pb-2 scroll-container">
                 <!-- Type Filter -->
                 <div class="relative">
-                    <button id="type-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
+                    <button id="type-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
                         <span>Type</span>
                         <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
                     </button>
-                    <div id="type-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
+                    <div id="type-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200">
                         <div class="p-2">
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Cars</span>
+                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                <span class="ml-2 text-gray-700 dark:text-dark-500">Cars</span>
                             </label>
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Motorcycles</span>
+                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                <span class="ml-2 text-gray-700 dark:text-dark-500">Motorcycles</span>
                             </label>
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Trucks</span>
+                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                <span class="ml-2 text-gray-700 dark:text-dark-500">Trucks</span>
                             </label>
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Parts</span>
+                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                <span class="ml-2 text-gray-700 dark:text-dark-500">Parts</span>
                             </label>
                         </div>
                     </div>
@@ -106,22 +138,22 @@
 
                 <!-- Price Filter -->
                 <div class="relative">
-                    <button id="price-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
+                    <button id="price-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
                         <span>Price</span>
                         <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
                     </button>
-                    <div id="price-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
+                    <div id="price-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200">
                         <div class="p-4">
                             <div class="flex justify-between mb-2">
-                                <span class="text-sm text-gray-500">Min</span>
-                                <span class="text-sm text-gray-500">Max</span>
+                                <span class="text-sm text-gray-500 dark:text-dark-400">Min</span>
+                                <span class="text-sm text-gray-500 dark:text-dark-400">Max</span>
                             </div>
                             <div class="flex items-center space-x-4">
-                                <input type="number" placeholder="Min" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                <span class="text-gray-500">-</span>
-                                <input type="number" placeholder="Max" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                <input type="number" placeholder="Min" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md">
+                                <span class="text-gray-500 dark:text-dark-400">-</span>
+                                <input type="number" placeholder="Max" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md">
                             </div>
-                            <button class="mt-4 w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">
+                            <button class="mt-4 w-full bg-indigo-600 dark:bg-indigo-500 text-white py-2 rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
                                 Apply
                             </button>
                         </div>
@@ -130,22 +162,22 @@
 
                 <!-- Year Filter -->
                 <div class="relative">
-                    <button id="year-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
+                    <button id="year-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
                         <span>Year</span>
                         <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
                     </button>
-                    <div id="year-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
+                    <div id="year-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200">
                         <div class="p-4">
                             <div class="flex justify-between mb-2">
-                                <span class="text-sm text-gray-500">From</span>
-                                <span class="text-sm text-gray-500">To</span>
+                                <span class="text-sm text-gray-500 dark:text-dark-400">From</span>
+                                <span class="text-sm text-gray-500 dark:text-dark-400">To</span>
                             </div>
                             <div class="flex items-center space-x-4">
-                                <input type="number" placeholder="From" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                                <span class="text-gray-500">-</span>
-                                <input type="number" placeholder="To" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                <input type="number" placeholder="From" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md">
+                                <span class="text-gray-500 dark:text-dark-400">-</span>
+                                <input type="number" placeholder="To" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md">
                             </div>
-                            <button class="mt-4 w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">
+                            <button class="mt-4 w-full bg-indigo-600 dark:bg-indigo-500 text-white py-2 rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
                                 Apply
                             </button>
                         </div>
@@ -154,23 +186,23 @@
 
                 <!-- Condition Filter -->
                 <div class="relative">
-                    <button id="condition-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
+                    <button id="condition-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
                         <span>Condition</span>
                         <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
                     </button>
-                    <div id="condition-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
+                    <div id="condition-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200">
                         <div class="p-2">
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">New</span>
+                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                <span class="ml-2 text-gray-700 dark:text-dark-500">New</span>
                             </label>
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Used</span>
+                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                <span class="ml-2 text-gray-700 dark:text-dark-500">Used</span>
                             </label>
-                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="rounded text-indigo-600">
-                                <span class="ml-2">Damaged</span>
+                            <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                <span class="ml-2 text-gray-700 dark:text-dark-500">Damaged</span>
                             </label>
                         </div>
                     </div>
@@ -178,31 +210,31 @@
 
                 <!-- Location Filter -->
                 <div class="relative">
-                    <button id="location-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300">
+                    <button id="location-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
                         <span>Location</span>
                         <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
                     </button>
-                    <div id="location-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white rounded-md shadow-lg">
+                    <div id="location-filter-menu" class="hidden absolute z-10 mt-2 w-56 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200">
                         <div class="p-2">
                             <div class="px-3 py-2">
-                                <input type="text" placeholder="Search location" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                <input type="text" placeholder="Search location" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md">
                             </div>
                             <div class="max-h-60 overflow-y-auto">
-                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                    <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Bucharest</span>
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                    <span class="ml-2 text-gray-700 dark:text-dark-500">Bucharest</span>
                                 </label>
-                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                    <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Cluj-Napoca</span>
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                    <span class="ml-2 text-gray-700 dark:text-dark-500">Cluj-Napoca</span>
                                 </label>
-                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                    <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Timișoara</span>
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                    <span class="ml-2 text-gray-700 dark:text-dark-500">Timișoara</span>
                                 </label>
-                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                    <input type="checkbox" class="rounded text-indigo-600">
-                                    <span class="ml-2">Iași</span>
+                                <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400">
+                                    <span class="ml-2 text-gray-700 dark:text-dark-500">Iași</span>
                                 </label>
                             </div>
                         </div>
@@ -210,7 +242,7 @@
                 </div>
 
                 <!-- Reset Filters -->
-                <button class="filter-option flex items-center px-4 py-2 border border-gray-200 rounded-full text-sm font-medium hover:border-indigo-300 hover:bg-gray-50">
+                <button class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
                     <span>Reset</span>
                     <i data-feather="x" class="ml-2 h-4 w-4"></i>
                 </button>
@@ -224,7 +256,7 @@
         <div class="absolute inset-0 bg-black flex items-center justify-center">
             <div class="relative w-full h-full">
                 <!-- Video placeholder -->
-                <div class="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                <div class="absolute inset-0 bg-gray-800 dark:bg-dark-50 flex items-center justify-center">
                     <i data-feather="play" class="h-20 w-20 text-white opacity-50"></i>
                 </div>
                 
@@ -244,16 +276,16 @@
                     <div class="mt-4 flex items-center justify-between">
                         <span class="text-xl font-bold text-white">€35,900</span>
                         <div class="flex space-x-4">
-                            <button class="flex items-center text-white">
-                                <i data-feather="heart" class="h-6 w-6"></i>
+                            <button class="flex items-center text-white group">
+                                <i data-feather="heart" class="h-6 w-6 group-hover:text-pink-500 transition"></i>
                                 <span class="ml-1">124</span>
                             </button>
-                            <button class="flex items-center text-white">
-                                <i data-feather="message-square" class="h-6 w-6"></i>
+                            <button class="flex items-center text-white group">
+                                <i data-feather="message-square" class="h-6 w-6 group-hover:text-blue-500 transition"></i>
                                 <span class="ml-1">23</span>
                             </button>
-                            <button class="flex items-center text-white">
-                                <i data-feather="share-2" class="h-6 w-6"></i>
+                            <button class="flex items-center text-white group">
+                                <i data-feather="share-2" class="h-6 w-6 group-hover:text-green-500 transition"></i>
                             </button>
                         </div>
                     </div>
@@ -265,11 +297,11 @@
     <!-- Navigation Arrows -->
     <div class="fixed bottom-6 right-6 z-20">
         <div class="flex space-x-3">
-            <button class="p-3 bg-white rounded-full shadow-md hover:bg-gray-100">
-                <i data-feather="chevron-up" class="h-6 w-6 text-gray-700"></i>
+            <button class="p-3 bg-white dark:bg-dark-100 rounded-full shadow-md dark:shadow-dark-200 hover:bg-gray-100 dark:hover:bg-dark-200 transition">
+                <i data-feather="chevron-up" class="h-6 w-6 text-gray-700 dark:text-dark-500"></i>
             </button>
-            <button class="p-3 bg-white rounded-full shadow-md hover:bg-gray-100">
-                <i data-feather="chevron-down" class="h-6 w-6 text-gray-700"></i>
+            <button class="p-3 bg-white dark:bg-dark-100 rounded-full shadow-md dark:shadow-dark-200 hover:bg-gray-100 dark:hover:bg-dark-200 transition">
+                <i data-feather="chevron-down" class="h-6 w-6 text-gray-700 dark:text-dark-500"></i>
             </button>
         </div>
     </div>
@@ -299,6 +331,16 @@
         document.addEventListener('click', () => {
             document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
                 menu.classList.add('hidden');
+            });
+        });
+
+        // Initialize theme toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
             });
         });
     </script>
