@@ -36,11 +36,12 @@ class UserDropdown extends HTMLElement {
       </style>
       <div class="dropdown-container">
         <div class="dropdown-content">
-          <a href="test-ad.html" class="dropdown-item">My Profile</a>
+          <a href="profile.html" class="dropdown-item">My Profile</a>
+          <a href="my-listings.html" class="dropdown-item">My Listings</a>
           <a href="upload.html" class="dropdown-item">Create Listing</a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item" id="logout-btn">Logout</a>
-        </div>
+          <a href="login.html" class="dropdown-item" id="logout-btn">Logout</a>
+</div>
       </div>
     `;
 
