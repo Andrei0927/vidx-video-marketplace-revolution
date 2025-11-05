@@ -35,6 +35,7 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
+    <script src="components/auth-modal.fixed.js"></script>
     <style>
         .scroll-container {
             scrollbar-width: thin;
@@ -306,43 +307,73 @@
         </div>
     </div>
 
-    <script>
-        // Initialize feather icons
-        feather.replace();
+            <script>
+                // Initialize feather icons (safe)
+                if (window.feather && typeof feather.replace === 'function') {
+                    try { feather.replace(); } catch (e) { /* ignore */ }
+                }
 
-        // Toggle filter menus
-        document.querySelectorAll('[id$="-filter-btn"]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const menuId = btn.id.replace('-btn', '-menu');
-                const menu = document.getElementById(menuId);
-                
-                // Close all other open menus
-                document.querySelectorAll('[id$="-filter-menu"]').forEach(m => {
-                    if (m.id !== menuId) m.classList.add('hidden');
+                // Bind user button immediately (script is at end of body)
+                (function bindUserButton(){
+                    const userBtn = document.getElementById('user-btn');
+                    if (!userBtn) return;
+
+                    userBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        try {
+                            const authToken = localStorage.getItem('authToken');
+                            if (!authToken) {
+                                const authModal = document.createElement('auth-modal');
+                                document.body.appendChild(authModal);
+                            } else {
+                                const dropdown = document.createElement('user-dropdown');
+                                // position dropdown near button
+                                const btnRect = userBtn.getBoundingClientRect();
+                                dropdown.style.position = 'fixed';
+                                dropdown.style.top = `${btnRect.bottom + window.scrollY}px`;
+                                dropdown.style.right = `${window.innerWidth - btnRect.right}px`;
+                                document.body.appendChild(dropdown);
+                            }
+                        } catch (err) {
+                            // If anything goes wrong, fallback to opening modal
+                            const authModal = document.createElement('auth-modal');
+                            document.body.appendChild(authModal);
+                            console.error('user-btn handler error:', err);
+                        }
+                    });
+                })();
+
+                // Toggle filter menus
+                document.querySelectorAll('[id$="-filter-btn"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const menuId = btn.id.replace('-btn', '-menu');
+                        const menu = document.getElementById(menuId);
+
+                        document.querySelectorAll('[id$="-filter-menu"]').forEach(m => {
+                            if (m.id !== menuId) m.classList.add('hidden');
+                        });
+
+                        if (menu) menu.classList.toggle('hidden');
+                        e.stopPropagation();
+                    });
                 });
-                
-                // Toggle current menu
-                menu.classList.toggle('hidden');
-                e.stopPropagation();
-            });
-        });
 
-        // Close menus when clicking outside
-        document.addEventListener('click', () => {
-            document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
-                menu.classList.add('hidden');
-            });
-        });
+                // Close menus when clicking outside
+                document.addEventListener('click', () => {
+                    document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
+                        menu.classList.add('hidden');
+                    });
+                });
 
-        // Initialize theme toggle
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.getElementById('theme-toggle');
-            
-            themeToggle.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-                localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-            });
-        });
-    </script>
+                // Theme toggle (safe attach)
+                const themeToggle = document.getElementById('theme-toggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', () => {
+                        const isDark = document.documentElement.classList.toggle('dark');
+                        localStorage.theme = isDark ? 'dark' : 'light';
+                    });
+                }
+            </script>
 </body>
 </html>

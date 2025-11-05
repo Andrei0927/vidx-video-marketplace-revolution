@@ -1,0 +1,134 @@
+// Lightweight auth modal web component — single, clean implementation
+class AuthModal extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host { all: initial; }
+        :host * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        .modal-content { background: #fff; color: #111827; width: 92%; max-width: 420px; border-radius: 10px; padding: 20px; box-shadow: 0 10px 30px rgba(2,6,23,0.2); position: relative; }
+        :host-context(.dark) .modal-content { background: #242526; color: #E4E6EB; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .tabs { display:flex; gap:8px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; margin-bottom:14px; }
+        :host-context(.dark) .tabs { border-bottom-color:#3A3B3C; }
+        .tab { padding:6px 10px; cursor:pointer; font-weight:600; }
+        .tab.active { border-bottom:2px solid #6366f1; color:#6366f1; }
+        :host-context(.dark) .tab.active { border-bottom-color:#818cf8; color:#818cf8; }
+        .form-group { margin-bottom:12px; }
+        label { display:block; margin-bottom:6px; font-size:13px; }
+        input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; color:#111827; }
+        input::placeholder { color:#9CA3AF; }
+        :host-context(.dark) input { background:#242526; border-color:#3A3B3C; color:#E4E6EB; }
+        :host-context(.dark) input::placeholder { color:#6B7280; }
+        .btn { width:100%; padding:10px 12px; border-radius:8px; background:#6366f1; color:#fff; border:none; cursor:pointer; font-weight:600; }
+        .btn:hover { filter:brightness(.95); }
+        :host-context(.dark) .btn { background:#818cf8; }
+        .close-btn { position:absolute; top:-10px; right:-10px; width:28px; height:28px; border-radius:50%; border:1px solid #e5e7eb; background:#fff; color:#6b7280; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+        :host-context(.dark) .close-btn { background:#242526; border-color:#3A3B3C; color:#9CA3AF; }
+      </style>
+      <div class="modal-backdrop">
+        <div class="modal-content" role="dialog" aria-modal="true">
+          <button class="close-btn" aria-label="Close">×</button>
+          <div class="tabs">
+            <div class="tab active" data-tab="login">Login</div>
+            <div class="tab" data-tab="register">Register</div>
+          </div>
+          <div id="login-form">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input id="login-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" placeholder="••••••••">
+            </div>
+            <button id="login-btn" class="btn">Login</button>
+          </div>
+          <div id="register-form" style="display:none;">
+            <div class="form-group">
+              <label for="register-name">Name</label>
+              <input id="register-name" type="text" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input id="register-email" type="email" placeholder="you@email.com">
+            </div>
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <input id="register-password" type="password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label for="register-confirm">Confirm</label>
+              <input id="register-confirm" type="password" placeholder="••••••••">
+            </div>
+            <button id="register-btn" class="btn">Register</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  setupEventListeners() {
+    const closeBtn = this.shadowRoot.querySelector('.close-btn');
+    const backdrop = this.shadowRoot.querySelector('.modal-backdrop');
+    const tabs = this.shadowRoot.querySelectorAll('.tab');
+
+    closeBtn?.addEventListener('click', () => this.closeModal());
+    backdrop?.addEventListener('click', (e) => { if (e.target === backdrop) this.closeModal(); });
+
+    tabs.forEach(t => t.addEventListener('click', (e) => {
+      tabs.forEach(x => x.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      const isLogin = e.currentTarget.dataset.tab === 'login';
+      this.shadowRoot.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+      this.shadowRoot.getElementById('register-form').style.display = isLogin ? 'none' : 'block';
+    }));
+
+    const loginBtn = this.shadowRoot.getElementById('login-btn');
+    const registerBtn = this.shadowRoot.getElementById('register-btn');
+
+    loginBtn?.addEventListener('click', () => this.handleLogin());
+    registerBtn?.addEventListener('click', () => this.handleRegister());
+
+    this._escHandler = (e) => { if (e.key === 'Escape') this.closeModal(); };
+    document.addEventListener('keydown', this._escHandler);
+  }
+
+  handleLogin() {
+    const email = this.shadowRoot.getElementById('login-email').value.trim();
+    const password = this.shadowRoot.getElementById('login-password').value;
+    if (!email || !password) { alert('Please fill in all fields'); return; }
+    localStorage.setItem('authToken', 'sample-token');
+    this.closeModal();
+    window.location.reload();
+  }
+
+  handleRegister() {
+    const name = this.shadowRoot.getElementById('register-name').value.trim();
+    const email = this.shadowRoot.getElementById('register-email').value.trim();
+    const password = this.shadowRoot.getElementById('register-password').value;
+    const confirm = this.shadowRoot.getElementById('register-confirm').value;
+    if (!name || !email || !password || !confirm) { alert('Please fill in all fields'); return; }
+    if (password !== confirm) { alert('Passwords do not match'); return; }
+    localStorage.setItem('authToken', 'sample-token');
+    localStorage.setItem('userName', name);
+    this.closeModal();
+    window.location.reload();
+  }
+
+  closeModal() {
+    document.removeEventListener('keydown', this._escHandler);
+    this.remove();
+  }
+}
+
+if (!customElements.get('auth-modal')) customElements.define('auth-modal', AuthModal);
