@@ -1,3 +1,4 @@
+
 class UserDropdown extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: 'open' });
@@ -16,7 +17,6 @@ class UserDropdown extends HTMLElement {
           border-radius: 8px;
           padding: 8px 0;
           z-index: 1;
-          margin-top: 8px;
         }
         .dropdown-item {
           padding: 12px 16px;
@@ -38,10 +38,9 @@ class UserDropdown extends HTMLElement {
         <div class="dropdown-content">
           <a href="profile.html" class="dropdown-item">My Profile</a>
           <a href="my-listings.html" class="dropdown-item">My Listings</a>
-          <a href="upload.html" class="dropdown-item">Create Listing</a>
           <div class="dropdown-divider"></div>
           <a href="login.html" class="dropdown-item" id="logout-btn">Logout</a>
-</div>
+        </div>
       </div>
     `;
 
