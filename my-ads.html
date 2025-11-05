@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Ads - VidX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style> body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; } </style>
+</head>
+<body class="bg-gray-50 dark:bg-dark-50 p-6">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">My Ads</h1>
+
+    <!-- Single BMW ad (mockup) -->
+    <article class="bg-white dark:bg-dark-100 rounded-lg shadow p-4 mb-6">
+      <div class="flex gap-4 items-start">
+  <img src="/images/image2.webp" alt="BMW X5" class="w-48 h-32 object-cover rounded">
+        <div class="flex-1">
+          <h2 class="text-xl font-semibold">BMW X5 2019 - Full Option</h2>
+          <p class="text-sm text-gray-600">27,000 km | Automatic | Diesel</p>
+          <p class="mt-2 text-lg font-bold">€35,900</p>
+          <div class="mt-4 flex gap-2">
+            <button class="px-3 py-1 bg-indigo-600 text-white rounded">Edit</button>
+            <button id="delete-ad" class="px-3 py-1 bg-red-500 text-white rounded">Delete</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <p class="text-sm text-gray-500">This is a demo ad attached to the demo user (Test &lt;test@example.com&gt;).</p>
+  </div>
+
+  <script>
+    document.getElementById('delete-ad').addEventListener('click', () => {
+      if (confirm('Delete this ad? (demo)')) {
+        alert('Ad deleted (demo)');
+        // In a real app we'd call the API and remove it from the DB
+      }
+    });
+  </script>
+</body>
+</html>

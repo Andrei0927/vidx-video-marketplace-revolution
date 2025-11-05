@@ -13,7 +13,14 @@
       "password": "pass1234"
     }
   ],
-  "sessions": [],
+  "sessions": [
+    {
+      "id": 1,
+      "userId": 2,
+      "token": "5d3lkb4aew8mhmhoa6s",
+      "createdAt": "2025-11-05T21:07:32.116Z"
+    }
+  ],
   "profiles": [
     {
       "id": 1,

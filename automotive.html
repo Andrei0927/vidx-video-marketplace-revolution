@@ -87,7 +87,9 @@
                         <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
                     </button>
-                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200 flex items-center">
+                        <img id="nav-avatar" src="" alt="" class="hidden h-6 w-6 rounded-full object-cover">
+                        <span id="nav-username" class="hidden ml-2 text-sm font-medium"></span>
                         <i data-feather="user" class="h-5 w-5"></i>
                     </button>
                 </div>
@@ -312,6 +314,34 @@
                 if (window.feather && typeof feather.replace === 'function') {
                     try { feather.replace(); } catch (e) { /* ignore */ }
                 }
+
+                // Update nav to show avatar/name when logged in
+                (function updateNavAuthUI(){
+                    try {
+                        const avatar = localStorage.getItem('userAvatar');
+                        const name = localStorage.getItem('userName');
+                        const avatarEl = document.getElementById('nav-avatar');
+                        const nameEl = document.getElementById('nav-username');
+                        const userBtn = document.getElementById('user-btn');
+                        const iconSvg = userBtn && userBtn.querySelector('svg');
+
+                        if (avatar) {
+                            avatarEl.src = avatar;
+                            avatarEl.classList.remove('hidden');
+                            if (iconSvg) iconSvg.classList.add('hidden');
+                        } else {
+                            avatarEl.classList.add('hidden');
+                            if (iconSvg) iconSvg.classList.remove('hidden');
+                        }
+
+                        if (name) {
+                            nameEl.textContent = name;
+                            nameEl.classList.remove('hidden');
+                        } else {
+                            nameEl.classList.add('hidden');
+                        }
+                    } catch (err) { console.error('updateNavAuthUI error', err); }
+                })();
 
                 // Bind user button immediately (script is at end of body)
                 (function bindUserButton(){

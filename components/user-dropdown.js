@@ -37,17 +37,24 @@ class UserDropdown extends HTMLElement {
       <div class="dropdown-container">
         <div class="dropdown-content">
           <a href="profile.html" class="dropdown-item">My Profile</a>
-          <a href="my-listings.html" class="dropdown-item">My Listings</a>
+          <a href="my-ads.html" class="dropdown-item">My Ads</a>
           <div class="dropdown-divider"></div>
-          <a href="login.html" class="dropdown-item" id="logout-btn">Logout</a>
+          <a href="#" class="dropdown-item" id="logout-btn">Logout</a>
         </div>
       </div>
     `;
 
     this.shadowRoot.getElementById('logout-btn').addEventListener('click', (e) => {
       e.preventDefault();
+      // Clear known auth/session keys
       localStorage.removeItem('authToken');
+      localStorage.removeItem('sessionToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userEmail');
       localStorage.removeItem('userName');
+      localStorage.removeItem('userAvatar');
+      localStorage.removeItem('userUsername');
+      // Redirect to home
       window.location.href = 'index.html';
     });
   }

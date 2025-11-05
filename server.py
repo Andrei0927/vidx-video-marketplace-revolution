@@ -17,14 +17,50 @@ class RequestHandler(BaseHTTPRequestHandler):
         
     def do_GET(self):
         parsed_path = urlparse(self.path)
+        query = parse_qs(parsed_path.query)
+
+        with open('db.json', 'r') as f:
+            db = json.load(f)
+
+        # /users optionally supports ?email=<email>
         if parsed_path.path == '/users':
-            with open('db.json', 'r') as f:
-                data = json.load(f)
-                self._set_headers()
-                self.wfile.write(json.dumps(data['users']).encode())
-        else:
-            self._set_headers(404)
-            self.wfile.write(json.dumps({"error": "Not found"}).encode())
+            email = query.get('email', [None])[0]
+            if email:
+                users = [u for u in db.get('users', []) if u.get('email') == email]
+            else:
+                users = db.get('users', [])
+            self._set_headers()
+            self.wfile.write(json.dumps(users).encode())
+            return
+
+        # /profiles supports ?userId=<id>
+        if parsed_path.path == '/profiles':
+            userId = query.get('userId', [None])[0]
+            if userId:
+                try:
+                    uid = int(userId)
+                except ValueError:
+                    uid = None
+                profiles = [p for p in db.get('profiles', []) if p.get('userId') == uid]
+            else:
+                profiles = db.get('profiles', [])
+            self._set_headers()
+            self.wfile.write(json.dumps(profiles).encode())
+            return
+
+        # /sessions supports ?token=<token>
+        if parsed_path.path == '/sessions':
+            token = query.get('token', [None])[0]
+            if token:
+                sessions = [s for s in db.get('sessions', []) if s.get('token') == token]
+            else:
+                sessions = db.get('sessions', [])
+            self._set_headers()
+            self.wfile.write(json.dumps(sessions).encode())
+            return
+
+        self._set_headers(404)
+        self.wfile.write(json.dumps({"error": "Not found"}).encode())
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
@@ -60,6 +96,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     json.dump(db, f, indent=2)
                 
                 self._set_headers(201)
+                # Return created user and profile to match client expectations
                 self.wfile.write(json.dumps({"user": new_user, "profile": new_profile}).encode())
                 
             elif parsed_path.path == '/login':
@@ -81,6 +118,22 @@ class RequestHandler(BaseHTTPRequestHandler):
                 else:
                     self._set_headers(401)
                     self.wfile.write(json.dumps({"error": "Invalid credentials"}).encode())
+            elif parsed_path.path == '/sessions':
+                # create a session record
+                token = data.get('token')
+                userId = data.get('userId')
+                createdAt = data.get('createdAt')
+                new_session = {
+                    "id": len(db.get('sessions', [])) + 1,
+                    "userId": userId,
+                    "token": token,
+                    "createdAt": createdAt
+                }
+                db.setdefault('sessions', []).append(new_session)
+                with open('db.json', 'w') as f:
+                    json.dump(db, f, indent=2)
+                self._set_headers(201)
+                self.wfile.write(json.dumps(new_session).encode())
             else:
                 self._set_headers(404)
                 self.wfile.write(json.dumps({"error": "Not found"}).encode())
@@ -91,6 +144,39 @@ class RequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             self._set_headers(500)
             self.wfile.write(json.dumps({"error": str(e)}).encode())
+
+    def do_DELETE(self):
+        parsed_path = urlparse(self.path)
+        query = parse_qs(parsed_path.query)
+
+        with open('db.json', 'r') as f:
+            db = json.load(f)
+
+        # Delete sessions by token: /sessions?token=...
+        if parsed_path.path == '/sessions':
+            token = query.get('token', [None])[0]
+            if not token:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({"error": "token query required"}).encode())
+                return
+
+            before = len(db.get('sessions', []))
+            db['sessions'] = [s for s in db.get('sessions', []) if s.get('token') != token]
+            after = len(db.get('sessions', []))
+
+            with open('db.json', 'w') as f:
+                json.dump(db, f, indent=2)
+
+            if before == after:
+                self._set_headers(404)
+                self.wfile.write(json.dumps({"error": "session not found"}).encode())
+            else:
+                self._set_headers(200)
+                self.wfile.write(json.dumps({"deleted": True}).encode())
+            return
+
+        self._set_headers(404)
+        self.wfile.write(json.dumps({"error": "Not found"}).encode())
 
 def run(server_class=HTTPServer, handler_class=RequestHandler, port=3001):
     server_address = ('', port)

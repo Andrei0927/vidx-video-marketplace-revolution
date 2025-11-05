@@ -1,6 +1,6 @@
 // API service for authentication
 class AuthService {
-  constructor(baseUrl = 'http://localhost:3000') {
+  constructor(baseUrl = 'http://localhost:3001') {
     this.baseUrl = baseUrl;
   }
 
@@ -30,21 +30,9 @@ class AuthService {
         throw new Error('Registration failed');
       }
 
-      const user = await response.json();
-      
-      // Create profile for new user
-      await fetch(`${this.baseUrl}/profiles`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`,
-          bio: ''
-        })
-      });
-
+      const result = await response.json();
+      // server returns { user: {...}, profile: {...} }
+      const user = result.user || result;
       return user;
     } catch (error) {
       console.error('Registration error:', error);
