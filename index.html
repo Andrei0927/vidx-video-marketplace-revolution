@@ -257,7 +257,8 @@
         </div>
     </footer>
   <script src="components/auth-modal.js"></script>
-  <script>
+  <script src="components/user-dropdown.js"></script>
+<script>
         // Initialize Vanta.js background
 VANTA.NET({
             el: "#vanta-bg",
@@ -276,14 +277,30 @@ VANTA.NET({
         });
         // Initialize feather icons
         feather.replace();
-
         // Handle user button click
-        document.getElementById('user-btn').addEventListener('click', () => {
+        document.getElementById('user-btn').addEventListener('click', (e) => {
           const token = localStorage.getItem('authToken');
           if (token) {
-            // TODO: Show user dropdown
-            console.log('User is logged in');
+            // Create and position dropdown
+            const dropdown = document.createElement('user-dropdown');
+            const btnRect = e.target.getBoundingClientRect();
+            dropdown.style.position = 'fixed';
+            dropdown.style.top = `${btnRect.bottom + window.scrollY}px`;
+            dropdown.style.right = `${window.innerWidth - btnRect.right}px`;
+            document.body.appendChild(dropdown);
+            
+            // Close dropdown when clicking outside
+            const clickHandler = (event) => {
+              if (!dropdown.contains(event.target) && event.target !== e.target) {
+                dropdown.remove();
+                document.removeEventListener('click', clickHandler);
+              }
+            };
+            setTimeout(() => {
+              document.addEventListener('click', clickHandler);
+            }, 0);
           } else {
+            e.stopPropagation();
             document.body.appendChild(document.createElement('auth-modal'));
           }
         });

@@ -160,31 +160,45 @@ this.shadowRoot.querySelectorAll('.tab').forEach(tab => {
     this.shadowRoot.querySelector('#login-btn').addEventListener('click', () => this.handleLogin());
     this.shadowRoot.querySelector('#register-btn').addEventListener('click', () => this.handleRegister());
   }
-
   handleLogin() {
     const email = this.shadowRoot.querySelector('#login-email').value;
     const password = this.shadowRoot.querySelector('#login-password').value;
     
-    // TODO: Implement actual login logic
-    console.log('Login attempt with:', email, password);
+    // Basic validation
+    if (!email || !password) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    // Store token and redirect
     localStorage.setItem('authToken', 'sample-token');
     this.closeModal();
-    window.location.reload();
-}
-
+    window.location.href = 'index.html';
+  }
   handleRegister() {
     const name = this.shadowRoot.querySelector('#register-name').value;
     const email = this.shadowRoot.querySelector('#register-email').value;
     const password = this.shadowRoot.querySelector('#register-password').value;
     const confirm = this.shadowRoot.querySelector('#register-confirm').value;
     
-    // TODO: Implement actual registration logic
-    console.log('Register attempt with:', name, email, password, confirm);
+    // Validation
+    if (!name || !email || !password || !confirm) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    if (password !== confirm) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    // Store token and redirect
     localStorage.setItem('authToken', 'sample-token');
+    localStorage.setItem('userName', name);
     this.closeModal();
-    window.location.reload();
-}
+    window.location.href = 'index.html';
   }
+}
 
   closeModal() {
     this.remove();
