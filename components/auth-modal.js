@@ -1,10 +1,19 @@
 // Single, clean AuthModal web component implementation
 // Dark-mode aware via :host-context(.dark)
+let authService;
 
 class AuthModal extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.isLoading = false;
+    
+    // Load auth service
+    import('../js/auth-service.js').then(module => {
+      authService = module.default;
+    }).catch(error => {
+      console.error('Failed to load auth service:', error);
+    });
   }
 
   connectedCallback() {
@@ -166,6 +175,52 @@ class AuthModal extends HTMLElement {
         color: #E4E6EB;
         background: #3A3B3C;
       }
+
+      .error-message {
+        color: #ef4444;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: none;
+      }
+
+      :host-context(.dark) .error-message {
+        color: #f87171;
+      }
+
+      button.btn {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      button.btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .loading .spinner {
+        display: inline-block;
+      }
+
+      .loading .btn-text {
+        opacity: 0.7;
+      }
     `;
 
     // Define markup
@@ -182,33 +237,47 @@ class AuthModal extends HTMLElement {
           <div id="login-form">
             <div class="form-group">
               <label for="login-email">Email</label>
-              <input type="email" id="login-email" placeholder="your@email.com">
+              <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
+              <div class="error-message" id="login-email-error"></div>
             </div>
             <div class="form-group">
               <label for="login-password">Password</label>
-              <input type="password" id="login-password" placeholder="••••••••">
+              <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+              <div class="error-message" id="login-password-error"></div>
             </div>
-            <button class="btn" id="login-btn">Login</button>
+            <button class="btn" id="login-btn">
+              <div class="spinner"></div>
+              <span class="btn-text">Login</span>
+            </button>
+            <div class="error-message" id="login-error"></div>
           </div>
 
           <div id="register-form" style="display: none;">
             <div class="form-group">
               <label for="register-name">Name</label>
-              <input type="text" id="register-name" placeholder="Your name">
+              <input type="text" id="register-name" placeholder="Your name" autocomplete="name">
+              <div class="error-message" id="register-name-error"></div>
             </div>
             <div class="form-group">
               <label for="register-email">Email</label>
-              <input type="email" id="register-email" placeholder="your@email.com">
+              <input type="email" id="register-email" placeholder="your@email.com" autocomplete="email">
+              <div class="error-message" id="register-email-error"></div>
             </div>
             <div class="form-group">
               <label for="register-password">Password</label>
-              <input type="password" id="register-password" placeholder="••••••••">
+              <input type="password" id="register-password" placeholder="••••••••" autocomplete="new-password">
+              <div class="error-message" id="register-password-error"></div>
             </div>
             <div class="form-group">
               <label for="register-confirm">Confirm Password</label>
-              <input type="password" id="register-confirm" placeholder="••••••••">
+              <input type="password" id="register-confirm" placeholder="••••••••" autocomplete="new-password">
+              <div class="error-message" id="register-confirm-error"></div>
             </div>
-            <button class="btn" id="register-btn">Register</button>
+            <button class="btn" id="register-btn">
+              <div class="spinner"></div>
+              <span class="btn-text">Register</span>
+            </button>
+            <div class="error-message" id="register-error"></div>
           </div>
         </div>
       </div>
@@ -234,63 +303,189 @@ class AuthModal extends HTMLElement {
 
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
+        if (this.isLoading) return;
+        
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         
         const isLogin = tab.dataset.tab === 'login';
         this.shadowRoot.querySelector('#login-form').style.display = isLogin ? 'block' : 'none';
         this.shadowRoot.querySelector('#register-form').style.display = isLogin ? 'none' : 'block';
+        
+        // Clear any errors when switching tabs
+        this.clearErrors();
       });
     });
 
     loginBtn?.addEventListener('click', () => this.handleLogin());
     registerBtn?.addEventListener('click', () => this.handleRegister());
 
+    // Add keyboard support
+    this.shadowRoot.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const activeTab = this.shadowRoot.querySelector('.tab.active');
+        if (activeTab?.dataset.tab === 'login') {
+          this.handleLogin();
+        } else {
+          this.handleRegister();
+        }
+      }
+    });
+
     // Setup escape key handler
     this._escHandler = (e) => {
-      if (e.key === 'Escape') this.closeModal();
+      if (e.key === 'Escape' && !this.isLoading) this.closeModal();
     };
     document.addEventListener('keydown', this._escHandler);
   }
 
-  handleLogin() {
-    const email = this.shadowRoot.querySelector('#login-email').value.trim();
-    const password = this.shadowRoot.querySelector('#login-password').value;
-    
-    if (!email || !password) {
-      alert('Please fill in all fields');
-      return;
-    }
+  async handleLogin() {
+    try {
+      this.clearErrors();
+      
+      const email = this.shadowRoot.querySelector('#login-email').value.trim();
+      const password = this.shadowRoot.querySelector('#login-password').value;
+      
+      // Validate inputs
+      let hasError = false;
+      
+      if (!email) {
+        this.showError('login-email-error', 'Email is required');
+        hasError = true;
+      } else if (!this.isValidEmail(email)) {
+        this.showError('login-email-error', 'Please enter a valid email');
+        hasError = true;
+      }
+      
+      if (!password) {
+        this.showError('login-password-error', 'Password is required');
+        hasError = true;
+      }
+      
+      if (hasError) return;
 
-    // Simulate login - in real app, call your auth API here
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', email);
-    this.closeModal();
-    window.location.reload();
+      this.setLoading(true);
+      const { user, profile, session } = await authService.login(email, password);
+      
+      // Store session and user info
+      localStorage.setItem('sessionToken', session);
+      localStorage.setItem('userId', user.id);
+      localStorage.setItem('userEmail', user.email);
+      localStorage.setItem('userName', user.name);
+      localStorage.setItem('userAvatar', profile.avatar);
+      
+      this.closeModal();
+      window.location.reload();
+    } catch (error) {
+      this.showError('login-error', error.message);
+    } finally {
+      this.setLoading(false);
+    }
   }
 
-  handleRegister() {
-    const name = this.shadowRoot.querySelector('#register-name').value.trim();
-    const email = this.shadowRoot.querySelector('#register-email').value.trim();
-    const password = this.shadowRoot.querySelector('#register-password').value;
-    const confirm = this.shadowRoot.querySelector('#register-confirm').value;
-    
-    if (!name || !email || !password || !confirm) {
-      alert('Please fill in all fields');
-      return;
-    }
-    
-    if (password !== confirm) {
-      alert('Passwords do not match');
-      return;
-    }
+  async handleRegister() {
+    try {
+      this.clearErrors();
+      
+      const name = this.shadowRoot.querySelector('#register-name').value.trim();
+      const email = this.shadowRoot.querySelector('#register-email').value.trim();
+      const password = this.shadowRoot.querySelector('#register-password').value;
+      const confirm = this.shadowRoot.querySelector('#register-confirm').value;
+      
+      // Validate inputs
+      let hasError = false;
+      
+      if (!name) {
+        this.showError('register-name-error', 'Name is required');
+        hasError = true;
+      }
+      
+      if (!email) {
+        this.showError('register-email-error', 'Email is required');
+        hasError = true;
+      } else if (!this.isValidEmail(email)) {
+        this.showError('register-email-error', 'Please enter a valid email');
+        hasError = true;
+      }
+      
+      if (!password) {
+        this.showError('register-password-error', 'Password is required');
+        hasError = true;
+      } else if (password.length < 8) {
+        this.showError('register-password-error', 'Password must be at least 8 characters');
+        hasError = true;
+      }
+      
+      if (!confirm) {
+        this.showError('register-confirm-error', 'Please confirm your password');
+        hasError = true;
+      } else if (password !== confirm) {
+        this.showError('register-confirm-error', 'Passwords do not match');
+        hasError = true;
+      }
+      
+      if (hasError) return;
 
-    // Simulate registration - in real app, call your auth API here
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', email);
-    localStorage.setItem('userName', name);
-    this.closeModal();
-    window.location.reload();
+      this.setLoading(true);
+      const user = await authService.register({ name, email, password });
+      
+      // Auto-login after registration
+      const { profile, session } = await authService.login(email, password);
+      
+      // Store session and user info
+      localStorage.setItem('sessionToken', session);
+      localStorage.setItem('userId', user.id);
+      localStorage.setItem('userEmail', user.email);
+      localStorage.setItem('userName', user.name);
+      localStorage.setItem('userAvatar', profile.avatar);
+
+      this.closeModal();
+      window.location.reload();
+    } catch (error) {
+      this.showError('register-error', error.message);
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
+  setLoading(loading) {
+    this.isLoading = loading;
+    
+    const loginBtn = this.shadowRoot.querySelector('#login-btn');
+    const registerBtn = this.shadowRoot.querySelector('#register-btn');
+    const tabs = this.shadowRoot.querySelectorAll('.tab');
+    
+    [loginBtn, registerBtn].forEach(btn => {
+      if (btn) {
+        btn.disabled = loading;
+        btn.classList.toggle('loading', loading);
+      }
+    });
+    
+    tabs.forEach(tab => {
+      tab.style.pointerEvents = loading ? 'none' : 'auto';
+      tab.style.opacity = loading ? '0.7' : '1';
+    });
+  }
+
+  showError(elementId, message) {
+    const errorElement = this.shadowRoot.querySelector(`#${elementId}`);
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+  }
+
+  clearErrors() {
+    const errorElements = this.shadowRoot.querySelectorAll('.error-message');
+    errorElements.forEach(el => {
+      el.textContent = '';
+      el.style.display = 'none';
+    });
+  }
+
+  isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   disconnectedCallback() {
@@ -298,8 +493,10 @@ class AuthModal extends HTMLElement {
   }
 
   closeModal() {
-    document.removeEventListener('keydown', this._escHandler);
-    this.remove();
+    if (!this.isLoading) {
+      document.removeEventListener('keydown', this._escHandler);
+      this.remove();
+    }
   }
 }
 

@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Demo User",
+      "email": "demo@example.com",
+      "password": "$2a$10$d7jH8YoVz.nhZ7U4YZdxZO8bqWVfnKCG9A6xHnEzQwkKN8P96Iz2q"
+    }
+  ],
+  "sessions": [],
+  "profiles": [
+    {
+      "id": 1,
+      "userId": 1,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=demo",
+      "bio": "Demo account for testing"
+    }
+  ]
+}
