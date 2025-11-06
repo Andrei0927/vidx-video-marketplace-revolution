@@ -1,0 +1,19 @@
+Car Make: Audi
+Model: A5
+Fuel: Diesel
+Power: 143 HP
+Displacement: 2461 CM3
+Transmission: Automatic
+Mileage: 215600 km
+Colour: Gray
+Condition: Used
+Year: 2013
+Price: 9950
+Description:
+    Runs great
+    Brown leather interior
+    Navigation
+    Rear climate control
+    Cruise Control
+    Parking sensors
+    Accepts swaps

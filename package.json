@@ -1,0 +1,17 @@
+ 
+{
+  "name": "vidx",
+  "version": "1.0.0",
+  "description": "VidX video marketplace",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "json-server --watch db.json --port 3001",
+    "client": "serve -p 3000",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.0",
+    "json-server": "^0.17.3",
+    "serve": "^14.2.0"
+  }
+}

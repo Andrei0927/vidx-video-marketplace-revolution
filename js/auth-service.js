@@ -145,6 +145,10 @@ class AuthService {
     // In production, use a proper UUID library
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
+
+  isLoggedIn() {
+    return !!(localStorage.getItem('sessionToken') || localStorage.getItem('authToken') || localStorage.getItem('userId'));
+  }
 }
 
 // Export as a singleton and attach to window for legacy callers/components

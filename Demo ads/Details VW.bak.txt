@@ -1,0 +1,25 @@
+Car Make: Volkswagen
+Model: Transporter
+Fuel: Diesel
+Power: 131 HP
+Displacement: 2461 CM3
+Transmission: Manual
+Mileage: 215600 km
+Colour: Gray
+Condition: Used
+Year: 2009
+Price: €6790
+Description:
+    For sale Vw Transporter T5, 4Motion, 2.5TDI, 131HP
+    -year: 2009
+    -215,000 km, second owner. Car bought new from Romania.
+    - 8+1 seats, short version
+    - Sony radio with new bluetooth
+    - A/C front and rear functional
+    - Summer tires 2 years old plus set of metal rims with winter tires DOT 2020 but in very good condition.
+    - Up-to-date inspections plus many engine repairs worth over 2,500 Euros, new calipers. I can send pictures of the service invoices with what repairs were made.
+
+    The car is in excellent technical condition, it has a few places with rust on the paint.
+    The car belongs to an association, mechanically it has been maintained exemplary.
+
+    I am not interested in trades, please be serious, all documents are in order.

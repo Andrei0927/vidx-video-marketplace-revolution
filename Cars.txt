@@ -1,0 +1,481 @@
+   <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/acura/">
+                                            Acura
+                                            <span class="css-1gjelyj">2</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/aixam/">
+                                            Aixam
+                                            <span class="css-1gjelyj">129</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/alfa-romeo/">
+                                            Alfa Romeo
+                                            <span class="css-1gjelyj">464</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/aro/">
+                                            Aro
+                                            <span class="css-1gjelyj">30</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/aston-martin/">
+                                            Aston Martin
+                                            <span class="css-1gjelyj">13</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/audi/">
+                                            Audi
+                                            <span class="css-1gjelyj">11.945</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/austin/">
+                                            Austin
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/baic/">
+                                            Baic
+                                            <span class="css-1gjelyj">2</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/bentley/">
+                                            Bentley
+                                            <span class="css-1gjelyj">44</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/bmw/">
+                                            BMW
+                                            <span class="css-1gjelyj">17.016</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/buick/">
+                                            Buick
+                                            <span class="css-1gjelyj">7</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/cadillac/">
+                                            Cadillac
+                                            <span class="css-1gjelyj">32</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/chevrolet/">
+                                            Chevrolet
+                                            <span class="css-1gjelyj">747</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/chrysler/">
+                                            Chrysler
+                                            <span class="css-1gjelyj">71</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/citroen/">
+                                            Citroen
+                                            <span class="css-1gjelyj">1.897</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/cupra/">
+                                            Cupra
+                                            <span class="css-1gjelyj">188</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/dacia/">
+                                            Dacia
+                                            <span class="css-1gjelyj">7.152</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/daewoo/">
+                                            Daewoo
+                                            <span class="css-1gjelyj">276</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/daihatsu/">
+                                            Daihatsu
+                                            <span class="css-1gjelyj">66</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/dodge/">
+                                            Dodge
+                                            <span class="css-1gjelyj">154</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/ds-automobiles/">
+                                            DS Automobiles
+                                            <span class="css-1gjelyj">156</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/ferrari/">
+                                            Ferrari
+                                            <span class="css-1gjelyj">32</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/fiat/">
+                                            Fiat
+                                            <span class="css-1gjelyj">1.356</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/ford/">
+                                            Ford
+                                            <span class="css-1gjelyj">9.413</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/geely/">
+                                            Geely
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/gmc/">
+                                            Gmc
+                                            <span class="css-1gjelyj">3</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/honda/">
+                                            Honda
+                                            <span class="css-1gjelyj">630</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/hummer/">
+                                            Hummer
+                                            <span class="css-1gjelyj">11</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/hyundai/">
+                                            Hyundai
+                                            <span class="css-1gjelyj">2.605</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/ineos/">
+                                            Ineos
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/infiniti/">
+                                            Infiniti
+                                            <span class="css-1gjelyj">56</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/isuzu/">
+                                            Isuzu
+                                            <span class="css-1gjelyj">19</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/jaguar/">
+                                            Jaguar
+                                            <span class="css-1gjelyj">445</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/jeep/">
+                                            Jeep
+                                            <span class="css-1gjelyj">709</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/kia/">
+                                            Kia
+                                            <span class="css-1gjelyj">1.619</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/lada/">
+                                            Lada
+                                            <span class="css-1gjelyj">42</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/lamborghini/">
+                                            Lamborghini
+                                            <span class="css-1gjelyj">51</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/lancia/">
+                                            Lancia
+                                            <span class="css-1gjelyj">64</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/land-rover/">
+                                            Land Rover
+                                            <span class="css-1gjelyj">1.584</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/lexus/">
+                                            Lexus
+                                            <span class="css-1gjelyj">342</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/ligier/">
+                                            Ligier
+                                            <span class="css-1gjelyj">13</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/lincoln/">
+                                            Lincoln
+                                            <span class="css-1gjelyj">10</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/lotus/">
+                                            Lotus
+                                            <span class="css-1gjelyj">2</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/lynk-co/">
+                                            Lynk&amp;Co
+                                            <span class="css-1gjelyj">2</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/maserati/">
+                                            Maserati
+                                            <span class="css-1gjelyj">98</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/mazda/">
+                                            Mazda
+                                            <span class="css-1gjelyj">1.764</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/mclaren/">
+                                            McLaren
+                                            <span class="css-1gjelyj">8</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/maybach/">
+                                            Maybach
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/mercedes-benz/">
+                                            Mercedes-Benz
+                                            <span class="css-1gjelyj">11.087</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/mg/">
+                                            MG
+                                            <span class="css-1gjelyj">209</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/microlino/">
+                                            Microlino
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/mini/">
+                                            Mini
+                                            <span class="css-1gjelyj">645</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/mitsubishi/">
+                                            Mitsubishi
+                                            <span class="css-1gjelyj">1.158</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/microcar/">
+                                            Microcar
+                                            <span class="css-1gjelyj">19</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/nissan/">
+                                            Nissan
+                                            <span class="css-1gjelyj">2.656</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/opel/">
+                                            Opel
+                                            <span class="css-1gjelyj">7.797</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/peugeot/">
+                                            Peugeot
+                                            <span class="css-1gjelyj">3.975</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/pontiac/">
+                                            Pontiac
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/porsche/">
+                                            Porsche
+                                            <span class="css-1gjelyj">955</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/renault/">
+                                            Renault
+                                            <span class="css-1gjelyj">8.109</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/rolls-royce/">
+                                            Rolls-Royce
+                                            <span class="css-1gjelyj">30</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/relive/">
+                                            Relive
+                                            <span class="css-1gjelyj">6</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/rover/">
+                                            Rover
+                                            <span class="css-1gjelyj">25</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/saab/">
+                                            Saab
+                                            <span class="css-1gjelyj">81</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/seat/">
+                                            Seat
+                                            <span class="css-1gjelyj">2.504</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/skoda/">
+                                            Skoda
+                                            <span class="css-1gjelyj">6.652</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/smart/">
+                                            Smart
+                                            <span class="css-1gjelyj">337</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/ssangyong/">
+                                            SsangYong
+                                            <span class="css-1gjelyj">274</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/subaru/">
+                                            Subaru
+                                            <span class="css-1gjelyj">265</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/suzuki/">
+                                            Suzuki
+                                            <span class="css-1gjelyj">1.350</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/swm/">
+                                            SWM
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/tesla/">
+                                            Tesla
+                                            <span class="css-1gjelyj">262</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/tata/">
+                                            Tata
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/tazzari/">
+                                            Tazzari
+                                            <span class="css-1gjelyj">1</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/toyota/">
+                                            Toyota
+                                            <span class="css-1gjelyj">2.660</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/trabant/">
+                                            Trabant
+                                            <span class="css-1gjelyj">10</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/volkswagen/">
+                                            Volkswagen
+                                            <span class="css-1gjelyj">21.020</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/volvo/">
+                                            Volvo
+                                            <span class="css-1gjelyj">2.542</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/xev/">
+                                            XEV
+                                            <span class="css-1gjelyj">14</span>
+                                        </a>
+                                    </li>
+                                    <li class="css-14syomj">
+                                        <a class="css-1q7zkos" href="/auto-masini-moto-ambarcatiuni/autoturisme/diverse/">
+                                            Alte marci
+                                            <span class="css-1gjelyj">315</span>
+                                        </a>
+                                    </li>
+                                </ul>

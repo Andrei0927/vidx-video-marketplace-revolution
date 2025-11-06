@@ -302,7 +302,7 @@
     </footer>
     <script type="module" src="components/auth-modal.js"></script>
     <script type="module" src="components/user-dropdown.js"></script>
-<script>
+<script type="module">
         // Theme Management
         const initTheme = () => {
             // Check for saved theme preference or system preference
@@ -386,9 +386,11 @@
                         // Run once on load
                         updateNavAuthUI();
 
-                // Helper: basic logged-in check (sessionToken preferred)
+                // Import auth service (module import already in a type=module script)
+                import authService from './js/auth-service.js';
+
                 const isLoggedIn = () => {
-                    return !!(localStorage.getItem('sessionToken') || localStorage.getItem('authToken') || localStorage.getItem('userId'));
+                    return authService.isLoggedIn();
                 };
 
                 // Handle user button click: toggle user menu when logged in, otherwise show auth modal

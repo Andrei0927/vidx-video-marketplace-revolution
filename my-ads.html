@@ -4,7 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>My Ads - VidX</title>
+  <script>
+    // Apply dark mode before page renders
+    if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+  <link rel="stylesheet" href="/css/dark-mode.css">
   <style> body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; } </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50">
@@ -28,43 +58,41 @@
                         <span id="nav-username" class="hidden ml-2 text-sm font-medium"></span>
                         <i data-feather="user" class="h-5 w-5"></i>
                     </button>
+                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
                 </div>
             </div>
         </div>
     </nav>
     <div class="max-w-5xl mx-auto py-8">
-        <h1 class="text-2xl font-bold mb-6">My Ads</h1>
+        <h1 class="text-2xl font-bold mb-6 text-gray-900 dark:text-dark-600">My Ads</h1>
 
         <!-- Single BMW ad (mockup) -->
         <article class="bg-white dark:bg-dark-100 rounded-lg shadow p-4 mb-6">
           <div class="flex gap-4 items-start">
             <img src="/images/image2.webp" alt="BMW X5" class="w-48 h-32 object-cover rounded">
             <div class="flex-1">
-              <h2 class="text-xl font-semibold">BMW X5 2019 - Full Option</h2>
-              <p class="text-sm text-gray-600">27,000 km | Automatic | Diesel</p>
-              <p class="mt-2 text-lg font-bold">€35,900</p>
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600">BMW X5 2019 - Full Option</h2>
+              <p class="text-sm text-gray-600 dark:text-dark-500">27,000 km | Automatic | Diesel</p>
+              <p class="mt-2 text-lg font-bold text-gray-900 dark:text-dark-600">€35,900</p>
               <div class="mt-4 flex gap-2">
-                <button class="px-3 py-1 bg-indigo-600 text-white rounded">Edit</button>
-                <button id="delete-ad" class="px-3 py-1 bg-red-500 text-white rounded">Delete</button>
+                <button class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 dark:hover:bg-indigo-500">Edit</button>
+                <button id="delete-ad" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 dark:hover:bg-red-400">Delete</button>
               </div>
             </div>
           </div>
         </article>
 
-        <p class="text-sm text-gray-500 mt-8">This is a demo ad attached to the demo user <strong>John Doe &lt;john@example.com&gt;</strong>.<br>Password: <strong>demo1234</strong></p>
+        <p class="text-sm text-gray-500 mt-8 dark:text-dark-400">This is a demo ad attached to the demo user <strong>John Doe &lt;john@example.com&gt;</strong>.<br>Password: <strong>demo1234</strong></p>
     </div>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script type="module" src="components/auth-modal.js"></script>
+    <script type="module" src="components/user-dropdown.js"></script>
+    <script type="module">
+        import authService from './js/auth-service.js';
+    </script>
+    <script src="/js/dark-mode.js"></script>
     <script>
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.theme = isDark ? 'dark' : 'light';
-            });
-        }
         // Feather icons
         if (window.feather && typeof feather.replace === 'function') {
             feather.replace();
@@ -94,6 +122,56 @@
                 }
             } catch (err) { console.error('updateNavAuthUI error', err); }
         })();
+
+        // Handle user button click: toggle user menu when logged in, otherwise show auth modal
+        (function() {
+            const userBtnEl = document.getElementById('user-btn');
+            const userMenuEl = document.getElementById('user-menu');
+
+            if (!userBtnEl || !userMenuEl) return;
+
+            userBtnEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!isLoggedIn()) {
+                    // Not logged in -> show auth modal (default login tab)
+                    const modal = document.createElement('auth-modal');
+                    document.body.appendChild(modal);
+                    return;
+                }
+
+                // Toggle menu visibility
+                userMenuEl.classList.toggle('hidden');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (ev) => {
+                try {
+                    const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
+                    if (path.includes(userMenuEl) || path.includes(userBtnEl)) return;
+                } catch (err) {
+                    const target = ev.target;
+                    if (userMenuEl.contains(target) || userBtnEl.contains(target)) return;
+                }
+                userMenuEl.classList.add('hidden');
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Escape') userMenuEl.classList.add('hidden');
+            });
+
+            // When the component dispatches a logout event, hide the menu and refresh nav
+            userMenuEl.addEventListener('user-logout', () => {
+                userMenuEl.classList.add('hidden');
+                updateNavAuthUI();
+            });
+        })();
+
+        const isLoggedIn = () => {
+            return authService.isLoggedIn();
+        };
     </script>
     <script>
     document.getElementById('delete-ad').addEventListener('click', () => {

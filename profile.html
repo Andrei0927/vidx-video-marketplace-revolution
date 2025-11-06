@@ -12,7 +12,31 @@
       document.documentElement.classList.remove('dark');
     }
   </script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+  <link rel="stylesheet" href="/css/dark-mode.css">
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
   </style>
@@ -38,72 +62,68 @@
                         <span id="nav-username" class="hidden ml-2 text-sm font-medium"></span>
                         <i data-feather="user" class="h-5 w-5"></i>
                     </button>
+                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
                 </div>
             </div>
         </div>
     </nav>
     <div class="max-w-3xl mx-auto py-8">
-        <h1 class="text-2xl font-bold mb-4">My Profile</h1>
+        <h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-dark-600">My Profile</h1>
 
         <!-- Section 1: Personal information -->
         <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
-          <h2 class="text-lg font-semibold mb-4">Personal information</h2>
+          <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-dark-600">Personal information</h2>
           <div class="grid grid-cols-1 gap-4">
             <div>
-              <label class="block text-sm text-gray-600">Name</label>
-              <input id="name" class="mt-1 block w-full border rounded px-3 py-2" value="Test">
+              <label class="block text-sm text-gray-600 dark:text-dark-500">Name</label>
+              <input id="name" class="mt-1 block w-full border rounded px-3 py-2 bg-white dark:bg-dark-200 border-gray-300 dark:border-dark-300 text-gray-900 dark:text-dark-600" value="Test">
             </div>
             <div>
-              <label class="block text-sm text-gray-600">Username</label>
-              <input id="username" class="mt-1 block w-full border rounded px-3 py-2" value="test">
+              <label class="block text-sm text-gray-600 dark:text-dark-500">Username</label>
+              <input id="username" class="mt-1 block w-full border rounded px-3 py-2 bg-white dark:bg-dark-200 border-gray-300 dark:border-dark-300 text-gray-900 dark:text-dark-600" value="test">
             </div>
             <div>
-              <label class="block text-sm text-gray-600">Email address</label>
-              <input id="email" class="mt-1 block w-full border rounded px-3 py-2" value="test@example.com">
+              <label class="block text-sm text-gray-600 dark:text-dark-500">Email address</label>
+              <input id="email" class="mt-1 block w-full border rounded px-3 py-2 bg-white dark:bg-dark-200 border-gray-300 dark:border-dark-300 text-gray-900 dark:text-dark-600" value="test@example.com">
             </div>
           </div>
           <div class="mt-4">
-            <button id="save-profile" class="bg-indigo-600 text-white px-4 py-2 rounded">Save</button>
+            <button id="save-profile" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 dark:hover:bg-indigo-500">Save</button>
           </div>
         </section>
 
         <!-- Section 2: Password reset -->
         <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
-          <h2 class="text-lg font-semibold mb-4">Password</h2>
-          <p class="text-sm text-gray-600">Click the button below to reset your password. (Demo: no email will be sent.)</p>
+          <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-dark-600">Password</h2>
+          <p class="text-sm text-gray-600 dark:text-dark-500">Click the button below to reset your password. (Demo: no email will be sent.)</p>
           <div class="mt-4">
-            <button id="reset-password" class="bg-yellow-500 text-white px-4 py-2 rounded">Reset password</button>
+            <button id="reset-password" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 dark:hover:bg-yellow-400">Reset password</button>
           </div>
         </section>
 
         <!-- Section 3: Payment information -->
         <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
-          <h2 class="text-lg font-semibold mb-4">Payment information</h2>
-          <p class="text-sm text-gray-600">No payment method on file. You can add card details here (demo only).</p>
+          <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-dark-600">Payment information</h2>
+          <p class="text-sm text-gray-600 dark:text-dark-500">No payment method on file. You can add card details here (demo only).</p>
           <div class="mt-4 grid grid-cols-1 gap-3">
-            <input id="card-number" placeholder="Card number" class="mt-1 block w-full border rounded px-3 py-2">
+            <input id="card-number" placeholder="Card number" class="mt-1 block w-full border rounded px-3 py-2 bg-white dark:bg-dark-200 border-gray-300 dark:border-dark-300 text-gray-900 dark:text-dark-600">
             <div class="grid grid-cols-2 gap-2">
-              <input id="card-exp" placeholder="MM/YY" class="mt-1 block w-full border rounded px-3 py-2">
-              <input id="card-cvc" placeholder="CVC" class="mt-1 block w-full border rounded px-3 py-2">
+              <input id="card-exp" placeholder="MM/YY" class="mt-1 block w-full border rounded px-3 py-2 bg-white dark:bg-dark-200 border-gray-300 dark:border-dark-300 text-gray-900 dark:text-dark-600">
+              <input id="card-cvc" placeholder="CVC" class="mt-1 block w-full border rounded px-3 py-2 bg-white dark:bg-dark-200 border-gray-300 dark:border-dark-300 text-gray-900 dark:text-dark-600">
             </div>
-            <button id="save-payment" class="bg-indigo-600 text-white px-4 py-2 rounded">Save payment info</button>
+            <button id="save-payment" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 dark:hover:bg-indigo-500">Save payment info</button>
           </div>
         </section>
 
-        <div class="text-sm text-gray-500 mt-8">Demo account: <strong>John Doe &lt;john@example.com&gt;</strong><br>Password: <strong>demo1234</strong></div>
+        <div class="text-sm text-gray-500 mt-8 dark:text-dark-400">Demo account: <strong>John Doe &lt;john@example.com&gt;</strong><br>Password: <strong>demo1234</strong></div>
     </div>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script type="module" src="components/auth-modal.js"></script>
+    <script type="module" src="components/user-dropdown.js"></script>
+    <script type="module">
+        import authService from './js/auth-service.js';
+    </script>
+    <script src="/js/dark-mode.js"></script>
     <script>
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.theme = isDark ? 'dark' : 'light';
-            });
-        }
         // Feather icons
         if (window.feather && typeof feather.replace === 'function') {
             feather.replace();
@@ -135,6 +155,57 @@
                 console.error('Error updating nav auth UI:', e);
             }
         })();
+
+        // Handle user button click: toggle user menu when logged in, otherwise show auth modal
+        (function() {
+            const userBtnEl = document.getElementById('user-btn');
+            const userMenuEl = document.getElementById('user-menu');
+
+            if (!userBtnEl || !userMenuEl) return;
+
+            userBtnEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!isLoggedIn()) {
+                    // Not logged in -> show auth modal (default login tab)
+                    const modal = document.createElement('auth-modal');
+                    document.body.appendChild(modal);
+                    return;
+                }
+
+                // Toggle menu visibility
+                userMenuEl.classList.toggle('hidden');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (ev) => {
+                try {
+                    const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
+                    if (path.includes(userMenuEl) || path.includes(userBtnEl)) return;
+                } catch (err) {
+                    const target = ev.target;
+                    if (userMenuEl.contains(target) || userBtnEl.contains(target)) return;
+                }
+                userMenuEl.classList.add('hidden');
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Escape') userMenuEl.classList.add('hidden');
+            });
+
+            // When the component dispatches a logout event, hide the menu and refresh nav
+            userMenuEl.addEventListener('user-logout', () => {
+                userMenuEl.classList.add('hidden');
+                updateNavAuthUI();
+            });
+        })();
+
+        const isLoggedIn = () => {
+            return authService.isLoggedIn();
+        };
+
     </script>
 </body>
 </html>
