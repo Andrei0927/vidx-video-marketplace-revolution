@@ -63,26 +63,17 @@
             </div>
         </div>
     </nav>
-    <div class="max-w-5xl mx-auto py-8">
+    <div class="max-w-5xl mx-auto py-8 px-4">
         <h1 class="text-2xl font-bold mb-6 text-gray-900 dark:text-dark-600">My Ads</h1>
 
-        <!-- Single BMW ad (mockup) -->
-        <article class="bg-white dark:bg-dark-100 rounded-lg shadow p-4 mb-6">
-          <div class="flex gap-4 items-start">
-            <img src="/images/image2.webp" alt="BMW X5" class="w-48 h-32 object-cover rounded">
-            <div class="flex-1">
-              <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600">BMW X5 2019 - Full Option</h2>
-              <p class="text-sm text-gray-600 dark:text-dark-500">27,000 km | Automatic | Diesel</p>
-              <p class="mt-2 text-lg font-bold text-gray-900 dark:text-dark-600">€35,900</p>
-              <div class="mt-4 flex gap-2">
-                <button class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 dark:hover:bg-indigo-500">Edit</button>
-                <button id="delete-ad" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 dark:hover:bg-red-400">Delete</button>
-              </div>
-            </div>
-          </div>
-        </article>
+        <!-- Ads container - dynamically filled -->
+        <div id="ads-container"></div>
 
-        <p class="text-sm text-gray-500 mt-8 dark:text-dark-400">This is a demo ad attached to the demo user <strong>John Doe &lt;john@example.com&gt;</strong>.<br>Password: <strong>demo1234</strong></p>
+        <p class="text-sm text-gray-500 mt-8 dark:text-dark-400">
+            Demo users:<br>
+            <strong>John Doe</strong> &lt;john@example.com&gt; - Password: <strong>demo1234</strong> (VW Transporter ad)<br>
+            <strong>Test User</strong> &lt;test@example.com&gt; - Password: <strong>test1234</strong> (Audi A5 ad)
+        </p>
     </div>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -172,14 +163,79 @@
         const isLoggedIn = () => {
             return authService.isLoggedIn();
         };
+
+        // Render user's ads based on logged-in user
+        (function renderUserAds() {
+            const userEmail = localStorage.getItem('userEmail');
+            const container = document.getElementById('ads-container');
+            
+            if (!container) return;
+            
+            // Demo ad data - maps email to their listing
+            const userAds = {
+                'john@example.com': {
+                    id: 'vw-transporter',
+                    video: 'Demo ads/VW.m4v',
+                    title: 'VW Transporter T6.1 2021',
+                    specs: '45,000 km | Manual | Diesel',
+                    price: '€28,500',
+                    location: 'Cluj-Napoca'
+                },
+                'test@example.com': {
+                    id: 'audi-a5',
+                    video: 'Demo ads/Audi.m4v',
+                    title: 'Audi A5 Sportback 2020',
+                    specs: '32,000 km | Automatic | Petrol',
+                    price: '€38,900',
+                    location: 'București'
+                }
+            };
+            
+            const userAd = userAds[userEmail];
+            
+            if (!userAd) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-dark-400">No ads yet. <a href="upload.html" class="text-indigo-600 dark:text-indigo-400 hover:underline">Create your first ad</a></p>';
+                return;
+            }
+            
+            // Render the ad
+            container.innerHTML = `
+                <article class="bg-white dark:bg-dark-100 rounded-lg shadow p-4 mb-6">
+                    <div class="flex gap-4 items-start">
+                        <video class="w-48 h-32 object-cover rounded" muted>
+                            <source src="${userAd.video}" type="video/mp4">
+                        </video>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600">${userAd.title}</h2>
+                            <p class="text-sm text-gray-600 dark:text-dark-500">${userAd.specs}</p>
+                            <p class="text-sm text-gray-500 dark:text-dark-400 mt-1">
+                                <i data-feather="map-pin" class="inline-block h-4 w-4"></i>
+                                ${userAd.location}
+                            </p>
+                            <p class="mt-2 text-lg font-bold text-gray-900 dark:text-dark-600">${userAd.price}</p>
+                            <div class="mt-4 flex gap-2">
+                                <a href="details.html?ad=${userAd.id}" class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 dark:hover:bg-indigo-500">View</a>
+                                <button class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 dark:hover:bg-gray-400">Edit</button>
+                                <button class="delete-ad px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 dark:hover:bg-red-400">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `;
+            
+            // Re-render feather icons
+            if (window.feather) feather.replace();
+            
+            // Handle delete
+            container.querySelector('.delete-ad')?.addEventListener('click', () => {
+                if (confirm('Delete this ad? (demo)')) {
+                    alert('Ad deleted (demo)');
+                    container.innerHTML = '<p class="text-gray-500 dark:text-dark-400">No ads yet. <a href="upload.html" class="text-indigo-600 dark:text-indigo-400 hover:underline">Create your first ad</a></p>';
+                }
+            });
+        })();
     </script>
     <script>
-    document.getElementById('delete-ad').addEventListener('click', () => {
-      if (confirm('Delete this ad? (demo)')) {
-        alert('Ad deleted (demo)');
-        // In a real app we'd call the API and remove it from the DB
-      }
-    });
-  </script>
+</script>
 </body>
 </html>

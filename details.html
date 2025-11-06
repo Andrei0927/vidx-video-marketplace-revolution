@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Ad Details - VidX</title>
     <script>
         // Add dark mode class if needed before page loads
@@ -176,60 +176,72 @@
         // Ad data
         const adData = {
             'vw-transporter': {
-                title: 'Volkswagen Transporter T5 4Motion',
-                price: '€6,790',
-                year: '2009',
-                mileage: '215,600 km',
+                title: 'VW Transporter T6.1 2021',
+                price: '€28,500',
+                year: '2021',
+                mileage: '45,000 km',
                 transmission: 'Manual',
                 fuel: 'Diesel',
                 make: 'Volkswagen',
                 model: 'Transporter',
-                power: '131 HP',
-                displacement: '2461 CM3',
-                colour: 'Gray',
+                power: '150 HP',
+                displacement: '1968 CM3',
+                colour: 'White',
                 condition: 'Used',
-                description: `For sale Vw Transporter T5, 4Motion, 2.5TDI, 131HP
-- Year: 2009
-- 215,000 km, second owner. Car bought new from Romania.
-- 8+1 seats, short version
-- Sony radio with new bluetooth
-- A/C front and rear functional
-- Summer tires 2 years old plus set of metal rims with winter tires DOT 2020 but in very good condition.
-- Up-to-date inspections plus many engine repairs worth over 2,500 Euros, new calipers. I can send pictures of the service invoices with what repairs were made.
+                description: `VW Transporter T6.1 in excellent condition.
 
-The car is in excellent technical condition, it has a few places with rust on the paint.
-The car belongs to an association, mechanically it has been maintained exemplary.
+Features:
+- Climate control
+- Cruise control
+- Parking sensors front/rear
+- Reversing camera
+- LED headlights
+- Touchscreen navigation
+- Bluetooth connectivity
+- Multi-function steering wheel
 
-I am not interested in trades, please be serious, all documents are in order.`,
+Very well maintained, full service history.
+Perfect for business or family use.`,
                 video: 'Demo ads/VW.m4v',
-                seller: 'Professional Seller',
+                seller: 'John Doe',
                 postedDate: '2 days ago',
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=seller1'
+                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
+                location: 'Cluj-Napoca'
             },
             'audi-a5': {
-                title: 'Audi A5 2013 - Brown Leather Interior',
-                price: '€9,950',
-                year: '2013',
-                mileage: '215,600 km',
+                title: 'Audi A5 Sportback 2020',
+                price: '€38,900',
+                year: '2020',
+                mileage: '32,000 km',
                 transmission: 'Automatic',
-                fuel: 'Diesel',
+                fuel: 'Petrol',
                 make: 'Audi',
                 model: 'A5',
-                power: '143 HP',
-                displacement: '2461 CM3',
-                colour: 'Gray',
+                power: '190 HP',
+                displacement: '1984 CM3',
+                colour: 'Black',
                 condition: 'Used',
-                description: `Runs great
-Brown leather interior
-Navigation
-Rear climate control
-Cruise Control
-Parking sensors
-Accepts swaps`,
+                description: `Stunning Audi A5 Sportback in pristine condition.
+
+Premium features:
+- Full leather interior
+- Virtual cockpit
+- MMI Navigation Plus
+- Bang & Olufsen sound system
+- Matrix LED headlights
+- Adaptive cruise control
+- Lane assist
+- Parking assist plus
+- Heated front seats
+- Electric tailgate
+
+One owner, full dealer service history.
+Immaculate inside and out.`,
                 video: 'Demo ads/Audi.m4v',
-                seller: 'Individual Seller',
+                seller: 'Test User',
                 postedDate: '4 days ago',
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=seller2'
+                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=test',
+                location: 'București'
             }
         };
 
@@ -254,7 +266,7 @@ Accepts swaps`,
             document.getElementById('detail-colour').textContent = ad.colour;
             document.getElementById('detail-condition').textContent = ad.condition;
             document.getElementById('seller-name').textContent = ad.seller;
-            document.getElementById('posted-date').textContent = ad.postedDate;
+            document.getElementById('posted-date').textContent = `${ad.postedDate} · ${ad.location}`;
             document.getElementById('seller-avatar').src = ad.avatar;
             document.getElementById('video-source').src = ad.video;
             document.getElementById('ad-video').load();

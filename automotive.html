@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Automotive - VidX</title>
     <script>
         // Add dark mode class if needed before page loads
@@ -37,6 +37,10 @@
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
     <style>
+        html, body {
+            min-height: 100%;
+        }
+
         .scroll-container {
             scrollbar-width: thin;
             scrollbar-color: #6366f1 #f1f1f1;
@@ -71,9 +75,14 @@
         
         /* Mobile: Full-screen snap scrolling (TikTok style) */
         @media (max-width: 1023px) {
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            
             .video-grid {
                 display: block;
-                height: calc(100vh - 4rem); /* Account for nav */
+                height: 100vh;
+                height: 100dvh; /* Dynamic viewport height for iOS */
                 overflow-y: scroll;
                 scroll-snap-type: y mandatory;
                 scroll-behavior: smooth;
@@ -85,7 +94,10 @@
             .video-card {
                 scroll-snap-align: start;
                 scroll-snap-stop: always;
+                min-height: 100vh;
+                min-height: 100dvh;
                 height: 100vh;
+                height: 100dvh;
                 margin-bottom: 0 !important;
                 border-radius: 0;
             }
@@ -102,7 +114,9 @@
             .video-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
-        }        .video-card {
+        }
+
+        .video-card {
             position: relative;
             background: #000;
             border-radius: 12px;
@@ -385,18 +399,18 @@
             
             <div class="video-overlay">
                 <div class="flex items-center mb-3">
-                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=seller1" alt="Seller">
+                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=john" alt="Seller">
                     <div class="ml-3">
-                        <h3 class="text-white font-medium">Professional Seller</h3>
-                        <p class="text-gray-300 text-sm">2 days ago</p>
+                        <h3 class="text-white font-medium">John Doe</h3>
+                        <p class="text-gray-300 text-sm">2 days ago · Cluj-Napoca</p>
                     </div>
                 </div>
-                <a href="details?ad=vw-transporter" class="block group">
-                    <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Volkswagen Transporter T5 4Motion</h2>
+                <a href="details.html?ad=vw-transporter" class="block group">
+                    <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">VW Transporter T6.1 2021</h2>
                 </a>
-                <p class="mt-1 text-gray-300 text-sm">215,600 km | Manual | Diesel | 131 HP</p>
+                <p class="mt-1 text-gray-300 text-sm">45,000 km | Manual | Diesel</p>
                 <div class="mt-3 flex items-center justify-between">
-                    <span class="text-xl font-bold text-white">€6,790</span>
+                    <span class="text-xl font-bold text-white">€28,500</span>
                     <div class="flex space-x-3">
                         <button class="flex items-center text-white group">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
@@ -429,18 +443,18 @@
             
             <div class="video-overlay">
                 <div class="flex items-center mb-3">
-                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=seller2" alt="Seller">
+                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=test" alt="Seller">
                     <div class="ml-3">
-                        <h3 class="text-white font-medium">Individual Seller</h3>
-                        <p class="text-gray-300 text-sm">4 days ago</p>
+                        <h3 class="text-white font-medium">Test User</h3>
+                        <p class="text-gray-300 text-sm">4 days ago · București</p>
                     </div>
                 </div>
-                <a href="details?ad=audi-a5" class="block group">
-                    <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Audi A5 2013 - Brown Leather Interior</h2>
+                <a href="details.html?ad=audi-a5" class="block group">
+                    <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Audi A5 Sportback 2020</h2>
                 </a>
-                <p class="mt-1 text-gray-300 text-sm">215,600 km | Automatic | Diesel | 143 HP</p>
+                <p class="mt-1 text-gray-300 text-sm">32,000 km | Automatic | Petrol</p>
                 <div class="mt-3 flex items-center justify-between">
-                    <span class="text-xl font-bold text-white">€9,950</span>
+                    <span class="text-xl font-bold text-white">€38,900</span>
                     <div class="flex space-x-3">
                         <button class="flex items-center text-white group">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
@@ -899,25 +913,36 @@
                             volumeOff.style.display = 'none';
                             volumeOn.style.display = 'block';
                         }
-                        feather.replace(); // Re-render icons
                     };
+
+                    // Ensure video metadata is available for first frame
+                    video.muted = true;
+                    video.load();
+                    video.addEventListener('loadeddata', () => {
+                        if (video.paused) {
+                            try {
+                                video.currentTime = 0;
+                            } catch (err) {
+                                console.debug('Unable to reset video time', err);
+                            }
+                        }
+                    }, { once: true });
+
+                    let userMutedPreference = isMobile ? true : false;
                     
                     if (isMobile) {
                         // ========================================
                         // MOBILE: TikTok-style snap scrolling with autoplay
                         // ========================================
                         
-                        // Start first video immediately
+                        // Start first video immediately (muted to satisfy autoplay policies)
                         if (index === 0) {
-                            video.muted = false;
+                            video.muted = userMutedPreference;
                             video.play().then(() => {
-                                updateVolumeIcon(false);
+                                updateVolumeIcon(video.muted);
                                 flashVolumeIndicator();
                             }).catch(() => {
-                                // If autoplay with sound fails, try muted
-                                video.muted = true;
-                                video.play().catch(() => {});
-                                updateVolumeIcon(true);
+                                // Autoplay might fail until user interaction; ignore
                             });
                         }
                         
@@ -925,12 +950,18 @@
                         const observer = new IntersectionObserver((entries) => {
                             entries.forEach(entry => {
                                 if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
-                                    // Video is in view, play it
-                                    video.play().catch(() => {});
+                                    // Video is in view, play it muted by default
+                                    video.muted = userMutedPreference;
+                                    video.play().then(() => {
+                                        updateVolumeIcon(video.muted);
+                                    }).catch(() => {});
                                     flashVolumeIndicator();
                                 } else {
                                     // Video out of view, pause it
                                     video.pause();
+                                    try {
+                                        video.currentTime = 0;
+                                    } catch (err) {}
                                 }
                             });
                         }, { threshold: [0.75] });
@@ -943,35 +974,38 @@
                             if (e.target.closest('a, button')) return;
                             
                             video.muted = !video.muted;
+                            userMutedPreference = video.muted;
                             updateVolumeIcon(video.muted);
                             flashVolumeIndicator();
                             
-                            if (!video.muted) {
-                                video.play();
+                            if (video.paused) {
+                                video.play().catch(() => {});
                             }
                         });
                     } else {
                         // ========================================
                         // DESKTOP: Hover to play with sound
                         // ========================================
-                        video.muted = true;
-                        updateVolumeIcon(true);
-                        
-                        // Load the first frame
-                        video.load();
-                        
                         card.addEventListener('mouseenter', () => {
-                            video.muted = false;
-                            video.play().catch(() => {});
-                            updateVolumeIcon(false);
-                            flashVolumeIndicator();
+                            video.muted = userMutedPreference;
+                            const playAttempt = video.play();
+                            if (playAttempt !== undefined) {
+                                playAttempt.then(() => {
+                                    updateVolumeIcon(video.muted);
+                                    flashVolumeIndicator();
+                                }).catch(() => {
+                                    // Keep muted if browser blocks unmuted playback
+                                    video.muted = true;
+                                    userMutedPreference = true;
+                                    updateVolumeIcon(true);
+                                    flashVolumeIndicator();
+                                });
+                            }
                         });
                         
                         card.addEventListener('mouseleave', () => {
                             video.pause();
                             video.currentTime = 0; // Reset to start
-                            video.muted = true;
-                            updateVolumeIcon(true);
                             flashVolumeIndicator();
                         });
                         
@@ -982,6 +1016,7 @@
                             
                             if (!video.paused) {
                                 video.muted = !video.muted;
+                                userMutedPreference = video.muted;
                                 updateVolumeIcon(video.muted);
                                 flashVolumeIndicator();
                             }
@@ -992,6 +1027,7 @@
                             e.stopPropagation();
                             if (!video.paused) {
                                 video.muted = !video.muted;
+                                userMutedPreference = video.muted;
                                 updateVolumeIcon(video.muted);
                                 flashVolumeIndicator();
                             }
