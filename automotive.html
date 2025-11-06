@@ -99,6 +99,7 @@
             /* Portrait aspect ratio 9:16 for mobile video */
             aspect-ratio: 9 / 16;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
         }
         
         @media (min-width: 1024px) {
@@ -111,6 +112,22 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        
+        .volume-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 9999px;
+            padding: 0.5rem;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+        
+        .volume-indicator.fade-out {
+            opacity: 0;
+            pointer-events: none;
         }
         
         .video-overlay {
@@ -332,11 +349,17 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid">
         <!-- Video Card 1: VW Transporter -->
-        <div class="video-card">
+        <div class="video-card" data-video-card>
             <video autoplay muted loop playsinline>
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
+            
+            <!-- Volume Indicator -->
+            <div class="volume-indicator">
+                <i data-feather="volume-x" class="h-5 w-5 text-white volume-off"></i>
+                <i data-feather="volume-2" class="h-5 w-5 text-white volume-on" style="display: none;"></i>
+            </div>
             
             <div class="video-overlay">
                 <div class="flex items-center mb-3">
@@ -370,11 +393,17 @@
         </div>
 
         <!-- Video Card 2: Audi A5 -->
-        <div class="video-card">
+        <div class="video-card" data-video-card>
             <video autoplay muted loop playsinline>
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
+            
+            <!-- Volume Indicator -->
+            <div class="volume-indicator">
+                <i data-feather="volume-x" class="h-5 w-5 text-white volume-off"></i>
+                <i data-feather="volume-2" class="h-5 w-5 text-white volume-on" style="display: none;"></i>
+            </div>
             
             <div class="video-overlay">
                 <div class="flex items-center mb-3">
@@ -815,6 +844,99 @@
                         localStorage.theme = isDark ? 'dark' : 'light';
                     });
                 }
+
+                // ========================================
+                // VIDEO HOVER-TO-PLAY WITH SOUND (Desktop & Mobile)
+                // ========================================
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 1024;
+                const videoCards = document.querySelectorAll('[data-video-card]');
+                
+                videoCards.forEach(card => {
+                    const video = card.querySelector('video');
+                    const volumeIndicator = card.querySelector('.volume-indicator');
+                    const volumeOff = volumeIndicator.querySelector('.volume-off');
+                    const volumeOn = volumeIndicator.querySelector('.volume-on');
+                    let volumeTimeout;
+                    
+                    // Function to show volume indicator temporarily
+                    const flashVolumeIndicator = () => {
+                        volumeIndicator.classList.remove('fade-out');
+                        clearTimeout(volumeTimeout);
+                        volumeTimeout = setTimeout(() => {
+                            volumeIndicator.classList.add('fade-out');
+                        }, 1500);
+                    };
+                    
+                    // Function to update volume icon
+                    const updateVolumeIcon = (muted) => {
+                        if (muted) {
+                            volumeOff.style.display = 'block';
+                            volumeOn.style.display = 'none';
+                        } else {
+                            volumeOff.style.display = 'none';
+                            volumeOn.style.display = 'block';
+                        }
+                    };
+                    
+                    if (isMobile) {
+                        // Mobile: Autoplay with sound on first interaction
+                        // Try to unmute and play on page load (may be blocked)
+                        video.muted = false;
+                        video.play().then(() => {
+                            updateVolumeIcon(false);
+                            flashVolumeIndicator();
+                        }).catch(() => {
+                            // If autoplay with sound fails, keep muted autoplay
+                            video.muted = true;
+                            updateVolumeIcon(true);
+                        });
+                        
+                        // Toggle mute on tap
+                        card.addEventListener('click', (e) => {
+                            // Don't toggle if clicking a link or button
+                            if (e.target.closest('a, button')) return;
+                            
+                            video.muted = !video.muted;
+                            updateVolumeIcon(video.muted);
+                            flashVolumeIndicator();
+                            
+                            if (!video.muted) {
+                                video.play();
+                            }
+                        });
+                    } else {
+                        // Desktop: Hover to play with sound
+                        updateVolumeIcon(true);
+                        
+                        card.addEventListener('mouseenter', () => {
+                            video.muted = false;
+                            video.play();
+                            updateVolumeIcon(false);
+                            flashVolumeIndicator();
+                        });
+                        
+                        card.addEventListener('mouseleave', () => {
+                            video.muted = true;
+                            updateVolumeIcon(true);
+                            flashVolumeIndicator();
+                        });
+                        
+                        // Click to toggle mute as well
+                        card.addEventListener('click', (e) => {
+                            // Don't toggle if clicking a link or button
+                            if (e.target.closest('a, button')) return;
+                            
+                            video.muted = !video.muted;
+                            updateVolumeIcon(video.muted);
+                            flashVolumeIndicator();
+                        });
+                    }
+                    
+                    // Initialize with fade out
+                    setTimeout(() => {
+                        volumeIndicator.classList.add('fade-out');
+                    }, 2000);
+                });
             </script>
 </body>
 </html>
