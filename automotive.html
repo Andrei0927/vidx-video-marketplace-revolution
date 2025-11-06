@@ -449,7 +449,7 @@
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: VW Transporter -->
         <div class="video-card" data-video-card data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel">
-            <video loop playsinline preload="metadata">
+            <video loop playsinline preload="auto" muted>
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
@@ -493,7 +493,7 @@
 
         <!-- Video Card 2: Audi A5 -->
         <div class="video-card" data-video-card data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol">
-            <video loop playsinline preload="metadata">
+            <video loop playsinline preload="auto" muted>
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
@@ -614,8 +614,18 @@
                     
                     console.log('Button clicked:', btn.id);
                     
+                    // Skip vertical filter button (it's a link to search.html)
+                    if (btn.id === 'vertical-filter-btn') {
+                        return; // Let the link work normally
+                    }
+                    
                     const menuId = btn.id.replace('-btn', '-menu');
                     const menu = document.getElementById(menuId);
+                    
+                    if (!menu) {
+                        console.warn('No menu found for button:', btn.id);
+                        return;
+                    }
                     
                     console.log('Menu ID:', menuId, 'Menu element:', menu);
                     console.log('Menu classes:', menu.className);
@@ -1043,18 +1053,30 @@
                     }
                     video.load();
                     
-                    // Wait for video to be ready, then show first frame
+                    // Strategy: Play briefly then pause to show first frame
+                    // This works better cross-browser than just setting currentTime
+                    const showFirstFrame = () => {
+                        video.muted = true;
+                        video.play().then(() => {
+                            console.log(`Video ${index} playing to show first frame`);
+                            // Pause after a brief moment to show first frame
+                            setTimeout(() => {
+                                if (!isMobile || index !== 0) {
+                                    video.pause();
+                                    video.currentTime = 0;
+                                }
+                            }, 100);
+                        }).catch(err => {
+                            console.log(`Video ${index} autoplay failed (normal):`, err.message);
+                            // Try setting currentTime as fallback
+                            video.currentTime = 0.1;
+                        });
+                    };
+                    
+                    // Wait for video to be ready
                     video.addEventListener('loadeddata', () => {
                         console.log(`Video ${index} loaded, duration:`, video.duration);
-                        video.currentTime = 0.1; // Show first frame
-                    }, { once: true });
-                    
-                    // Also listen for canplay to ensure video is visible
-                    video.addEventListener('canplay', () => {
-                        console.log(`Video ${index} can play`);
-                        if (video.paused && video.currentTime === 0) {
-                            video.currentTime = 0.1;
-                        }
+                        showFirstFrame();
                     }, { once: true });
 
                     let userMutedPreference = isMobile ? true : false;
@@ -1064,33 +1086,26 @@
                         // MOBILE: TikTok-style snap scrolling with autoplay
                         // ========================================
                         
-                        // Start first video immediately (muted to satisfy autoplay policies)
-                        if (index === 0) {
-                            video.muted = userMutedPreference;
-                            video.play().then(() => {
-                                updateVolumeIcon(video.muted);
-                                flashVolumeIndicator();
-                            }).catch(() => {
-                                // Autoplay might fail until user interaction; ignore
-                            });
-                        }
-                        
                         // Intersection Observer for snap scroll autoplay
                         const observer = new IntersectionObserver((entries) => {
                             entries.forEach(entry => {
                                 if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
-                                    // Video is in view, play it muted by default
+                                    // Video is in view, play it
                                     video.muted = userMutedPreference;
-                                    video.play().then(() => {
-                                        updateVolumeIcon(video.muted);
-                                    }).catch(() => {});
-                                    flashVolumeIndicator();
+                                    const playPromise = video.play();
+                                    if (playPromise !== undefined) {
+                                        playPromise.then(() => {
+                                            console.log(`Video ${index} playing`);
+                                            updateVolumeIcon(video.muted);
+                                            flashVolumeIndicator();
+                                        }).catch(err => {
+                                            console.log(`Video ${index} play failed:`, err.message);
+                                        });
+                                    }
                                 } else {
                                     // Video out of view, pause it
                                     video.pause();
-                                    try {
-                                        video.currentTime = 0;
-                                    } catch (err) {}
+                                    video.currentTime = 0;
                                 }
                             });
                         }, { threshold: [0.75] });
