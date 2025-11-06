@@ -1,8 +1,0 @@
-# Placeholder for PWA icons
-# You can generate icons at: https://www.pwabuilder.com/imageGenerator
-# 
-# Required icons:
-# - icon-192.png (192x192)
-# - icon-512.png (512x512)
-#
-# For now, the manifest will work without icons but won't be fully installable

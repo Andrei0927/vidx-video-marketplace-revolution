@@ -28,10 +28,13 @@
 - ✅ App manifest with theme colors
 - ✅ Mobile-optimized meta tags
 - ✅ Works on both iOS and Android
+- ✅ App icons (192x192, 512x512 for Android)
+- ✅ Apple touch icons (120x120, 152x152, 180x180 for iOS)
 
-## Note
-For full functionality, you'll need to add app icons to `/images/`:
-- `icon-192.png` (192x192px)
-- `icon-512.png` (512x512px)
+## Files
+- `/manifest.json` - PWA configuration
+- `/service-worker.js` - Offline caching
+- `/images/android/` - Android launcher icons (48px to 512px)
+- `/images/ios/` - iOS touch icons (16px to 1024px)
 
-You can generate these at: https://www.pwabuilder.com/imageGenerator
+All set up and ready to install!

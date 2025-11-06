@@ -39,3 +39,4 @@ images/image;s=1000x700.webp filter=lfs diff=lfs merge=lfs -text
 images/image2.webp filter=lfs diff=lfs merge=lfs -text
 *.m4v filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
+images/**/*.png filter=lfs diff=lfs merge=lfs -text
