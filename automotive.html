@@ -76,7 +76,9 @@
         /* Mobile: Full-screen snap scrolling (TikTok style) */
         @media (max-width: 1023px) {
             body {
-                padding-bottom: env(safe-area-inset-bottom);
+                padding: 0;
+                margin: 0;
+                overflow-x: hidden;
             }
             
             .video-grid {
@@ -84,9 +86,11 @@
                 height: 100vh;
                 height: 100dvh; /* Dynamic viewport height for iOS */
                 overflow-y: scroll;
+                overflow-x: hidden;
                 scroll-snap-type: y mandatory;
                 scroll-behavior: smooth;
                 padding: 0;
+                margin: 0;
                 gap: 0;
                 -webkit-overflow-scrolling: touch;
             }
@@ -98,6 +102,8 @@
                 min-height: 100dvh;
                 height: 100vh;
                 height: 100dvh;
+                width: 100vw;
+                max-width: 100vw;
                 margin-bottom: 0 !important;
                 border-radius: 0;
             }
@@ -174,13 +180,18 @@
             padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); /* Account for Safari nav bar */
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
             z-index: 5;
+            pointer-events: none; /* Allow clicks to pass through overlay */
+        }
+        
+        .video-overlay > * {
+            pointer-events: auto; /* But enable clicks on overlay children (links, buttons) */
         }
     </style>
     <!-- Note: feather icons don't have a 'car' icon; we'll use 'truck' later in the body -->
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
     <!-- Navigation -->
-    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 hidden lg:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -208,17 +219,56 @@
         </div>
     </nav>
 
-    <!-- Category Header -->
-    <div class="bg-white dark:bg-dark-100 py-6 shadow-sm dark:shadow-dark-200">
+    <!-- Category Header with Search -->
+    <div class="bg-white dark:bg-dark-100 py-4 shadow-sm dark:shadow-dark-200 hidden lg:block" id="page-header">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center">
-                <i data-feather="truck" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
-                <h1 class="ml-3 text-2xl font-bold text-gray-900 dark:text-dark-600">Automotive</h1>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i data-feather="truck" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                    <h1 class="ml-3 text-2xl font-bold text-gray-900 dark:text-dark-600">Automotive</h1>
+                    <span id="filter-badge" class="hidden ml-3 px-2 py-1 text-xs font-semibold bg-indigo-600 text-white rounded-full"></span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Filters -->
+    <!-- Vertical Filter Button (Left Edge) -->
+    <a href="search.html" id="vertical-filter-btn" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 8px 8px 0;">
+        <div class="relative flex items-center justify-center">
+            <i data-feather="sliders" class="h-5 w-5 sm:h-6 sm:w-6" style="transform: rotate(90deg);"></i>
+            <span id="floating-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center"></span>
+        </div>
+    </a>
+
+    <style>
+        #vertical-filter-btn {
+            /* Mobile: 3:4 aspect ratio, compact */
+            width: 36px;
+            height: 48px;
+        }
+        
+        @media (min-width: 640px) {
+            /* Desktop: slightly larger with text */
+            #vertical-filter-btn {
+                width: 44px;
+                height: 100px;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem 0.5rem;
+            }
+            #vertical-filter-btn::after {
+                content: 'FILTER';
+                font-size: 0.625rem;
+                font-weight: 500;
+                letter-spacing: 0.05em;
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+            }
+        }
+    </style>
+
+    <!-- Hidden Filters (keeping for backward compatibility) -->
+    <div class="hidden">
     <div class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-[100]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex space-x-4 overflow-x-auto pb-2 scroll-container">
@@ -381,11 +431,13 @@
             </div>
         </div>
     </div>
+    </div>
+    <!-- End Hidden Filters -->
 
     <!-- Video Grid (Portrait/Mobile-optimized) -->
-    <div class="video-grid">
+    <div class="video-grid" id="video-grid">
         <!-- Video Card 1: VW Transporter -->
-        <div class="video-card" data-video-card>
+        <div class="video-card" data-video-card data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel">
             <video loop playsinline preload="metadata">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -405,7 +457,7 @@
                         <p class="text-gray-300 text-sm">2 days ago · Cluj-Napoca</p>
                     </div>
                 </div>
-                <a href="details.html?ad=vw-transporter" class="block group">
+                <a href="details?ad=vw-transporter" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">VW Transporter T6.1 2021</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">45,000 km | Manual | Diesel</p>
@@ -429,7 +481,7 @@
         </div>
 
         <!-- Video Card 2: Audi A5 -->
-        <div class="video-card" data-video-card>
+        <div class="video-card" data-video-card data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol">
             <video loop playsinline preload="metadata">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -449,7 +501,7 @@
                         <p class="text-gray-300 text-sm">4 days ago · București</p>
                     </div>
                 </div>
-                <a href="details.html?ad=audi-a5" class="block group">
+                <a href="details?ad=audi-a5" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Audi A5 Sportback 2020</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">32,000 km | Automatic | Petrol</p>
@@ -484,14 +536,63 @@
 
         // Wait for DOM to be ready
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing dropdowns...');
+            console.log('DOM loaded, initializing...');
             
-            // Replace feather icons again
+            // Replace feather icons
             if (window.feather) {
                 feather.replace();
             }
 
-            // Toggle filter menus
+            // ========================================
+            // APPLY FILTERS FROM SEARCH PAGE
+            // ========================================
+            const savedFilters = localStorage.getItem('automotiveFilters');
+            if (savedFilters) {
+                const filters = JSON.parse(savedFilters);
+                const videoCards = document.querySelectorAll('[data-video-card]');
+                let visibleCount = 0;
+                
+                videoCards.forEach(card => {
+                    let visible = true;
+                    
+                    if (filters.make && card.dataset.make !== filters.make) visible = false;
+                    if (filters.year && card.dataset.year !== filters.year) visible = false;
+                    if (filters.transmission && card.dataset.transmission !== filters.transmission) visible = false;
+                    if (filters.fuel && card.dataset.fuel !== filters.fuel) visible = false;
+                    
+                    if (visible) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Show filter badge
+                const activeFilters = Object.values(filters).filter(v => v).length;
+                if (activeFilters > 0) {
+                    const badge = document.getElementById('filter-badge');
+                    badge.textContent = `${activeFilters} filter${activeFilters > 1 ? 's' : ''}`;
+                    badge.classList.remove('hidden');
+                    
+                    // Also show on floating button
+                    const floatingBadge = document.getElementById('floating-badge');
+                    if (floatingBadge) {
+                        floatingBadge.textContent = activeFilters;
+                        floatingBadge.classList.remove('hidden');
+                    }
+                }
+                
+                // Clear filters after applying
+                localStorage.removeItem('automotiveFilters');
+            }
+
+            // Replace feather icons again after any DOM updates
+            setTimeout(() => {
+                if (window.feather) feather.replace();
+            }, 100);
+
+            // Toggle filter menus (keeping for hidden filter dropdowns)
             const filterButtons = document.querySelectorAll('[id$="-filter-btn"]');
             console.log('Found filter buttons:', filterButtons.length);
             
@@ -888,12 +989,16 @@
                 const videoCards = document.querySelectorAll('[data-video-card]');
                 const videoGrid = document.querySelector('.video-grid');
                 
+                console.log('Initializing videos, mobile:', isMobile, 'cards:', videoCards.length);
+                
                 videoCards.forEach((card, index) => {
                     const video = card.querySelector('video');
                     const volumeIndicator = card.querySelector('.volume-indicator');
                     const volumeOff = volumeIndicator.querySelector('.volume-off');
                     const volumeOn = volumeIndicator.querySelector('.volume-on');
                     let volumeTimeout;
+                    
+                    console.log(`Video ${index}:`, video.src || video.querySelector('source')?.src);
                     
                     // Function to show volume indicator temporarily
                     const flashVolumeIndicator = () => {
@@ -915,17 +1020,22 @@
                         }
                     };
 
-                    // Ensure video metadata is available for first frame
+                    // Ensure video is properly set up
+                    video.setAttribute('playsinline', '');
+                    video.setAttribute('webkit-playsinline', '');
                     video.muted = true;
+                    
+                    // Force video to load
+                    const videoSource = video.querySelector('source');
+                    if (videoSource) {
+                        video.src = videoSource.src;
+                    }
                     video.load();
-                    video.addEventListener('loadeddata', () => {
-                        if (video.paused) {
-                            try {
-                                video.currentTime = 0;
-                            } catch (err) {
-                                console.debug('Unable to reset video time', err);
-                            }
-                        }
+                    
+                    // Wait for video to be ready
+                    video.addEventListener('loadedmetadata', () => {
+                        console.log(`Video ${index} metadata loaded`);
+                        video.currentTime = 0;
                     }, { once: true });
 
                     let userMutedPreference = isMobile ? true : false;

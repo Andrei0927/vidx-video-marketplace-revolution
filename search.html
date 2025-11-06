@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Search Automotive - VidX</title>
+    <script>
+        // Add dark mode class if needed before page loads
+        if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="/css/dark-mode.css">
+    <script src="components/auth-modal.js"></script>
+</head>
+<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 flex items-center">
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search & Filters -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-2">
+                <i data-feather="truck" class="inline-block h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                Automotive Search
+            </h1>
+            <p class="text-gray-600 dark:text-dark-500">Filter and find your perfect vehicle</p>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <!-- Make Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Make</label>
+                    <select id="filter-make" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Makes</option>
+                        <option value="Volkswagen">Volkswagen</option>
+                        <option value="Audi">Audi</option>
+                    </select>
+                </div>
+
+                <!-- Year Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Year</label>
+                    <select id="filter-year" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Years</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                </div>
+
+                <!-- Transmission Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Transmission</label>
+                    <select id="filter-transmission" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Types</option>
+                        <option value="Manual">Manual</option>
+                        <option value="Automatic">Automatic</option>
+                    </select>
+                </div>
+
+                <!-- Fuel Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Fuel Type</label>
+                    <select id="filter-fuel" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Fuels</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Petrol">Petrol</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4">
+                <button id="apply-filters" class="flex-1 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition font-medium">
+                    <i data-feather="search" class="inline-block h-5 w-5 mr-2"></i>
+                    Search
+                </button>
+                <button id="view-all" class="flex-1 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium">
+                    <i data-feather="list" class="inline-block h-5 w-5 mr-2"></i>
+                    View All
+                </button>
+                <button id="clear-filters" class="px-6 py-3 border border-gray-300 dark:border-dark-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition font-medium text-gray-700 dark:text-dark-500">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div id="results-info" class="mb-4 text-gray-600 dark:text-dark-500">
+            <!-- Will be populated by JS -->
+        </div>
+
+        <!-- No Results Message (hidden by default) -->
+        <div id="no-results" class="hidden text-center py-12">
+            <i data-feather="search" class="h-16 w-16 mx-auto text-gray-400 dark:text-dark-400 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-2">No Results Found</h3>
+            <p class="text-gray-600 dark:text-dark-500 mb-4">Try adjusting your filters or view all listings</p>
+            <button onclick="document.getElementById('view-all').click()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+                View All Listings
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize feather icons
+        if (window.feather) {
+            feather.replace();
+        }
+
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.theme = isDark ? 'dark' : 'light';
+            });
+        }
+
+        // Ad database
+        const allAds = [
+            {
+                id: 'vw-transporter',
+                make: 'Volkswagen',
+                model: 'Transporter',
+                year: '2021',
+                transmission: 'Manual',
+                fuel: 'Diesel',
+                mileage: '45,000 km',
+                price: '€28,500',
+                location: 'Cluj-Napoca',
+                seller: 'John Doe',
+                video: 'Demo ads/VW.m4v',
+                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
+                postedDays: 2
+            },
+            {
+                id: 'audi-a5',
+                make: 'Audi',
+                model: 'A5',
+                year: '2020',
+                transmission: 'Automatic',
+                fuel: 'Petrol',
+                mileage: '32,000 km',
+                price: '€38,900',
+                location: 'București',
+                seller: 'Test User',
+                video: 'Demo ads/Audi.m4v',
+                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=test',
+                postedDays: 4
+            }
+        ];
+
+        // Get filter values
+        function getFilters() {
+            return {
+                make: document.getElementById('filter-make').value,
+                year: document.getElementById('filter-year').value,
+                transmission: document.getElementById('filter-transmission').value,
+                fuel: document.getElementById('filter-fuel').value
+            };
+        }
+
+        // Filter ads
+        function filterAds(filters) {
+            return allAds.filter(ad => {
+                if (filters.make && ad.make !== filters.make) return false;
+                if (filters.year && ad.year !== filters.year) return false;
+                if (filters.transmission && ad.transmission !== filters.transmission) return false;
+                if (filters.fuel && ad.fuel !== filters.fuel) return false;
+                return true;
+            });
+        }
+
+        // Store filters and redirect
+        function applyFiltersAndRedirect(filters) {
+            localStorage.setItem('automotiveFilters', JSON.stringify(filters));
+            window.location.href = 'automotive.html';
+        }
+
+        // Apply filters button
+        document.getElementById('apply-filters').addEventListener('click', () => {
+            const filters = getFilters();
+            const results = filterAds(filters);
+            
+            if (results.length === 0) {
+                document.getElementById('no-results').classList.remove('hidden');
+                document.getElementById('results-info').textContent = '';
+            } else {
+                applyFiltersAndRedirect(filters);
+            }
+        });
+
+        // View all button
+        document.getElementById('view-all').addEventListener('click', () => {
+            localStorage.removeItem('automotiveFilters');
+            window.location.href = 'automotive.html';
+        });
+
+        // Clear filters
+        document.getElementById('clear-filters').addEventListener('click', () => {
+            document.getElementById('filter-make').value = '';
+            document.getElementById('filter-year').value = '';
+            document.getElementById('filter-transmission').value = '';
+            document.getElementById('filter-fuel').value = '';
+            document.getElementById('no-results').classList.add('hidden');
+            document.getElementById('results-info').textContent = '';
+        });
+
+        // Show current filter count
+        function updateResultsInfo() {
+            const filters = getFilters();
+            const results = filterAds(filters);
+            const activeFilters = Object.values(filters).filter(v => v).length;
+            
+            if (activeFilters > 0) {
+                document.getElementById('results-info').textContent = 
+                    `${results.length} result(s) match your ${activeFilters} filter(s)`;
+            } else {
+                document.getElementById('results-info').textContent = 
+                    `${allAds.length} total listings available`;
+            }
+        }
+
+        // Update on filter change
+        ['filter-make', 'filter-year', 'filter-transmission', 'filter-fuel'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => {
+                updateResultsInfo();
+                document.getElementById('no-results').classList.add('hidden');
+            });
+        });
+
+        // Initial update
+        updateResultsInfo();
+
+        // Replace feather icons after DOM updates
+        setTimeout(() => feather.replace(), 100);
+    </script>
+</body>
+</html>
