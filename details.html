@@ -3,201 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Details - VidX</title>
+    <title>Ad Details - VidX</title>
+    <script>
+        // Add dark mode class if needed before page loads
+        if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link rel="stylesheet" href="/css/dark-mode.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="index.html" class="flex-shrink-0 flex items-center">
-                        <i data-feather="video" class="text-indigo-600 h-8 w-8"></i>
-                        <span class="ml-2 text-xl font-bold text-gray-900">VidX</span>
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
                     </a>
-</div>
-                <div class="flex items-center">
-                    <button class="ml-4 p-2 rounded-full hover:bg-gray-100">
-                        <i data-feather="user"></i>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="automotive.html" class="text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center">
+                        <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
+                        <span>Back to Automotive</span>
+                    </a>
+                    <button id="theme-toggle" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Details Form -->
-    <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg overflow-hidden">
-            <!-- Progress Stepper -->
-            <div class="px-6 py-4 border-b border-gray-200">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-gray-200 rounded-full h-8 w-8 flex items-center justify-center">
-                        <span class="text-gray-600 font-medium">1</span>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-500">Upload Media</h3>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <div class="flex-1 border-t-2 border-gray-200"></div>
-                    <div class="flex-shrink-0 bg-indigo-600 rounded-full h-8 w-8 flex items-center justify-center ml-2 mr-2">
-                        <span class="text-white font-medium">2</span>
-                    </div>
-                    <div class="flex-1 border-t-2 border-gray-200"></div>
-                    <div class="flex-shrink-0 bg-gray-200 rounded-full h-8 w-8 flex items-center justify-center ml-2 mr-2">
-                        <span class="text-gray-600 font-medium">3</span>
-                    </div>
-                    <div class="flex-1 border-t-2 border-gray-200"></div>
-                </div>
-                <div class="mt-4 flex items-center">
-                    <div class="flex-shrink-0 bg-indigo-600 rounded-full h-8 w-8 flex items-center justify-center">
-                        <i data-feather="check" class="h-4 w-4 text-white"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-900">Add Details</h3>
-                        <p class="text-sm text-gray-500">Provide information about your vehicle</p>
-                    </div>
+    <!-- Ad Details Container -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Video/Images Section -->
+            <div>
+                <div class="bg-black rounded-lg overflow-hidden aspect-video lg:aspect-square">
+                    <video id="ad-video" class="w-full h-full object-cover" controls autoplay muted loop playsinline>
+                        <source id="video-source" src="" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
             </div>
 
-            <!-- Form Fields -->
-            <div class="px-6 py-8 space-y-6">
-                <!-- Basic Info -->
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="make" class="block text-sm font-medium text-gray-700">Make</label>
-                            <input type="text" id="make" name="make" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label for="model" class="block text-sm font-medium text-gray-700">Model</label>
-                            <input type="text" id="model" name="model" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label for="year" class="block text-sm font-medium text-gray-700">First Registered Year</label>
-                            <input type="number" id="year" name="year" min="1900" max="2023" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label for="mileage" class="block text-sm font-medium text-gray-700">Mileage (km)</label>
-                            <input type="number" id="mileage" name="mileage" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
+            <!-- Details Section -->
+            <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6">
+                <div class="flex items-center mb-4">
+                    <img id="seller-avatar" class="h-12 w-12 rounded-full" src="" alt="Seller">
+                    <div class="ml-3">
+                        <h3 id="seller-name" class="text-lg font-medium text-gray-900 dark:text-dark-600"></h3>
+                        <p id="posted-date" class="text-sm text-gray-500 dark:text-dark-400"></p>
                     </div>
                 </div>
 
-                <!-- Technical Details -->
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Technical Details</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="power" class="block text-sm font-medium text-gray-700">Power (HP)</label>
-                            <input type="number" id="power" name="power" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label for="engine" class="block text-sm font-medium text-gray-700">Engine Size (cc)</label>
-                            <input type="number" id="engine" name="engine" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label for="transmission" class="block text-sm font-medium text-gray-700">Transmission</label>
-                            <select id="transmission" name="transmission" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Select</option>
-                                <option>Manual</option>
-                                <option>Automatic</option>
-                                <option>Semi-Automatic</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="fuel" class="block text-sm font-medium text-gray-700">Fuel Type</label>
-                            <select id="fuel" name="fuel" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Select</option>
-                                <option>Petrol</option>
-                                <option>Diesel</option>
-                                <option>Hybrid</option>
-                                <option>Electric</option>
-                                <option>LPG</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <h1 id="ad-title" class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-2"></h1>
+                <p id="ad-price" class="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-6"></p>
 
-                <!-- Pricing -->
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Pricing</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
-                            <div class="mt-1 flex rounded-md shadow-sm">
-                                <input type="number" id="price" name="price" min="0" class="flex-1 min-w-0 block w-full rounded-none rounded-l-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 py-2 px-3">
-                                <select id="currency" name="currency" class="-ml-px relative inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm rounded-r-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option>EUR</option>
-                                    <option>RON</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="condition" class="block text-sm font-medium text-gray-700">Condition</label>
-                            <select id="condition" name="condition" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Select</option>
-                                <option>New</option>
-                                <option>Used</option>
-                                <option>Damaged</option>
-                            </select>
-                        </div>
+                <!-- Key Specs -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="flex items-center text-gray-700 dark:text-dark-500">
+                        <i data-feather="calendar" class="h-5 w-5 mr-2"></i>
+                        <span id="spec-year"></span>
+                    </div>
+                    <div class="flex items-center text-gray-700 dark:text-dark-500">
+                        <i data-feather="activity" class="h-5 w-5 mr-2"></i>
+                        <span id="spec-mileage"></span>
+                    </div>
+                    <div class="flex items-center text-gray-700 dark:text-dark-500">
+                        <i data-feather="settings" class="h-5 w-5 mr-2"></i>
+                        <span id="spec-transmission"></span>
+                    </div>
+                    <div class="flex items-center text-gray-700 dark:text-dark-500">
+                        <i data-feather="zap" class="h-5 w-5 mr-2"></i>
+                        <span id="spec-fuel"></span>
                     </div>
                 </div>
 
                 <!-- Description -->
-                <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                    <textarea id="description" name="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                <div class="border-t border-gray-200 dark:border-dark-200 pt-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-3">Description</h2>
+                    <p id="ad-description" class="text-gray-700 dark:text-dark-500 whitespace-pre-line"></p>
                 </div>
-            </div>
 
-            <!-- Navigation -->
-            <div class="px-6 py-4 bg-gray-50 flex justify-between border-t border-gray-200">
-                <button id="back-btn" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                    Back
-                </button>
-                <button id="next-btn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                    Next: Review and Publish
-                </button>
+                <!-- Additional Details -->
+                <div class="border-t border-gray-200 dark:border-dark-200 pt-6 mt-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-3">Vehicle Details</h2>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">Make:</span>
+                            <span id="detail-make" class="text-gray-900 dark:text-dark-600 font-medium"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">Model:</span>
+                            <span id="detail-model" class="text-gray-900 dark:text-dark-600 font-medium"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">Power:</span>
+                            <span id="detail-power" class="text-gray-900 dark:text-dark-600 font-medium"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">Displacement:</span>
+                            <span id="detail-displacement" class="text-gray-900 dark:text-dark-600 font-medium"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">Colour:</span>
+                            <span id="detail-colour" class="text-gray-900 dark:text-dark-600 font-medium"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">Condition:</span>
+                            <span id="detail-condition" class="text-gray-900 dark:text-dark-600 font-medium"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 flex space-x-3">
+                    <button class="flex-1 bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition flex items-center justify-center">
+                        <i data-feather="message-circle" class="h-5 w-5 mr-2"></i>
+                        Contact Seller
+                    </button>
+                    <button class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition">
+                        <i data-feather="heart" class="h-5 w-5 text-gray-700 dark:text-dark-500"></i>
+                    </button>
+                    <button class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition">
+                        <i data-feather="share-2" class="h-5 w-5 text-gray-700 dark:text-dark-500"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        feather.replace();
+        // Initialize feather icons
+        if (window.feather) {
+            feather.replace();
+        }
 
-        // Store form data in localStorage
-        const form = document.querySelector('form');
-        const formInputs = document.querySelectorAll('input, select, textarea');
-        
-        // Load saved data if available
-        formInputs.forEach(input => {
-            const savedValue = localStorage.getItem(`vehicle_${input.name}`);
-            if (savedValue) {
-                input.value = savedValue;
+        // Theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            feather.replace();
+        });
+
+        // Ad data
+        const adData = {
+            'vw-transporter': {
+                title: 'Volkswagen Transporter T5 4Motion',
+                price: '€6,790',
+                year: '2009',
+                mileage: '215,600 km',
+                transmission: 'Manual',
+                fuel: 'Diesel',
+                make: 'Volkswagen',
+                model: 'Transporter',
+                power: '131 HP',
+                displacement: '2461 CM3',
+                colour: 'Gray',
+                condition: 'Used',
+                description: `For sale Vw Transporter T5, 4Motion, 2.5TDI, 131HP
+- Year: 2009
+- 215,000 km, second owner. Car bought new from Romania.
+- 8+1 seats, short version
+- Sony radio with new bluetooth
+- A/C front and rear functional
+- Summer tires 2 years old plus set of metal rims with winter tires DOT 2020 but in very good condition.
+- Up-to-date inspections plus many engine repairs worth over 2,500 Euros, new calipers. I can send pictures of the service invoices with what repairs were made.
+
+The car is in excellent technical condition, it has a few places with rust on the paint.
+The car belongs to an association, mechanically it has been maintained exemplary.
+
+I am not interested in trades, please be serious, all documents are in order.`,
+                video: 'Demo ads/VW.m4v',
+                seller: 'Professional Seller',
+                postedDate: '2 days ago',
+                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=seller1'
+            },
+            'audi-a5': {
+                title: 'Audi A5 2013 - Brown Leather Interior',
+                price: '€9,950',
+                year: '2013',
+                mileage: '215,600 km',
+                transmission: 'Automatic',
+                fuel: 'Diesel',
+                make: 'Audi',
+                model: 'A5',
+                power: '143 HP',
+                displacement: '2461 CM3',
+                colour: 'Gray',
+                condition: 'Used',
+                description: `Runs great
+Brown leather interior
+Navigation
+Rear climate control
+Cruise Control
+Parking sensors
+Accepts swaps`,
+                video: 'Demo ads/Audi.m4v',
+                seller: 'Individual Seller',
+                postedDate: '4 days ago',
+                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=seller2'
             }
-        });
+        };
 
-        // Save data on input change
-        formInputs.forEach(input => {
-            input.addEventListener('change', () => {
-                localStorage.setItem(`vehicle_${input.name}`, input.value);
-            });
-        });
+        // Get ad ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const adId = urlParams.get('ad');
+        const ad = adData[adId];
 
-        // Navigation buttons
-        document.getElementById('back-btn').addEventListener('click', () => {
-            window.location.href = 'upload.html';
-        });
-
-        document.getElementById('next-btn').addEventListener('click', () => {
-            window.location.href = 'automotive.html';
-        });
+        if (ad) {
+            // Populate the page
+            document.getElementById('ad-title').textContent = ad.title;
+            document.getElementById('ad-price').textContent = ad.price;
+            document.getElementById('spec-year').textContent = ad.year;
+            document.getElementById('spec-mileage').textContent = ad.mileage;
+            document.getElementById('spec-transmission').textContent = ad.transmission;
+            document.getElementById('spec-fuel').textContent = ad.fuel;
+            document.getElementById('ad-description').textContent = ad.description;
+            document.getElementById('detail-make').textContent = ad.make;
+            document.getElementById('detail-model').textContent = ad.model;
+            document.getElementById('detail-power').textContent = ad.power;
+            document.getElementById('detail-displacement').textContent = ad.displacement;
+            document.getElementById('detail-colour').textContent = ad.colour;
+            document.getElementById('detail-condition').textContent = ad.condition;
+            document.getElementById('seller-name').textContent = ad.seller;
+            document.getElementById('posted-date').textContent = ad.postedDate;
+            document.getElementById('seller-avatar').src = ad.avatar;
+            document.getElementById('video-source').src = ad.video;
+            document.getElementById('ad-video').load();
+            
+            // Update page title
+            document.title = `${ad.title} - VidX`;
+            
+            // Reinitialize feather icons
+            feather.replace();
+        } else {
+            // Ad not found
+            document.querySelector('.max-w-6xl').innerHTML = `
+                <div class="text-center py-12">
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-4">Ad Not Found</h1>
+                    <p class="text-gray-600 dark:text-dark-500 mb-6">The ad you're looking for doesn't exist.</p>
+                    <a href="automotive.html" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition inline-block">
+                        Back to Automotive
+                    </a>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>

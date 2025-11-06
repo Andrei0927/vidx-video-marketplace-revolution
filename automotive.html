@@ -62,8 +62,65 @@
             background-color: #6366f1;
             color: white;
         }
-        .video-container {
-            height: calc(100vh - 160px);
+        /* Mobile-first portrait video grid */
+        .video-grid {
+            padding: 1rem;
+            max-width: 100%;
+        }
+        
+        @media (min-width: 640px) {
+            .video-grid {
+                max-width: 640px;
+                margin: 0 auto;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .video-grid {
+                max-width: 1200px;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (min-width: 1280px) {
+            .video-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .video-card {
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            /* Portrait aspect ratio 9:16 for mobile video */
+            aspect-ratio: 9 / 16;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        @media (min-width: 1024px) {
+            .video-card {
+                margin-bottom: 0;
+            }
+        }
+        
+        .video-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+            z-index: 2;
         }
     </style>
     <!-- Note: feather icons don't have a 'car' icon; we'll use 'truck' later in the body -->
@@ -109,7 +166,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
+    <div class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-[100]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex space-x-4 overflow-x-auto pb-2 scroll-container">
                 <!-- Car Make Filter -->
@@ -272,106 +329,82 @@
         </div>
     </div>
 
-    <!-- Video Timeline -->
-    <div class="video-container relative overflow-hidden z-0">
-        <!-- Video 1 -->
-        <div class="absolute inset-0 bg-black flex items-center justify-center">
-            <div class="relative w-full h-full">
-                <!-- Video -->
-                <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-                    <source src="Demo ads/VW.m4v" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-                
-                <!-- Video info overlay -->
-                <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" src="http://static.photos/people/200x200/1" alt="">
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-white font-medium">Maria Ionescu</h3>
-                            <p class="text-gray-300 text-sm">1 day ago</p>
-                        </div>
+    <!-- Video Grid (Portrait/Mobile-optimized) -->
+    <div class="video-grid">
+        <!-- Video Card 1: VW Transporter -->
+        <div class="video-card">
+            <video autoplay muted loop playsinline>
+                <source src="Demo ads/VW.m4v" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+            
+            <div class="video-overlay">
+                <div class="flex items-center mb-3">
+                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=seller1" alt="Seller">
+                    <div class="ml-3">
+                        <h3 class="text-white font-medium">Professional Seller</h3>
+                        <p class="text-gray-300 text-sm">2 days ago</p>
                     </div>
-                    <a href="Demo ads/Details VW.txt" class="block">
-                        <h2 class="mt-2 text-xl font-bold text-white hover:text-indigo-400 transition">Volkswagen Golf 8 GTI - Performance Edition</h2>
-                    </a>
-                    <p class="mt-1 text-gray-300">12,000 km | DSG Automatic | Petrol</p>
-                    <div class="mt-4 flex items-center justify-between">
-                        <span class="text-xl font-bold text-white">€42,500</span>
-                        <div class="flex space-x-4">
-                            <button class="flex items-center text-white group">
-                                <i data-feather="heart" class="h-6 w-6 group-hover:text-pink-500 transition"></i>
-                                <span class="ml-1">89</span>
-                            </button>
-                            <button class="flex items-center text-white group">
-                                <i data-feather="message-square" class="h-6 w-6 group-hover:text-blue-500 transition"></i>
-                                <span class="ml-1">23</span>
-                            </button>
-                            <button class="flex items-center text-white group">
-                                <i data-feather="share-2" class="h-6 w-6 group-hover:text-green-500 transition"></i>
-                            </button>
-                        </div>
+                </div>
+                <a href="details?ad=vw-transporter" class="block group">
+                    <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Volkswagen Transporter T5 4Motion</h2>
+                </a>
+                <p class="mt-1 text-gray-300 text-sm">215,600 km | Manual | Diesel | 131 HP</p>
+                <div class="mt-3 flex items-center justify-between">
+                    <span class="text-xl font-bold text-white">€6,790</span>
+                    <div class="flex space-x-3">
+                        <button class="flex items-center text-white group">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm">42</span>
+                        </button>
+                        <button class="flex items-center text-white group">
+                            <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
+                            <span class="ml-1 text-sm">12</span>
+                        </button>
+                        <button class="flex items-center text-white group">
+                            <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Video 2 -->
-        <div class="absolute inset-0 bg-black flex items-center justify-center translate-x-full">
-            <div class="relative w-full h-full">
-                <!-- Video -->
-                <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline>
-                    <source src="Demo ads/Audi.m4v" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-                
-                <!-- Video info overlay -->
-                <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" src="http://static.photos/people/200x200/2" alt="">
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-white font-medium">Alexandru Popescu</h3>
-                            <p class="text-gray-300 text-sm">2 days ago</p>
-                        </div>
-                    </div>
-                    <a href="Demo ads/Details Audi.txt" class="block">
-                        <h2 class="mt-2 text-xl font-bold text-white hover:text-indigo-400 transition">Audi A4 2022 - Executive Package</h2>
-                    </a>
-                    <p class="mt-1 text-gray-300">45,000 km | Automatic | Diesel</p>
-                    <div class="mt-4 flex items-center justify-between">
-                        <span class="text-xl font-bold text-white">€39,900</span>
-                        <div class="flex space-x-4">
-                            <button class="flex items-center text-white group">
-                                <i data-feather="heart" class="h-6 w-6 group-hover:text-pink-500 transition"></i>
-                                <span class="ml-1">156</span>
-                            </button>
-                            <button class="flex items-center text-white group">
-                                <i data-feather="message-square" class="h-6 w-6 group-hover:text-blue-500 transition"></i>
-                                <span class="ml-1">31</span>
-                            </button>
-                            <button class="flex items-center text-white group">
-                                <i data-feather="share-2" class="h-6 w-6 group-hover:text-green-500 transition"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Navigation Arrows -->
-    <div class="fixed bottom-6 right-6 z-20">
-        <div class="flex space-x-3">
-            <button class="p-3 bg-white dark:bg-dark-100 rounded-full shadow-md dark:shadow-dark-200 hover:bg-gray-100 dark:hover:bg-dark-200 transition">
-                <i data-feather="chevron-up" class="h-6 w-6 text-gray-700 dark:text-dark-500"></i>
-            </button>
-            <button class="p-3 bg-white dark:bg-dark-100 rounded-full shadow-md dark:shadow-dark-200 hover:bg-gray-100 dark:hover:bg-dark-200 transition">
-                <i data-feather="chevron-down" class="h-6 w-6 text-gray-700 dark:text-dark-500"></i>
-            </button>
+        <!-- Video Card 2: Audi A5 -->
+        <div class="video-card">
+            <video autoplay muted loop playsinline>
+                <source src="Demo ads/Audi.m4v" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+            
+            <div class="video-overlay">
+                <div class="flex items-center mb-3">
+                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=seller2" alt="Seller">
+                    <div class="ml-3">
+                        <h3 class="text-white font-medium">Individual Seller</h3>
+                        <p class="text-gray-300 text-sm">4 days ago</p>
+                    </div>
+                </div>
+                <a href="details?ad=audi-a5" class="block group">
+                    <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Audi A5 2013 - Brown Leather Interior</h2>
+                </a>
+                <p class="mt-1 text-gray-300 text-sm">215,600 km | Automatic | Diesel | 143 HP</p>
+                <div class="mt-3 flex items-center justify-between">
+                    <span class="text-xl font-bold text-white">€9,950</span>
+                    <div class="flex space-x-3">
+                        <button class="flex items-center text-white group">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm">87</span>
+                        </button>
+                        <button class="flex items-center text-white group">
+                            <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
+                            <span class="ml-1 text-sm">19</span>
+                        </button>
+                        <button class="flex items-center text-white group">
+                            <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -480,22 +513,28 @@
                 });
             }
 
-            // Update nav auth UI
+            // Update nav auth UI - only show if actually logged in
             const avatar = localStorage.getItem('userAvatar');
             const name = localStorage.getItem('userName');
+            const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
             const avatarEl = document.getElementById('nav-avatar');
             const nameEl = document.getElementById('nav-username');
             const iconSvg = userBtn && userBtn.querySelector('svg');
 
-            if (avatar && avatarEl) {
+            if (sessionToken && avatar && avatarEl) {
                 avatarEl.src = avatar;
                 avatarEl.classList.remove('hidden');
                 if (iconSvg) iconSvg.classList.add('hidden');
+            } else {
+                if (avatarEl) avatarEl.classList.add('hidden');
+                if (iconSvg) iconSvg.classList.remove('hidden');
             }
 
-            if (name && nameEl) {
+            if (sessionToken && name && nameEl) {
                 nameEl.textContent = name;
                 nameEl.classList.remove('hidden');
+            } else {
+                if (nameEl) nameEl.classList.add('hidden');
             }
         });
     </script>
