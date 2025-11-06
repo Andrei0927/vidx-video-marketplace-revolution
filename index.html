@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VidX - Discover Products Through Video</title>
+    <title>VidX - Discover Products Through Video</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VidX">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -467,6 +475,17 @@
                                 console.error('Could not switch to register tab on auth modal', err);
                             }
                         }, 50);
+                    });
+                }
+                
+                // ========================================
+                // REGISTER SERVICE WORKER FOR PWA
+                // ========================================
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('/service-worker.js')
+                            .then(reg => console.log('Service Worker registered'))
+                            .catch(err => console.log('Service Worker registration failed:', err));
                     });
                 }
 </script>

@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Automotive - VidX</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VidX">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
     <script>
         // Add dark mode class if needed before page loads
         if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -1025,17 +1033,25 @@
                     video.setAttribute('webkit-playsinline', '');
                     video.muted = true;
                     
-                    // Force video to load
+                    // Force video to load and show first frame
                     const videoSource = video.querySelector('source');
                     if (videoSource) {
                         video.src = videoSource.src;
                     }
                     video.load();
                     
-                    // Wait for video to be ready
-                    video.addEventListener('loadedmetadata', () => {
-                        console.log(`Video ${index} metadata loaded`);
-                        video.currentTime = 0;
+                    // Wait for video to be ready, then show first frame
+                    video.addEventListener('loadeddata', () => {
+                        console.log(`Video ${index} loaded, duration:`, video.duration);
+                        video.currentTime = 0.1; // Show first frame
+                    }, { once: true });
+                    
+                    // Also listen for canplay to ensure video is visible
+                    video.addEventListener('canplay', () => {
+                        console.log(`Video ${index} can play`);
+                        if (video.paused && video.currentTime === 0) {
+                            video.currentTime = 0.1;
+                        }
                     }, { once: true });
 
                     let userMutedPreference = isMobile ? true : false;
@@ -1150,6 +1166,17 @@
                         volumeIndicator.classList.add('fade-out');
                     }, 2000);
                 });
+                
+                // ========================================
+                // REGISTER SERVICE WORKER FOR PWA
+                // ========================================
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('/service-worker.js')
+                            .then(reg => console.log('Service Worker registered'))
+                            .catch(err => console.log('Service Worker registration failed:', err));
+                    });
+                }
             </script>
 </body>
 </html>
