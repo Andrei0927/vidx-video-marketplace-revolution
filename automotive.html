@@ -124,6 +124,15 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            background: #000;
+        }
+        
+        .video-card video::-webkit-media-controls {
+            display: none !important;
+        }
+        
+        .video-card video::-webkit-media-controls-enclosure {
+            display: none !important;
         }
         
         .volume-indicator {
@@ -148,8 +157,9 @@
             left: 0;
             right: 0;
             padding: 1.5rem;
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); /* Account for Safari nav bar */
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
-            z-index: 2;
+            z-index: 5;
         }
     </style>
     <!-- Note: feather icons don't have a 'car' icon; we'll use 'truck' later in the body -->
@@ -362,7 +372,7 @@
     <div class="video-grid">
         <!-- Video Card 1: VW Transporter -->
         <div class="video-card" data-video-card>
-            <video loop playsinline>
+            <video loop playsinline preload="metadata">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
@@ -406,7 +416,7 @@
 
         <!-- Video Card 2: Audi A5 -->
         <div class="video-card" data-video-card>
-            <video loop playsinline>
+            <video loop playsinline preload="metadata">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
@@ -947,6 +957,9 @@
                         video.muted = true;
                         updateVolumeIcon(true);
                         
+                        // Load the first frame
+                        video.load();
+                        
                         card.addEventListener('mouseenter', () => {
                             video.muted = false;
                             video.play().catch(() => {});
@@ -967,6 +980,16 @@
                             // Don't toggle if clicking a link or button
                             if (e.target.closest('a, button')) return;
                             
+                            if (!video.paused) {
+                                video.muted = !video.muted;
+                                updateVolumeIcon(video.muted);
+                                flashVolumeIndicator();
+                            }
+                        });
+                        
+                        // Click volume indicator to toggle sound
+                        volumeIndicator.addEventListener('click', (e) => {
+                            e.stopPropagation();
                             if (!video.paused) {
                                 video.muted = !video.muted;
                                 updateVolumeIcon(video.muted);
