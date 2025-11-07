@@ -330,44 +330,40 @@
 
     <!-- Scripts -->
     <script src="js/dark-mode.js"></script>
+    
+    <!-- Filter Renderer Scripts -->
     <script src="js/electronics-filter-schema.js"></script>
-    <script type="module">
-        import FilterRenderer from './js/filter-renderer.js';
-        
-        // Wait for DOM and schema to load
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize filter renderer
-            const electronicsRenderer = new FilterRenderer(
-                window.electronicsFilterSchema || electronicsFilterSchema,
-                'filter-container',
-                {
-                    onChange: (filters) => {
-                        console.log('Filters changed:', filters);
-                        window.updateActiveFilters(filters);
-                    },
-                    onApply: () => {
-                        console.log('Applying filters...');
-                        window.applyFilters();
-                    },
-                    onClear: () => {
-                        console.log('Clearing filters...');
-                        window.clearResults();
-                    }
+    <script src="js/filter-renderer.js"></script>
+    <script>
+        // Initialize the filter renderer
+        const electronicsRenderer = new FilterRenderer(
+            electronicsFilterSchema,
+            'filter-container',
+            {
+                onChange: (filterValues) => {
+                    console.log('Filters changed:', filterValues);
+                    updateActiveFilters(filterValues);
+                },
+                onApply: (filterValues) => {
+                    console.log('Applying filters:', filterValues);
+                    // Store filters in localStorage for electronics.html
+                    localStorage.setItem('electronicsFilters', JSON.stringify(filterValues));
+                    // Redirect to electronics.html with filters applied
+                    window.location.href = 'electronics.html';
+                },
+                onClear: () => {
+                    clearResults();
                 }
-            );
-            
-            electronicsRenderer.render();
-            
-            // Make renderer global for access
-            window.electronicsRenderer = electronicsRenderer;
-            
-            // Re-render feather icons
-            if (typeof feather !== 'undefined') {
-                feather.replace();
             }
-        });
+        );
 
-        window.updateActiveFilters = function(filters) {
+        // Render the filters
+        electronicsRenderer.render();
+
+        // Replace feather icons after rendering
+        setTimeout(() => feather.replace(), 100);
+
+        function updateActiveFilters(filters) {
             const container = document.getElementById('active-filters');
             container.innerHTML = '';
             
@@ -407,16 +403,7 @@
             }
         }
 
-        window.applyFilters = function() {
-            // Save filters to localStorage for electronics.html to read
-            const filters = window.electronicsRenderer.getFilters();
-            localStorage.setItem('electronicsFilters', JSON.stringify(filters));
-            
-            // Redirect to electronics.html
-            window.location.href = 'electronics.html';
-        }
-
-        window.clearResults = function() {
+        function clearResults() {
             document.getElementById('results-grid').innerHTML = `
                 <div class="col-span-full text-center py-12">
                     <i data-feather="search" class="h-16 w-16 text-gray-300 dark:text-dark-300 mx-auto mb-4"></i>
