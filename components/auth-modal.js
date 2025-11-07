@@ -365,7 +365,15 @@ class AuthModal extends HTMLElement {
       if (hasError) return;
 
       this.setLoading(true);
-      const { user, profile, session } = await authService.login(email, password);
+      const result = await authService.login(email, password);
+      
+      console.log('Login result:', result);
+      
+      const { user, profile, session } = result;
+      
+      console.log('User:', user);
+      console.log('Profile:', profile);
+      console.log('Session:', session);
       
       // Store session and user info
       localStorage.setItem('sessionToken', session);
@@ -374,9 +382,18 @@ class AuthModal extends HTMLElement {
       localStorage.setItem('userName', user.name);
       localStorage.setItem('userAvatar', profile.avatar);
       
+      console.log('Stored in localStorage:', {
+        sessionToken: localStorage.getItem('sessionToken'),
+        userId: localStorage.getItem('userId'),
+        userEmail: localStorage.getItem('userEmail'),
+        userName: localStorage.getItem('userName'),
+        userAvatar: localStorage.getItem('userAvatar')
+      });
+
       this.closeModal();
       window.location.reload();
     } catch (error) {
+      console.error('Login error:', error);
       this.showError('login-error', error.message);
     } finally {
       this.setLoading(false);
@@ -427,21 +444,36 @@ class AuthModal extends HTMLElement {
       if (hasError) return;
 
       this.setLoading(true);
-      const user = await authService.register({ name, email, password });
+      const result = await authService.register({ name, email, password });
       
-      // Auto-login after registration
-      const { profile, session } = await authService.login(email, password);
+      console.log('Registration result:', result);
+      
+      // Extract user, profile, and token from registration response
+      const { user, profile, token } = result;
+      
+      console.log('User:', user);
+      console.log('Profile:', profile);
+      console.log('Token:', token);
       
       // Store session and user info
-      localStorage.setItem('sessionToken', session);
+      localStorage.setItem('sessionToken', token);
       localStorage.setItem('userId', user.id);
       localStorage.setItem('userEmail', user.email);
       localStorage.setItem('userName', user.name);
       localStorage.setItem('userAvatar', profile.avatar);
+      
+      console.log('Stored in localStorage:', {
+        sessionToken: localStorage.getItem('sessionToken'),
+        userId: localStorage.getItem('userId'),
+        userEmail: localStorage.getItem('userEmail'),
+        userName: localStorage.getItem('userName'),
+        userAvatar: localStorage.getItem('userAvatar')
+      });
 
       this.closeModal();
       window.location.reload();
     } catch (error) {
+      console.error('Registration error:', error);
       this.showError('register-error', error.message);
     } finally {
       this.setLoading(false);
