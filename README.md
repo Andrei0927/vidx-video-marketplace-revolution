@@ -20,9 +20,9 @@ A modern video-first marketplace where AI creates professional video ads automat
 
 ### 🤖 AI-Powered Video Creation
 - **Automatic Script Generation**: AI writes engaging promotional copy from your description
-- **Professional Voiceover**: Consistent brand voice (TTS) like TikTok's signature sound
+- **Professional Voiceover**: Consistent brand voice (TTS) for familiarity
 - **Auto Captions**: Accessibility-friendly animated captions
-- **Smart Transitions**: TikTok-style slideshow format optimized for mobile
+- **Smart Transitions**: Mobile-optimized slideshow format
 - **Background Music**: Curated music options (Upbeat, Calm, Energetic, None)
 
 ### 🔐 Secure Authentication
@@ -32,7 +32,7 @@ A modern video-first marketplace where AI creates professional video ads automat
 - **Local Development**: Works on localhost with fallback for iOS
 
 ### 📱 Mobile-First Design
-- **TikTok-Style Scrolling**: Full-screen snap scrolling on automotive page
+- **Immersive Scrolling**: Full-screen snap scrolling on automotive page
 - **Hover-to-Play**: Desktop videos play on hover, pause on leave
 - **Dark Mode**: Full dark mode support across all pages
 - **Responsive**: Optimized for mobile, tablet, and desktop
@@ -102,14 +102,14 @@ this.apiKey = 'your-actual-revid-api-key-here';
 ### AI Integration
 - **Revid.ai** - Video generation
 - **TTS** - Professional voiceover
-- **Auto Captions** - TikTok-style captions
+- **Auto Captions** - Modern animated captions
 
 ## 📂 Project Structure
 
 ```
 vidx-video-marketplace-revolution/
 ├── index.html              # Homepage
-├── automotive.html         # TikTok-style video feed
+├── automotive.html         # Immersive video feed
 ├── details.html           # Ad detail page
 ├── upload.html            # Step 1: Upload images
 ├── upload-details.html    # Step 2: Add details
@@ -146,7 +146,7 @@ vidx-video-marketplace-revolution/
 
 ### Marketplace Pages
 - **index.html** - Homepage with category grid
-- **automotive.html** - TikTok-style full-screen scrolling
+- **automotive.html** - Full-screen immersive scrolling
 - **electronics.html** - Standard grid layout
 - **fashion.html** - Grid layout
 - **details.html** - Individual ad details with video
@@ -201,7 +201,7 @@ GET  /video/status/:id - Check video status
 
 ## 🎨 Design Features
 
-### TikTok-Style Video Feed
+### Immersive Video Feed
 - Full-screen vertical videos (9:16)
 - Snap scrolling between videos
 - Autoplay when 75% visible

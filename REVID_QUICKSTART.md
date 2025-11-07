@@ -5,10 +5,10 @@
 ### Features
 - **AI Video Generation**: Automatically creates professional video ads from images + description
 - **Smart Script Generation**: AI analyzes your product description and creates engaging copy
-- **Professional Voiceover**: Uses consistent "Emma" voice (like TikTok's signature voice)
-- **Auto Captions**: TikTok-style animated captions for accessibility
+- **Professional Voiceover**: Uses consistent "Emma" voice for brand familiarity
+- **Auto Captions**: Modern animated captions for accessibility
 - **Music Options**: 4 choices - Upbeat, Calm, Energetic, or No Music
-- **Mobile-First**: Vertical 9:16 format optimized for TikTok/Instagram
+- **Mobile-First**: Vertical 9:16 format optimized for social media
 
 ### Upload Flow
 1. **Upload Images** → Select background music
@@ -78,7 +78,7 @@ const result = await revidService.waitForVideo(video.jobId);
 - **Resolution**: 1080x1920 (vertical)
 - **Duration**: 15-30 seconds
 - **Format**: MP4, H.264
-- **Captions**: Auto-generated, TikTok style
+- **Captions**: Auto-generated, modern animated style
 - **Voice**: Emma (professional, clear)
 - **Music**: 4 options (or none)
 - **Style**: Slideshow with smooth transitions
@@ -153,7 +153,7 @@ See `REVID_INTEGRATION.md` for:
   - Generate script
   - Professional voiceover
   - Automatic captions
-  - TikTok-style format
+  - Mobile-optimized format
 
 ### Review Page
 - Shows music choice

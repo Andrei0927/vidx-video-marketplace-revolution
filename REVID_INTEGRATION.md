@@ -6,8 +6,8 @@ VidX uses Revid.ai to automatically generate professional video ads from user-up
 
 - **AI Script Generation**: Creates engaging promotional scripts from item descriptions
 - **Text-to-Speech**: Professional voiceover using a consistent brand voice
-- **Video Creation**: TikTok-style slideshow with transitions and effects
-- **Auto Captions**: Accessibility-friendly captions in TikTok style
+- **Video Creation**: Mobile-optimized slideshow with transitions and effects
+- **Auto Captions**: Accessibility-friendly modern animated captions
 - **Background Music**: Curated music options to match the vibe
 
 ## Features
@@ -17,7 +17,7 @@ VidX uses Revid.ai to automatically generate professional video ads from user-up
 1. **Simplified Options**
    - Music selection (4 options: Upbeat, Calm, Energetic, No Music)
    - Video style is fixed to "slideshow" for consistency
-   - One consistent AI voice for brand familiarity (like TikTok's signature voice)
+   - One consistent AI voice for brand familiarity
 
 2. **Automated Video Generation**
    - Upload images → Add description → Get professional video
@@ -92,7 +92,7 @@ class RevidService {
   "prompt": "Create script for [category] listing...",
   "tone": "professional",
   "length": "short",
-  "platform": "tiktok"
+  "platform": "social"
 }
 ```
 
@@ -119,7 +119,7 @@ class RevidService {
   "images": [...base64 encoded images],
   "captions": {
     "enabled": true,
-    "style": "tiktok",
+    "style": "modern",
     "position": "center",
     "animation": true
   },
@@ -225,7 +225,7 @@ this.defaultVoice = 'emma';  // Professional, clear voice
 ```
 
 **Why one voice?**
-- Creates brand recognition (like TikTok's signature voice)
+- Creates brand recognition and consistency
 - Users get familiar with the sound
 - Professional and consistent quality
 

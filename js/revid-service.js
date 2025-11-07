@@ -16,13 +16,13 @@ class RevidService {
         this.baseUrl = 'https://api.revid.ai/v1'; // Standard REST API pattern
         
         // Voice configuration - using one consistent voice for brand familiarity
-        this.defaultVoice = 'emma'; // Professional, clear voice (like TikTok's signature voice)
+        this.defaultVoice = 'emma'; // Professional, clear voice for consistency
         
-        // Music options - limited selection
+        // Music options - curated selection for marketplace ads
         this.musicOptions = {
-            'upbeat': 'upbeat_commercial',
-            'calm': 'calm_background',
-            'energetic': 'energetic_promo',
+            'upbeat': 'upbeat',
+            'calm': 'calm',
+            'energetic': 'energetic',
             'none': null
         };
         
@@ -59,8 +59,8 @@ class RevidService {
                 body: JSON.stringify({
                     prompt: prompt,
                     tone: 'professional', // Professional tone for marketplace ads
-                    length: 'short', // 15-30 seconds for social media
-                    platform: 'tiktok' // TikTok-style short-form
+                    length: 'short', // 15-30 seconds optimized for mobile viewing
+                    platform: 'social' // Social media optimized format
                 })
             });
 
@@ -113,7 +113,7 @@ class RevidService {
                     images: imageData,
                     captions: {
                         enabled: true,
-                        style: 'tiktok', // TikTok-style captions
+                        style: 'modern', // Modern animated captions
                         position: 'center',
                         animation: true
                     },
@@ -240,7 +240,7 @@ class RevidService {
 - Maintain factual accuracy - use ONLY information provided above
 - Create urgency without being pushy
 - End with a clear call-to-action
-- Write for TikTok/Instagram Reels style delivery`;
+- Write for mobile-first short-form video delivery`;
         
         return prompt;
     }
