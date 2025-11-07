@@ -473,7 +473,7 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: VW Transporter -->
-    <div class="video-card" data-video-card data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel" data-details-url="details?ad=vw-transporter">
+    <div class="video-card" data-video-card data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel" data-details-url="details.html?ad=vw-transporter">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -493,7 +493,7 @@
                         <p class="text-gray-300 text-sm">2 days ago · Cluj-Napoca</p>
                     </div>
                 </div>
-                <a href="details?ad=vw-transporter" class="block group">
+                <a href="details.html?ad=vw-transporter" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">VW Transporter T6.1 2021</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">45,000 km | Manual | Diesel</p>
@@ -517,7 +517,8 @@
         </div>
 
         <!-- Video Card 2: Audi A5 -->
-    <div class="video-card" data-video-card data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol" data-details-url="details?ad=audi-a5">
+            <!-- Video Card 2: Audi A5 -->
+    <div class="video-card" data-video-card data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol" data-details-url="details.html?ad=audi-a5">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -531,34 +532,15 @@
             
             <div class="video-overlay">
                 <div class="flex items-center mb-3">
-                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=test" alt="Seller">
+                    <img class="h-10 w-10 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=jane" alt="Seller">
                     <div class="ml-3">
-                        <h3 class="text-white font-medium">Test User</h3>
-                        <p class="text-gray-300 text-sm">4 days ago · București</p>
+                        <h3 class="text-white font-medium">Jane Smith</h3>
+                        <p class="text-gray-300 text-sm">5 days ago · Bucharest</p>
                     </div>
                 </div>
-                <a href="details?ad=audi-a5" class="block group">
+                <a href="details.html?ad=audi-a5" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Audi A5 Sportback 2020</h2>
                 </a>
-                <p class="mt-1 text-gray-300 text-sm">32,000 km | Automatic | Petrol</p>
-                <div class="mt-3 flex items-center justify-between">
-                    <span class="text-xl font-bold text-white">€38,900</span>
-                    <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">87</span>
-                        </button>
-                        <button class="flex items-center text-white group">
-                            <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
-                            <span class="ml-1 text-sm">19</span>
-                        </button>
-                        <button class="flex items-center text-white group">
-                            <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script type="module">
