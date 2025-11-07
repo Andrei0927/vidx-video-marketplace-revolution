@@ -523,7 +523,8 @@ class FilterRenderer {
      */
     renderActionButtons() {
         const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'flex space-x-4 mt-6';
+        buttonContainer.id = 'filter-action-buttons';
+        buttonContainer.className = 'flex space-x-4 mt-6 md:mt-6 md:order-last';
 
         const applyBtn = document.createElement('button');
         applyBtn.id = 'apply-filters';
@@ -539,7 +540,13 @@ class FilterRenderer {
 
         buttonContainer.appendChild(applyBtn);
         buttonContainer.appendChild(clearBtn);
-        this.container.appendChild(buttonContainer);
+        
+        // Insert at the beginning on mobile, at the end on desktop
+        if (this.container.firstChild) {
+            this.container.insertBefore(buttonContainer, this.container.firstChild);
+        } else {
+            this.container.appendChild(buttonContainer);
+        }
 
         // Replace feather icons
         if (window.feather) {
@@ -624,6 +631,13 @@ class FilterRenderer {
         this.container.querySelectorAll('select').forEach(select => {
             select.selectedIndex = 0;
         });
+
+        // Reset model dropdown to disabled state when make is cleared
+        const modelSelect = document.getElementById('model-select');
+        if (modelSelect) {
+            modelSelect.innerHTML = '<option value="">Select make first</option>';
+            modelSelect.disabled = true;
+        }
 
         if (this.callbacks.onClear) {
             this.callbacks.onClear();

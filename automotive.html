@@ -609,6 +609,15 @@
                     matchesValue(filters.fuel, card.dataset.fuel);
 
                 card.style.display = visible ? '' : 'none';
+                
+                // Pause and reset hidden videos
+                if (!visible) {
+                    const video = card.querySelector('video');
+                    if (video) {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                }
             });
 
             const activeFilters = Object.values(filters).filter(value => {
@@ -867,6 +876,9 @@
                 if (isMobile) {
                     const observer = new IntersectionObserver(entries => {
                         entries.forEach(entry => {
+                            // Only process if card is not hidden by filters
+                            if (card.style.display === 'none') return;
+                            
                             if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
                                 video.muted = userMutedPreference;
                                 const playAttempt = video.play();

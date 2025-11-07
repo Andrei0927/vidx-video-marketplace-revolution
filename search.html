@@ -218,6 +218,30 @@
         .dark .filter-checkbox-item:hover {
             background: rgba(99, 102, 241, 0.1);
         }
+        
+        /* Action buttons positioning - top on mobile, bottom on desktop */
+        .filter-compact-grid {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #filter-action-buttons {
+            order: -1; /* Top on mobile */
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .filter-compact-grid {
+                display: grid;
+            }
+            
+            #filter-action-buttons {
+                order: 9999; /* Bottom on desktop */
+                margin-top: 1.5rem;
+                margin-bottom: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
