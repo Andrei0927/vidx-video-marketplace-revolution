@@ -343,8 +343,19 @@ class AuthModal extends HTMLElement {
     try {
       this.clearErrors();
       
+      console.log('=== LOGIN START ===');
+      
+      // Check if authService is loaded
+      if (!authService) {
+        console.error('Auth service not loaded yet!');
+        this.showError('login-error', 'Please wait and try again');
+        return;
+      }
+      
       const email = this.shadowRoot.querySelector('#login-email').value.trim();
       const password = this.shadowRoot.querySelector('#login-password').value;
+      
+      console.log('Login attempt for:', email);
       
       // Validate inputs
       let hasError = false;
@@ -362,8 +373,12 @@ class AuthModal extends HTMLElement {
         hasError = true;
       }
       
-      if (hasError) return;
+      if (hasError) {
+        console.log('Validation failed');
+        return;
+      }
 
+      console.log('Calling authService.login...');
       this.setLoading(true);
       const result = await authService.login(email, password);
       
@@ -389,10 +404,13 @@ class AuthModal extends HTMLElement {
         userName: localStorage.getItem('userName'),
         userAvatar: localStorage.getItem('userAvatar')
       });
+      
+      console.log('=== LOGIN SUCCESS ===');
 
       this.closeModal();
       window.location.reload();
     } catch (error) {
+      console.error('=== LOGIN ERROR ===');
       console.error('Login error:', error);
       this.showError('login-error', error.message);
     } finally {
@@ -404,10 +422,21 @@ class AuthModal extends HTMLElement {
     try {
       this.clearErrors();
       
+      console.log('=== REGISTRATION START ===');
+      
+      // Check if authService is loaded
+      if (!authService) {
+        console.error('Auth service not loaded yet!');
+        this.showError('register-error', 'Please wait and try again');
+        return;
+      }
+      
       const name = this.shadowRoot.querySelector('#register-name').value.trim();
       const email = this.shadowRoot.querySelector('#register-email').value.trim();
       const password = this.shadowRoot.querySelector('#register-password').value;
       const confirm = this.shadowRoot.querySelector('#register-confirm').value;
+      
+      console.log('Form data:', { name, email, passwordLength: password.length });
       
       // Validate inputs
       let hasError = false;
@@ -441,8 +470,12 @@ class AuthModal extends HTMLElement {
         hasError = true;
       }
       
-      if (hasError) return;
+      if (hasError) {
+        console.log('Validation failed');
+        return;
+      }
 
+      console.log('Calling authService.register...');
       this.setLoading(true);
       const result = await authService.register({ name, email, password });
       
@@ -469,10 +502,13 @@ class AuthModal extends HTMLElement {
         userName: localStorage.getItem('userName'),
         userAvatar: localStorage.getItem('userAvatar')
       });
+      
+      console.log('=== REGISTRATION SUCCESS ===');
 
       this.closeModal();
       window.location.reload();
     } catch (error) {
+      console.error('=== REGISTRATION ERROR ===');
       console.error('Registration error:', error);
       this.showError('register-error', error.message);
     } finally {
