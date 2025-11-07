@@ -59,6 +59,12 @@
                         <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
                     </button>
+                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200 flex items-center">
+                        <img id="nav-avatar" src="" alt="" class="hidden h-6 w-6 rounded-full object-cover">
+                        <span id="nav-username" class="hidden ml-2 text-sm font-medium text-gray-900 dark:text-dark-600"></span>
+                        <i data-feather="user" class="h-5 w-5"></i>
+                    </button>
+                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
                 </div>
             </div>
         </div>
@@ -203,6 +209,7 @@
         </div>
     </div>
 
+    <script type="module" src="components/user-dropdown.js"></script>
     <script>
         feather.replace();
 
@@ -213,6 +220,45 @@
             localStorage.theme = isDark ? 'dark' : 'light';
             feather.replace();
         });
+
+        // User authentication display
+        const userName = localStorage.getItem('userName');
+        const userAvatar = localStorage.getItem('userAvatar');
+        const navUsername = document.getElementById('nav-username');
+        const navAvatar = document.getElementById('nav-avatar');
+        const userBtn = document.getElementById('user-btn');
+        const userMenu = document.getElementById('user-menu');
+        const userIcon = userBtn ? userBtn.querySelector('svg') : null;
+
+        if (userAvatar && navAvatar) {
+            navAvatar.src = userAvatar;
+            navAvatar.classList.remove('hidden');
+            if (userIcon) userIcon.classList.add('hidden');
+        } else {
+            navAvatar.classList.add('hidden');
+            if (userIcon) userIcon.classList.remove('hidden');
+        }
+
+        if (userName && navUsername) {
+            navUsername.textContent = userName;
+            navUsername.classList.remove('hidden');
+        } else {
+            navUsername.classList.add('hidden');
+        }
+
+        // User menu toggle
+        if (userBtn && userMenu) {
+            userBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!userMenu.contains(e.target) && !userBtn.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
 
         // Show/hide category-specific fields
         const categorySelect = document.getElementById('category');
