@@ -75,9 +75,6 @@
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
-    <!-- Auth Modal -->
-    <auth-modal id="auth-modal"></auth-modal>
-
     <!-- Navigation -->
     <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -520,9 +517,23 @@
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
             loginBtn.addEventListener('click', () => {
-                const authModal = document.getElementById('auth-modal');
-                if (authModal && typeof authModal.open === 'function') {
-                    authModal.open();
+                // Create auth modal dynamically only when needed
+                let authModal = document.getElementById('auth-modal');
+                if (!authModal) {
+                    authModal = document.createElement('auth-modal');
+                    authModal.id = 'auth-modal';
+                    document.body.appendChild(authModal);
+                    
+                    // Wait for component to initialize, then open
+                    setTimeout(() => {
+                        if (authModal && typeof authModal.open === 'function') {
+                            authModal.open();
+                        }
+                    }, 100);
+                } else {
+                    if (typeof authModal.open === 'function') {
+                        authModal.open();
+                    }
                 }
             });
         }
