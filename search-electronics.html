@@ -330,43 +330,44 @@
 
     <!-- Scripts -->
     <script src="js/dark-mode.js"></script>
+    <script src="js/electronics-filter-schema.js"></script>
     <script type="module">
         import FilterRenderer from './js/filter-renderer.js';
         
-        // Import electronics filter schema
-        const script = document.createElement('script');
-        script.src = './js/electronics-filter-schema.js';
-        script.onload = () => {
+        // Wait for DOM and schema to load
+        document.addEventListener('DOMContentLoaded', () => {
             // Initialize filter renderer
             const electronicsRenderer = new FilterRenderer(
-                electronicsFilterSchema,
+                window.electronicsFilterSchema || electronicsFilterSchema,
                 'filter-container',
                 {
                     onChange: (filters) => {
                         console.log('Filters changed:', filters);
-                        updateActiveFilters(filters);
+                        window.updateActiveFilters(filters);
                     },
                     onApply: () => {
                         console.log('Applying filters...');
-                        applyFilters();
+                        window.applyFilters();
                     },
                     onClear: () => {
                         console.log('Clearing filters...');
-                        clearResults();
+                        window.clearResults();
                     }
                 }
             );
             
             electronicsRenderer.render();
             
+            // Make renderer global for access
+            window.electronicsRenderer = electronicsRenderer;
+            
             // Re-render feather icons
             if (typeof feather !== 'undefined') {
                 feather.replace();
             }
-        };
-        document.head.appendChild(script);
+        });
 
-        function updateActiveFilters(filters) {
+        window.updateActiveFilters = function(filters) {
             const container = document.getElementById('active-filters');
             container.innerHTML = '';
             
@@ -406,16 +407,16 @@
             }
         }
 
-        function applyFilters() {
+        window.applyFilters = function() {
             // Save filters to localStorage for electronics.html to read
-            const filters = electronicsRenderer.getFilters();
+            const filters = window.electronicsRenderer.getFilters();
             localStorage.setItem('electronicsFilters', JSON.stringify(filters));
             
             // Redirect to electronics.html
             window.location.href = 'electronics.html';
         }
 
-        function clearResults() {
+        window.clearResults = function() {
             document.getElementById('results-grid').innerHTML = `
                 <div class="col-span-full text-center py-12">
                     <i data-feather="search" class="h-16 w-16 text-gray-300 dark:text-dark-300 mx-auto mb-4"></i>
