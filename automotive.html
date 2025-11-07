@@ -210,8 +210,10 @@
             pointer-events: none; /* Allow clicks to pass through overlay */
         }
         
-        .video-overlay > * {
-            pointer-events: auto; /* But enable clicks on overlay children (links, buttons) */
+        .video-overlay a,
+        .video-overlay button,
+        .volume-indicator {
+            pointer-events: auto; /* Only interactive elements capture clicks */
         }
     </style>
     <!-- Note: feather icons don't have a 'car' icon; we'll use 'truck' later in the body -->
