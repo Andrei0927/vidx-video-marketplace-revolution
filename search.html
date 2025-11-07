@@ -39,7 +39,6 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script type="module" src="components/auth-modal.js"></script>
-    <script type="module" src="components/user-dropdown.js"></script>
     <style>
         .filter-section {
             display: none;
@@ -72,6 +71,153 @@
         .filter-grid::-webkit-scrollbar-thumb:hover {
             background: rgba(99, 102, 241, 0.7);
         }
+        
+        /* ===== COMPACT FILTER GRID LAYOUT ===== */
+        .filter-compact-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr;
+        }
+        
+        @media (min-width: 768px) {
+            .filter-compact-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.25rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .filter-compact-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+        }
+        
+        /* Filter width control */
+        .filter-compact-grid > .filter-full {
+            grid-column: 1 / -1;
+        }
+        
+        .filter-compact-grid > .filter-half {
+            grid-column: span 1;
+        }
+        
+        @media (min-width: 1024px) {
+            .filter-compact-grid > .filter-half {
+                grid-column: span 2;
+            }
+        }
+        
+        /* Compact filter card */
+        .filter-card-compact {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.875rem;
+            transition: all 0.15s ease;
+        }
+        
+        .dark .filter-card-compact {
+            background: #242526;
+            border-color: #3A3B3C;
+        }
+        
+        .filter-card-compact:hover {
+            border-color: #a5b4fc;
+            box-shadow: 0 1px 3px rgba(99, 102, 241, 0.08);
+        }
+        
+        .dark .filter-card-compact:hover {
+            border-color: #6366f1;
+        }
+        
+        /* Compact labels */
+        .filter-label-sm {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        .dark .filter-label-sm {
+            color: #9ca3af;
+        }
+        
+        /* Compact inputs */
+        .filter-input-sm {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            background: #f9fafb;
+            color: #111827;
+            transition: all 0.15s;
+        }
+        
+        .dark .filter-input-sm {
+            background: #18191A;
+            border-color: #4E4F50;
+            color: #E4E6EB;
+        }
+        
+        .filter-input-sm:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.05);
+        }
+        
+        .dark .filter-input-sm:focus {
+            background: #242526;
+        }
+        
+        /* Range inputs row */
+        .filter-range-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-range-row input {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .filter-range-separator {
+            color: #9ca3af;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        
+        /* Compact checkboxes grid */
+        .filter-checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        
+        .filter-checkbox-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .dark .filter-checkbox-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
@@ -93,10 +239,20 @@
                     <button id="login-btn" class="hidden px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
                         Login
                     </button>
-                    <button id="user-avatar-btn" class="hidden p-1 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200">
-                        <img id="user-avatar" src="" alt="User" class="h-8 w-8 rounded-full">
-                    </button>
-                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
+                    <!-- User Menu Container -->
+                    <div id="user-menu-container" class="hidden relative">
+                        <button id="user-avatar-btn" class="flex items-center space-x-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200 transition">
+                            <img id="user-avatar" src="" alt="User" class="h-8 w-8 rounded-full">
+                            <span id="user-name" class="hidden sm:inline-block text-sm font-medium text-gray-700 dark:text-dark-500"></span>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-dark-100 rounded-lg shadow-lg dark:shadow-dark-200 border border-gray-200 dark:border-dark-300 py-1 z-50">
+                            <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">My Profile</a>
+                            <a href="my-ads.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">My ads</a>
+                            <div class="border-t border-gray-200 dark:border-dark-300 my-1"></div>
+                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">Log out</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -114,335 +270,11 @@
 
         <!-- Filters Card -->
         <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6 mb-8">
-            <!-- Quick Search -->
-            <div class="mb-6">
-                <input type="text" id="quick-search" placeholder="Search by make, model, or keyword..." 
-                    class="w-full px-4 py-3 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
-            </div>
-
-            <!-- Collapsible Filter Sections -->
-            <div class="space-y-4">
-                <!-- Type Filter -->
-                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
-                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="type-section">
-                        <span class="font-medium text-gray-900 dark:text-dark-600">Type</span>
-                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
-                    </div>
-                    <div id="type-section" class="filter-section p-4 pt-0">
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="type" value="Cars" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Cars</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="type" value="Commercial" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Commercial</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="type" value="Trucks - Trailers - Caravans" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Trucks & Trailers</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="type" value="Motorcycles" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Motorcycles</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="type" value="Scooters - ATV - UTV" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Scooters & ATV</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="type" value="Boats" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Boats</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="type" value="Industrial & farm vehicles" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Industrial & Farm</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Price & Year Range -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Price Range -->
-                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
-                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Price Range</label>
-                        <div class="flex items-center space-x-4">
-                            <input type="number" id="price-from" placeholder="From" 
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                            <span class="text-gray-500 dark:text-dark-400">-</span>
-                            <input type="number" id="price-to" placeholder="To" 
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                        </div>
-                    </div>
-
-                    <!-- Year Range -->
-                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
-                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Year</label>
-                        <div class="flex items-center space-x-4">
-                            <input type="number" id="year-from" placeholder="From" 
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                            <span class="text-gray-500 dark:text-dark-400">-</span>
-                            <input type="number" id="year-to" placeholder="To" 
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Body Type Filter -->
-                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
-                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="body-section">
-                        <span class="font-medium text-gray-900 dark:text-dark-600">Body Type</span>
-                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
-                    </div>
-                    <div id="body-section" class="filter-section p-4 pt-0">
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Coupe" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Coupe</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Cabrio" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Cabrio</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Sedan" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Sedan</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Pick-up" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Pick-up</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Hatchback" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Hatchback</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Estate" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Estate</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Off-road" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Off-road</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="Minibus" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Minibus</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="People carrier" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">People Carrier</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="bodyType" value="SUV" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">SUV</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Make Filter -->
-                <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
-                    <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Make</label>
-                    <select id="make-select" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
-                        <option value="">Any</option>
-                    </select>
-                </div>
-
-                <!-- Mileage Range -->
-                <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
-                    <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Mileage (km)</label>
-                    <div class="flex items-center space-x-4">
-                        <input type="number" id="mileage-from" placeholder="From" 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                        <span class="text-gray-500 dark:text-dark-400">-</span>
-                        <input type="number" id="mileage-to" placeholder="To" 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                    </div>
-                </div>
-
-                <!-- Fuel & Transmission -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Fuel Type -->
-                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
-                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Fuel Type</label>
-                        <div class="space-y-2">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="fuel" value="Petrol" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Petrol</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="fuel" value="Diesel" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Diesel</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="fuel" value="LPG" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">LPG</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="fuel" value="Hybrid" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Hybrid</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" name="fuel" value="Electric" class="rounded text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Electric</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Transmission -->
-                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
-                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Transmission</label>
-                        <div class="space-y-2">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="radio" name="transmission" value="Automatic" class="text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Automatic</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="radio" name="transmission" value="Manual" class="text-indigo-600">
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Manual</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="radio" name="transmission" value="" class="text-indigo-600" checked>
-                                <span class="text-sm text-gray-700 dark:text-dark-500">Any</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- More Filters (Collapsed by default) -->
-                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
-                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="more-section">
-                        <span class="font-medium text-gray-900 dark:text-dark-600">More Filters</span>
-                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
-                    </div>
-                    <div id="more-section" class="filter-section p-4 pt-0 space-y-4">
-                        <!-- Displacement Range -->
-                        <div>
-                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Displacement (L)</label>
-                            <div class="flex items-center space-x-4">
-                                <input type="number" id="displacement-from" placeholder="From" step="0.1"
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                                <span class="text-gray-500 dark:text-dark-400">-</span>
-                                <input type="number" id="displacement-to" placeholder="To" step="0.1"
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                            </div>
-                        </div>
-
-                        <!-- Power Range -->
-                        <div>
-                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Power (HP)</label>
-                            <div class="flex items-center space-x-4">
-                                <input type="number" id="power-from" placeholder="From"
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                                <span class="text-gray-500 dark:text-dark-400">-</span>
-                                <input type="number" id="power-to" placeholder="To"
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                            </div>
-                        </div>
-
-                        <!-- Color -->
-                        <div>
-                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Colour</label>
-                            <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="White" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">White</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Black" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Black</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Gray" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Gray</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Silver" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Silver</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Blue" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Blue</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Red" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Red</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Green" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Green</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Yellow/Gold" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Yellow/Gold</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Brown/Beige" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Brown/Beige</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="color" value="Other" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Other</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Steering Wheel -->
-                        <div>
-                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Steering Wheel</label>
-                            <div class="flex space-x-4">
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="radio" name="steering" value="Left-hand drive" class="text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Left-hand drive</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="radio" name="steering" value="Right-hand drive" class="text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Right-hand drive</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="radio" name="steering" value="" class="text-indigo-600" checked>
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Any</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Condition -->
-                        <div>
-                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Condition</label>
-                            <div class="flex space-x-4">
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="condition" value="New" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">New</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="condition" value="Used" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Used</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" name="condition" value="Damaged" class="rounded text-indigo-600">
-                                    <span class="text-sm text-gray-700 dark:text-dark-500">Damaged</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex gap-4 mt-6">
-                <button id="apply-filters" class="flex-1 bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
-                    <i data-feather="search" class="inline-block h-5 w-5 mr-2"></i>
-                    Apply Filters
-                </button>
-                <button id="clear-filters" class="px-6 py-3 border border-gray-300 dark:border-dark-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition font-medium text-gray-700 dark:text-dark-500">
-                    <i data-feather="x" class="inline-block h-5 w-5 mr-2"></i>
-                    Clear All
-                </button>
-            </div>
-
+            <!-- Dynamic Filter Container with Compact Grid Layout -->
+            <div id="filter-container" class="filter-compact-grid"></div>
+            
             <!-- Active Filters Display -->
-            <div id="active-filters" class="mt-4 flex flex-wrap gap-2"></div>
+            <div id="active-filters" class="mt-6 flex flex-wrap gap-2"></div>
         </div>
 
         <!-- Results Info -->
@@ -462,22 +294,6 @@
     </div>
 
     <script>
-        // Car makes from the XML
-        const carMakes = [
-            'Abarth', 'Acura', 'Aiways', 'Aixam', 'Alfa Romeo', 'Aro', 'Aston Martin', 'Audi', 'Austin',
-            'Baic', 'Bentley', 'BMW', 'Bugatti', 'Buick', 'Cadillac', 'Chery', 'Chevrolet', 'Chrysler',
-            'Citroen', 'Comarth', 'Cupra', 'Dacia', 'Daewoo', 'Daihatsu', 'DFSK', 'Dodge', 'Dongwei',
-            'DS Automobiles', 'Ferrari', 'Fiat', 'Fisker', 'Ford', 'Forthing', 'Geely', 'GMC', 'Honda',
-            'Hummer', 'Hyundai', 'Ineos', 'Infiniti', 'Isuzu', 'JAC', 'Jaguar', 'Jeep', 'KG Mobility',
-            'Kia', 'Lada', 'Lamborghini', 'Lancia', 'Land Rover', 'Lexus', 'Ligier', 'Lincoln', 'Lotus',
-            'Lucid', 'Lynk&Co', 'Mahindra', 'Maserati', 'Mazda', 'McLaren', 'Maybach', 'Mercedes-Benz',
-            'MG', 'Microlino', 'Mini', 'Mitsubishi', 'Microcar', 'Morgan', 'Nio', 'Nissan', 'Opel',
-            'Peugeot', 'Plymouth', 'Polestar', 'Pontiac', 'Porsche', 'Renault', 'Rolls-Royce', 'Relive',
-            'Rover', 'Saab', 'Seat', 'Seres', 'Skoda', 'Smart', 'SsangYong', 'Skywell', 'Subaru',
-            'Suzuki', 'SWM', 'Tesla', 'Tazzari', 'Toyota', 'Trabant', 'Triumph', 'Vauxhall',
-            'Volkswagen', 'Volvo', 'Weismann', 'XEV', 'Xpeng', 'Zeekr', 'Other'
-        ];
-
         // Initialize feather icons
         if (window.feather) {
             feather.replace();
@@ -497,26 +313,32 @@
         function checkAuth() {
             const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
             const loginBtn = document.getElementById('login-btn');
-            const userAvatarBtn = document.getElementById('user-avatar-btn');
+            const userMenuContainer = document.getElementById('user-menu-container');
             const userAvatar = document.getElementById('user-avatar');
-            const userMenu = document.getElementById('user-menu');
+            const userName = document.getElementById('user-name');
             
             if (sessionToken) {
-                // User is logged in - show user avatar button
+                // User is logged in - show user menu
                 if (loginBtn) loginBtn.classList.add('hidden');
-                if (userAvatarBtn) {
-                    userAvatarBtn.classList.remove('hidden');
+                if (userMenuContainer) {
+                    userMenuContainer.classList.remove('hidden');
+                    
                     // Set avatar image from localStorage or use default
                     const avatarUrl = localStorage.getItem('userAvatar') || 
                                     `https://api.dicebear.com/7.x/avataaars/svg?seed=${localStorage.getItem('userEmail') || 'user'}`;
                     if (userAvatar) userAvatar.src = avatarUrl;
+                    
+                    // Set username
+                    const displayName = localStorage.getItem('userName') || 
+                                       localStorage.getItem('userUsername') || 
+                                       localStorage.getItem('userEmail')?.split('@')[0] || 
+                                       'User';
+                    if (userName) userName.textContent = displayName;
                 }
-                if (userMenu) userMenu.classList.remove('hidden');
             } else {
                 // User is not logged in - show login button
                 if (loginBtn) loginBtn.classList.remove('hidden');
-                if (userAvatarBtn) userAvatarBtn.classList.add('hidden');
-                if (userMenu) userMenu.classList.add('hidden');
+                if (userMenuContainer) userMenuContainer.classList.add('hidden');
             }
         }
 
@@ -553,11 +375,39 @@
 
         // User avatar button click handler - toggles dropdown
         const userAvatarBtn = document.getElementById('user-avatar-btn');
-        const userMenu = document.getElementById('user-menu');
-        if (userAvatarBtn && userMenu) {
-            userAvatarBtn.addEventListener('click', () => {
-                // Toggle the hidden class to show/hide dropdown
-                userMenu.classList.toggle('hidden');
+        const userDropdown = document.getElementById('user-dropdown');
+        if (userAvatarBtn && userDropdown) {
+            userAvatarBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!userDropdown.contains(e.target) && !userAvatarBtn.contains(e.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // Logout button handler
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                // Close dropdown
+                if (userDropdown) userDropdown.classList.add('hidden');
+                
+                // Clear localStorage
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('sessionToken');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userAvatar');
+                localStorage.removeItem('userUsername');
+                
+                // Redirect to home
+                window.location.href = 'index.html';
             });
         }
 
@@ -571,186 +421,42 @@
             checkAuth();
         });
 
-        // Populate car makes dropdown
-        const makeSelect = document.getElementById('make-select');
-        carMakes.forEach(make => {
-            const option = document.createElement('option');
-            option.value = make;
-            option.textContent = make;
-            makeSelect.appendChild(option);
-        });
-
-        // Filter toggle functionality
-        document.querySelectorAll('.filter-toggle').forEach(toggle => {
-            toggle.addEventListener('click', () => {
-                const sectionId = toggle.dataset.toggle;
-                const section = document.getElementById(sectionId);
-                const icon = toggle.querySelector('i[data-feather="chevron-down"]');
-                
-                section.classList.toggle('active');
-                
-                if (section.classList.contains('active')) {
-                    icon.style.transform = 'rotate(180deg)';
-                } else {
-                    icon.style.transform = 'rotate(0deg)';
-                }
-            });
-        });
-
-        // Get all filter values
-        function getAllFilters() {
-            const filters = {
-                quickSearch: document.getElementById('quick-search').value.trim(),
-                type: Array.from(document.querySelectorAll('input[name="type"]:checked')).map(cb => cb.value),
-                priceFrom: document.getElementById('price-from').value,
-                priceTo: document.getElementById('price-to').value,
-                yearFrom: document.getElementById('year-from').value,
-                yearTo: document.getElementById('year-to').value,
-                bodyType: Array.from(document.querySelectorAll('input[name="bodyType"]:checked')).map(cb => cb.value),
-                make: document.getElementById('make-select').value,
-                mileageFrom: document.getElementById('mileage-from').value,
-                mileageTo: document.getElementById('mileage-to').value,
-                fuel: Array.from(document.querySelectorAll('input[name="fuel"]:checked')).map(cb => cb.value),
-                transmission: document.querySelector('input[name="transmission"]:checked')?.value || '',
-                displacementFrom: document.getElementById('displacement-from').value,
-                displacementTo: document.getElementById('displacement-to').value,
-                powerFrom: document.getElementById('power-from').value,
-                powerTo: document.getElementById('power-to').value,
-                color: Array.from(document.querySelectorAll('input[name="color"]:checked')).map(cb => cb.value),
-                steering: document.querySelector('input[name="steering"]:checked')?.value || '',
-                condition: Array.from(document.querySelectorAll('input[name="condition"]:checked')).map(cb => cb.value)
-            };
-            
-            // Remove empty values
-            Object.keys(filters).forEach(key => {
-                if (Array.isArray(filters[key]) && filters[key].length === 0) {
-                    delete filters[key];
-                } else if (!Array.isArray(filters[key]) && !filters[key]) {
-                    delete filters[key];
-                }
-            });
-            
-            return filters;
-        }
-
-        // Display active filters as tags
-        function displayActiveFilters(filters) {
-            const container = document.getElementById('active-filters');
-            container.innerHTML = '';
-            
-            let count = 0;
-            
-            Object.entries(filters).forEach(([key, value]) => {
-                if (key === 'quickSearch') return; // Skip quick search in tags
-                
-                const values = Array.isArray(value) ? value : [value];
-                values.forEach(val => {
-                    if (val) {
-                        count++;
-                        const tag = document.createElement('div');
-                        tag.className = 'inline-flex items-center space-x-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 px-3 py-1 rounded-full text-sm';
-                        tag.innerHTML = `
-                            <span>${key}: ${val}</span>
-                            <button class="hover:text-indigo-600 dark:hover:text-indigo-400" onclick="removeFilter('${key}', '${val}')">
-                                <i data-feather="x" class="h-4 w-4"></i>
-                            </button>
-                        `;
-                        container.appendChild(tag);
-                    }
-                });
-            });
-            
-            if (count > 0) {
-                feather.replace();
-            }
-            
-            return count;
-        }
-
-        // Remove individual filter
-        window.removeFilter = function(key, value) {
-            // Find and uncheck the checkbox or clear the input
-            if (key === 'make') {
-                document.getElementById('make-select').value = '';
-            } else if (['type', 'bodyType', 'fuel', 'color', 'condition'].includes(key)) {
-                const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
-                if (checkbox) checkbox.checked = false;
-            } else if (['transmission', 'steering'].includes(key)) {
-                const anyRadio = document.querySelector(`input[name="${key}"][value=""]`);
-                if (anyRadio) anyRadio.checked = true;
-            } else {
-                // Clear range inputs
-                const fromInput = document.getElementById(`${key.replace(/From|To/, '').toLowerCase()}-from`);
-                const toInput = document.getElementById(`${key.replace(/From|To/, '').toLowerCase()}-to`);
-                if (key.endsWith('From') && fromInput) fromInput.value = '';
-                if (key.endsWith('To') && toInput) toInput.value = '';
-            }
-            
-            updateActiveFilters();
-        };
-
-        // Update active filters display
-        function updateActiveFilters() {
-            const filters = getAllFilters();
-            const count = displayActiveFilters(filters);
-            
-            // Update results info
-            document.getElementById('results-info').textContent = 
-                count > 0 ? `${count} active filter(s)` : 'No filters applied';
-        }
-
-        // Apply filters and redirect
-        document.getElementById('apply-filters').addEventListener('click', () => {
-            const filters = getAllFilters();
-            
-            // Save filters to localStorage
-            localStorage.setItem('automotiveFilters', JSON.stringify(filters));
-            
-            // Redirect to automotive feed
-            window.location.href = 'automotive.html';
-        });
-
-        // Clear all filters
-        document.getElementById('clear-filters').addEventListener('click', () => {
-            // Clear text inputs
-            document.getElementById('quick-search').value = '';
-            document.getElementById('price-from').value = '';
-            document.getElementById('price-to').value = '';
-            document.getElementById('year-from').value = '';
-            document.getElementById('year-to').value = '';
-            document.getElementById('mileage-from').value = '';
-            document.getElementById('mileage-to').value = '';
-            document.getElementById('displacement-from').value = '';
-            document.getElementById('displacement-to').value = '';
-            document.getElementById('power-from').value = '';
-            document.getElementById('power-to').value = '';
-            
-            // Reset make dropdown
-            document.getElementById('make-select').value = '';
-            
-            // Uncheck all checkboxes
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            
-            // Reset radios to "Any"
-            document.querySelectorAll('input[type="radio"][value=""]').forEach(radio => radio.checked = true);
-            
-            // Update display
-            updateActiveFilters();
-        });
-
-        // Monitor all input changes
-        document.querySelectorAll('input[type="checkbox"], input[type="radio"], input[type="number"]').forEach(input => {
-            input.addEventListener('change', updateActiveFilters);
-        });
-
-        document.getElementById('quick-search').addEventListener('input', updateActiveFilters);
-        document.getElementById('make-select').addEventListener('change', updateActiveFilters);
-
-        // Initial update
-        updateActiveFilters();
-
         // Replace feather icons after DOM updates
         setTimeout(() => feather.replace(), 100);
+    </script>
+
+    <!-- Filter Renderer Scripts -->
+    <script src="js/automotive-filter-schema.js"></script>
+    <script src="js/filter-renderer.js"></script>
+    <script>
+        // Initialize the filter renderer
+        const automotiveRenderer = new FilterRenderer(
+            automotiveFilterSchema,
+            'filter-container',
+            {
+                carModels: carModels,
+                onChange: (filterValues) => {
+                    console.log('Filters changed:', filterValues);
+                },
+                onApply: (filterValues) => {
+                    console.log('Applying filters:', filterValues);
+                    // Store filters in localStorage for automotive.html
+                    localStorage.setItem('automotiveFilters', JSON.stringify(filterValues));
+                    // Redirect to automotive.html with filters applied
+                    window.location.href = 'automotive.html';
+                },
+                onClear: () => {
+                    console.log('Filters cleared');
+                    localStorage.removeItem('automotiveFilters');
+                }
+            }
+        );
+
+        // Render the filters
+        automotiveRenderer.render();
+
+        // Initialize feather icons for filter renderer
+        setTimeout(() => feather.replace(), 200);
     </script>
 </body>
 </html>
