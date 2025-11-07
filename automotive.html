@@ -748,9 +748,12 @@
 
                     const dropdown = document.createElement('user-dropdown');
                     const rect = userBtn.getBoundingClientRect();
-                    dropdown.style.position = 'fixed';
-                    dropdown.style.top = `${rect.bottom + window.scrollY}px`;
-                    dropdown.style.right = `${window.innerWidth - rect.right}px`;
+                    // Position the host element where the button is (component will use this for positioning)
+                    dropdown.style.position = 'absolute';
+                    dropdown.style.left = `${rect.left}px`;
+                    dropdown.style.top = `${rect.bottom}px`;
+                    dropdown.style.width = '0';
+                    dropdown.style.height = '0';
                     document.body.appendChild(dropdown);
                 } catch (err) {
                     console.error('Failed to open user menu', err);

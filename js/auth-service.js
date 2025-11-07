@@ -6,13 +6,20 @@ class AuthService {
       // If on localhost, use the local API server
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         this.baseUrl = 'http://localhost:3001/api/auth';
-      } else {
+      } 
+      // If on Hugging Face Spaces, try to use API (you'll need to update this with your Space URL)
+      else if (window.location.hostname.includes('hf.space')) {
+        this.baseUrl = null; // Will use localStorage for now (update with your API endpoint when deployed)
+      }
+      else {
         // For remote/production, use mock/localStorage-based auth
         this.baseUrl = null; // Will use localStorage for demo
       }
     } else {
       this.baseUrl = baseUrl;
     }
+    
+    console.log('[AuthService] Initialized with baseUrl:', this.baseUrl || 'localStorage mode');
   }
 
   async register(userData) {
@@ -115,9 +122,25 @@ class AuthService {
   // LocalStorage-based auth (for remote/iOS)
   // ========================================
   
-  registerLocal(userData) {
-    // Get existing users from localStorage
+  _seedDefaultUsers() {
+    // Seed with some default test users if localStorage is empty
+    const defaultUsers = [
+      { id: 1, name: 'Demo User', email: 'demo@example.com', password: 'demo123' },
+      { id: 2, name: 'Test User', email: 'test@example.com', password: 'test123' }
+    ];
+    
     const users = JSON.parse(localStorage.getItem('vidx_users') || '[]');
+    if (users.length === 0) {
+      console.log('[AuthService] Seeding default test users for localStorage mode');
+      localStorage.setItem('vidx_users', JSON.stringify(defaultUsers));
+      return defaultUsers;
+    }
+    return users;
+  }
+  
+  registerLocal(userData) {
+    // Get existing users from localStorage (or seed defaults)
+    const users = this._seedDefaultUsers();
     
     // Check if email already exists
     if (users.find(u => u.email === userData.email)) {
@@ -135,23 +158,31 @@ class AuthService {
     users.push(newUser);
     localStorage.setItem('vidx_users', JSON.stringify(users));
     
+    console.log('[AuthService] User registered in localStorage:', newUser.email);
     return newUser;
   }
   
   loginLocal(email, password) {
-    // Get users from localStorage
-    const users = JSON.parse(localStorage.getItem('vidx_users') || '[]');
+    // Get users from localStorage (or seed defaults)
+    const users = this._seedDefaultUsers();
+    
+    console.log('[AuthService] Attempting login for:', email);
+    console.log('[AuthService] Available users:', users.map(u => u.email));
     
     // Find user
     const user = users.find(u => u.email === email);
     if (!user) {
-      throw new Error('User not found');
+      console.error('[AuthService] User not found. Available:', users.map(u => u.email));
+      throw new Error(`User not found. Try: ${users[0].email}`);
     }
     
     // Verify password
     if (user.password !== password) {
+      console.error('[AuthService] Invalid password for:', email);
       throw new Error('Invalid password');
     }
+    
+    console.log('[AuthService] Login successful for:', email);
     
     // Generate session token
     const session = this.generateSessionToken();
