@@ -620,6 +620,35 @@
                 }
             });
 
+            // On mobile, trigger autoplay for first visible video after filtering
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    const firstVisibleCard = document.querySelector('[data-video-card]:not([style*="display: none"])');
+                    if (firstVisibleCard) {
+                        const video = firstVisibleCard.querySelector('video');
+                        if (video) {
+                            // Scroll to first visible video
+                            firstVisibleCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            
+                            // Ensure video is loaded and trigger play after scroll
+                            setTimeout(() => {
+                                const userMuted = localStorage.getItem('videoMuted') === 'true';
+                                video.load(); // Force reload to ensure first frame loads
+                                video.muted = userMuted;
+                                video.currentTime = 0;
+                                const playAttempt = video.play();
+                                if (playAttempt && typeof playAttempt.catch === 'function') {
+                                    playAttempt.catch(() => {
+                                        video.muted = true;
+                                        video.play();
+                                    });
+                                }
+                            }, 300);
+                        }
+                    }
+                }, 100);
+            }
+
             const activeFilters = Object.values(filters).filter(value => {
                 if (Array.isArray(value)) return value.length > 0;
                 return Boolean(value);
