@@ -39,35 +39,45 @@ self.addEventListener('activate', event => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
+  // Allow the browser to handle navigations and full-page HTML requests directly.
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const acceptHeader = event.request.headers.get('accept') || '';
+  if (event.request.mode === 'navigate' || acceptHeader.includes('text/html')) {
+    return;
+  }
+
+  if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') {
+    return;
+  }
+
   // Skip caching for video files (too large)
   if (event.request.url.includes('.m4v') || event.request.url.includes('.mp4')) {
-    return event.respondWith(fetch(event.request));
+    event.respondWith(fetch(event.request));
+    return;
   }
 
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - return response
         if (response) {
           return response;
         }
-        // Clone the request
-        const fetchRequest = event.request.clone();
-        
-        return fetch(fetchRequest).then(response => {
-          // Check if valid response
+
+        return fetch(event.request.clone()).then(response => {
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-          
-          // Clone the response
+
           const responseToCache = response.clone();
-          
+
           caches.open(CACHE_NAME)
             .then(cache => {
               cache.put(event.request, responseToCache);
             });
-          
+
           return response;
         });
       })

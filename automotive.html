@@ -16,10 +16,14 @@
     <link rel="apple-touch-icon" sizes="152x152" href="/images/ios/152.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/images/ios/120.png">
     <script>
-        // Add dark mode class if needed before page loads
-        if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
+        (function() {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        })();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -120,16 +124,16 @@
             }
         }
         
-        /* Desktop: Grid layout */
+        /* Desktop layout */
         @media (min-width: 1024px) {
             .video-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (min-width: 1280px) {
-            .video-grid {
-                grid-template-columns: repeat(3, 1fr);
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                justify-items: center;
+                gap: 2.5rem;
+                padding: 0 2rem 2.5rem;
+                max-width: 1200px;
+                margin: 6rem auto 0; /* Added top margin to push videos below header */
             }
         }
 
@@ -148,14 +152,26 @@
         @media (min-width: 1024px) {
             .video-card {
                 margin-bottom: 0;
+                width: min(100%, 360px);
+                max-width: 360px;
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .video-card {
+                max-width: 400px;
             }
         }
         
         .video-card video {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             background: #000;
+            pointer-events: none;
         }
         
         .video-card video::-webkit-media-controls {
@@ -230,28 +246,26 @@
         </div>
     </nav>
 
-    <!-- Category Header with Search -->
-    <div class="bg-white dark:bg-dark-100 py-4 shadow-sm dark:shadow-dark-200 hidden lg:block" id="page-header">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <i data-feather="truck" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
-                    <h1 class="ml-3 text-2xl font-bold text-gray-900 dark:text-dark-600">Automotive</h1>
-                    <span id="filter-badge" class="hidden ml-3 px-2 py-1 text-xs font-semibold bg-indigo-600 text-white rounded-full"></span>
-                </div>
+    <!-- Vertical Navigation Buttons (Left Edge) -->
+    <div class="fixed left-0 top-1/2 -translate-y-1/2 z-50 flex flex-col" style="gap: 2px;">
+        <!-- Home Button -->
+        <a href="index.html" id="vertical-home-btn" class="bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 8px 0 0;">
+            <div class="relative flex items-center justify-center">
+                <i data-feather="home" class="h-5 w-5 sm:h-6 sm:w-6"></i>
             </div>
-        </div>
+        </a>
+        
+        <!-- Filter Button -->
+        <a href="search.html" id="vertical-filter-btn" class="bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 0 8px 0;">
+            <div class="relative flex items-center justify-center">
+                <i data-feather="sliders" class="h-5 w-5 sm:h-6 sm:w-6" style="transform: rotate(90deg);"></i>
+                <span id="floating-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center"></span>
+            </div>
+        </a>
     </div>
 
-    <!-- Vertical Filter Button (Left Edge) -->
-    <a href="search.html" id="vertical-filter-btn" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 8px 8px 0;">
-        <div class="relative flex items-center justify-center">
-            <i data-feather="sliders" class="h-5 w-5 sm:h-6 sm:w-6" style="transform: rotate(90deg);"></i>
-            <span id="floating-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center"></span>
-        </div>
-    </a>
-
     <style>
+        #vertical-home-btn,
         #vertical-filter-btn {
             /* Mobile: 3:4 aspect ratio, compact */
             width: 36px;
@@ -260,12 +274,21 @@
         
         @media (min-width: 640px) {
             /* Desktop: slightly larger with text */
+            #vertical-home-btn,
             #vertical-filter-btn {
                 width: 44px;
                 height: 100px;
                 flex-direction: column;
                 gap: 0.5rem;
                 padding: 1rem 0.5rem;
+            }
+            #vertical-home-btn::after {
+                content: 'HOME';
+                font-size: 0.625rem;
+                font-weight: 500;
+                letter-spacing: 0.05em;
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
             }
             #vertical-filter-btn::after {
                 content: 'FILTER';
@@ -448,8 +471,8 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: VW Transporter -->
-        <div class="video-card" data-video-card data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel">
-            <video loop playsinline preload="auto" muted>
+    <div class="video-card" data-video-card data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel" data-details-url="details?ad=vw-transporter">
+            <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
@@ -492,8 +515,8 @@
         </div>
 
         <!-- Video Card 2: Audi A5 -->
-        <div class="video-card" data-video-card data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol">
-            <video loop playsinline preload="auto" muted>
+    <div class="video-card" data-video-card data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol" data-details-url="details?ad=audi-a5">
+            <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
@@ -536,177 +559,204 @@
         </div>
     </div>
 
-    <script type="module" src="js/romanian-locations.js"></script>
-    <script type="module" src="js/filter-manager.js"></script>
-    <script type="module" src="js/car-brands.js"></script>
-    <script>
-        // Initialize feather icons
-        if (window.feather) {
-            feather.replace();
-        }
+    <script type="module">
+        import { filterManager } from './js/filter-manager.js';
+        import { carBrands } from './js/car-brands.js';
 
-        // Wait for DOM to be ready
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing...');
-            
-            // Replace feather icons
-            if (window.feather) {
-                feather.replace();
+        const applyFeatherIcons = () => {
+            if (window.feather && typeof window.feather.replace === 'function') {
+                window.feather.replace();
+            }
+        };
+
+        const updateFilterBadges = (count) => {
+            const headerBadge = document.getElementById('filter-badge');
+            const floatingBadge = document.getElementById('floating-badge');
+
+            if (headerBadge) {
+                if (count > 0) {
+                    headerBadge.textContent = `${count} filter${count > 1 ? 's' : ''}`;
+                    headerBadge.classList.remove('hidden');
+                } else {
+                    headerBadge.classList.add('hidden');
+                }
             }
 
-            // ========================================
-            // APPLY FILTERS FROM SEARCH PAGE
-            // ========================================
-            const savedFilters = localStorage.getItem('automotiveFilters');
-            if (savedFilters) {
-                const filters = JSON.parse(savedFilters);
-                const videoCards = document.querySelectorAll('[data-video-card]');
-                let visibleCount = 0;
-                
-                videoCards.forEach(card => {
-                    let visible = true;
-                    
-                    if (filters.make && card.dataset.make !== filters.make) visible = false;
-                    if (filters.year && card.dataset.year !== filters.year) visible = false;
-                    if (filters.transmission && card.dataset.transmission !== filters.transmission) visible = false;
-                    if (filters.fuel && card.dataset.fuel !== filters.fuel) visible = false;
-                    
-                    if (visible) {
-                        card.style.display = '';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
+            if (floatingBadge) {
+                if (count > 0) {
+                    floatingBadge.textContent = count;
+                    floatingBadge.classList.remove('hidden');
+                } else {
+                    floatingBadge.classList.add('hidden');
+                }
+            }
+        };
+
+        const applyFiltersFromSearch = () => {
+            const saved = localStorage.getItem('automotiveFilters');
+            if (!saved) return;
+
+            let filters;
+            try {
+                filters = JSON.parse(saved);
+            } catch (err) {
+                console.error('Failed to parse saved filters', err);
+                localStorage.removeItem('automotiveFilters');
+                return;
+            }
+
+            const videoCards = document.querySelectorAll('[data-video-card]');
+
+            const matchesValue = (filterValue, datasetValue) => {
+                if (!filterValue) return true;
+                if (Array.isArray(filterValue)) {
+                    if (filterValue.length === 0) return true;
+                    return filterValue.includes(datasetValue);
+                }
+                return filterValue === datasetValue;
+            };
+
+            videoCards.forEach(card => {
+                const visible =
+                    matchesValue(filters.make, card.dataset.make) &&
+                    matchesValue(filters.year, card.dataset.year) &&
+                    matchesValue(filters.transmission, card.dataset.transmission) &&
+                    matchesValue(filters.fuel, card.dataset.fuel);
+
+                card.style.display = visible ? '' : 'none';
+            });
+
+            const activeFilters = Object.values(filters).filter(value => {
+                if (Array.isArray(value)) return value.length > 0;
+                return Boolean(value);
+            }).length;
+
+            updateFilterBadges(activeFilters);
+            localStorage.removeItem('automotiveFilters');
+        };
+
+        const setupFilterMenus = () => {
+            const buttons = document.querySelectorAll('[id$="-filter-btn"]');
+            const menus = document.querySelectorAll('[id$="-filter-menu"]');
+
+            const closeAllMenus = (exceptionId) => {
+                menus.forEach(menu => {
+                    if (!exceptionId || menu.id !== exceptionId) {
+                        menu.classList.add('hidden');
+                        menu.style.display = 'none';
                     }
                 });
-                
-                // Show filter badge
-                const activeFilters = Object.values(filters).filter(v => v).length;
-                if (activeFilters > 0) {
-                    const badge = document.getElementById('filter-badge');
-                    badge.textContent = `${activeFilters} filter${activeFilters > 1 ? 's' : ''}`;
-                    badge.classList.remove('hidden');
-                    
-                    // Also show on floating button
-                    const floatingBadge = document.getElementById('floating-badge');
-                    if (floatingBadge) {
-                        floatingBadge.textContent = activeFilters;
-                        floatingBadge.classList.remove('hidden');
-                    }
-                }
-                
-                // Clear filters after applying
-                localStorage.removeItem('automotiveFilters');
-            }
+            };
 
-            // Replace feather icons again after any DOM updates
-            setTimeout(() => {
-                if (window.feather) feather.replace();
-            }, 100);
+            buttons.forEach(btn => {
+                if (btn.id === 'vertical-filter-btn') return;
 
-            // Toggle filter menus (keeping for hidden filter dropdowns)
-            const filterButtons = document.querySelectorAll('[id$="-filter-btn"]');
-            console.log('Found filter buttons:', filterButtons.length);
-            
-            filterButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    console.log('Button clicked:', btn.id);
-                    
-                    // Skip vertical filter button (it's a link to search.html)
-                    if (btn.id === 'vertical-filter-btn') {
-                        return; // Let the link work normally
-                    }
-                    
+                btn.addEventListener('click', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+
                     const menuId = btn.id.replace('-btn', '-menu');
                     const menu = document.getElementById(menuId);
-                    
-                    if (!menu) {
-                        console.warn('No menu found for button:', btn.id);
-                        return;
-                    }
-                    
-                    console.log('Menu ID:', menuId, 'Menu element:', menu);
-                    console.log('Menu classes:', menu.className);
-                    console.log('Has hidden class:', menu.classList.contains('hidden'));
+                    if (!menu) return;
 
-                    // Close all other menus
-                    document.querySelectorAll('[id$="-filter-menu"]').forEach(m => {
-                        if (m.id !== menuId) {
-                            m.classList.add('hidden');
-                        }
-                    });
+                    const shouldOpen = menu.classList.contains('hidden') || getComputedStyle(menu).display === 'none';
+                    closeAllMenus(menuId);
 
-                    // Toggle this menu
-                    if (menu) {
-                        const wasHidden = menu.classList.contains('hidden');
-                        console.log('Menu was hidden:', wasHidden);
-                        
-                        if (wasHidden) {
-                            menu.classList.remove('hidden');
-                            console.log('Menu opened');
-                        } else {
-                            menu.classList.add('hidden');
-                            console.log('Menu closed');
-                        }
-                    }
-                });
-            });
-
-            // Prevent menu clicks from closing the menu
-            document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
-                menu.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            });
-
-            // Close menus when clicking outside (but don't trigger on initial load)
-            setTimeout(() => {
-                document.addEventListener('click', function() {
-                    document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
+                    if (shouldOpen) {
+                        menu.classList.remove('hidden');
+                        menu.style.display = 'block';
+                    } else {
                         menu.classList.add('hidden');
-                    });
+                        menu.style.display = 'none';
+                    }
                 });
-            }, 100);
+            });
 
-            // Theme toggle
+            menus.forEach(menu => {
+                menu.classList.add('hidden');
+                menu.style.display = 'none';
+                menu.addEventListener('click', event => event.stopPropagation());
+            });
+
+            document.addEventListener('click', () => closeAllMenus());
+        };
+
+        const setupMakeFilter = () => {
+            const makeList = document.getElementById('make-list');
+            const makeSearch = document.getElementById('make-search');
+            if (!makeList || !makeSearch) return;
+
+            const renderBrands = (brands) => {
+                makeList.innerHTML = brands.map(({ brand, count }) => `
+                    <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
+                        <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400" value="${brand}">
+                        <span class="ml-2 text-gray-700 dark:text-dark-500">${brand}</span>
+                        <span class="ml-auto text-gray-500 dark:text-dark-400 text-sm">${count}</span>
+                    </label>
+                `).join('');
+            };
+
+            renderBrands(carBrands);
+
+            makeSearch.addEventListener('input', event => {
+                const query = event.target.value.trim().toLowerCase();
+                const filtered = carBrands.filter(({ brand }) => brand.toLowerCase().includes(query));
+                renderBrands(filtered);
+            });
+
+            makeList.addEventListener('change', () => {
+                const selected = Array.from(makeList.querySelectorAll('input[type="checkbox"]:checked'))
+                    .map(input => input.value);
+                filterManager.setFilter('make', selected);
+            });
+        };
+
+        const setupThemeToggle = () => {
             const themeToggle = document.getElementById('theme-toggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('click', function() {
-                    const isDark = document.documentElement.classList.toggle('dark');
-                    localStorage.theme = isDark ? 'dark' : 'light';
-                });
-            }
+            if (!themeToggle) return;
 
-            // User button
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.theme = isDark ? 'dark' : 'light';
+            });
+        };
+
+        const bindUserButton = () => {
             const userBtn = document.getElementById('user-btn');
-            if (userBtn) {
-                userBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+            if (!userBtn) return;
+
+            userBtn.addEventListener('click', event => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                try {
                     const authToken = localStorage.getItem('authToken');
                     if (!authToken) {
                         const authModal = document.createElement('auth-modal');
                         document.body.appendChild(authModal);
-                    } else {
-                        const dropdown = document.createElement('user-dropdown');
-                        const btnRect = userBtn.getBoundingClientRect();
-                        dropdown.style.position = 'fixed';
-                        dropdown.style.top = `${btnRect.bottom + window.scrollY}px`;
-                        dropdown.style.right = `${window.innerWidth - btnRect.right}px`;
-                        document.body.appendChild(dropdown);
+                        return;
                     }
-                });
-            }
 
-            // Update nav auth UI - only show if actually logged in
+                    const dropdown = document.createElement('user-dropdown');
+                    const rect = userBtn.getBoundingClientRect();
+                    dropdown.style.position = 'fixed';
+                    dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+                    dropdown.style.right = `${window.innerWidth - rect.right}px`;
+                    document.body.appendChild(dropdown);
+                } catch (err) {
+                    console.error('Failed to open user menu', err);
+                }
+            });
+        };
+
+        const updateNavAuthUI = () => {
             const avatar = localStorage.getItem('userAvatar');
             const name = localStorage.getItem('userName');
             const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
             const avatarEl = document.getElementById('nav-avatar');
             const nameEl = document.getElementById('nav-username');
-            const iconSvg = userBtn && userBtn.querySelector('svg');
+            const userBtn = document.getElementById('user-btn');
+            const iconSvg = userBtn ? userBtn.querySelector('svg') : null;
 
             if (sessionToken && avatar && avatarEl) {
                 avatarEl.src = avatar;
@@ -720,481 +770,220 @@
             if (sessionToken && name && nameEl) {
                 nameEl.textContent = name;
                 nameEl.classList.remove('hidden');
-            } else {
-                if (nameEl) nameEl.classList.add('hidden');
+            } else if (nameEl) {
+                nameEl.classList.add('hidden');
             }
-        });
-    </script>
-    <script type="module">
-        import { carBrands } from './js/car-brands.js';
-        import { filterManager } from './js/filter-manager.js';
+        };
 
-        // Wait for DOM
-        window.addEventListener('DOMContentLoaded', () => {
-            const makeList = document.getElementById('make-list');
-            const makeSearch = document.getElementById('make-search');
-            
-            if (!makeList || !makeSearch) {
-                console.error('Make list or search not found');
-                return;
-            }
+        const initVideos = () => {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 1024;
+            const videoCards = document.querySelectorAll('[data-video-card]');
+            let currentlyPlayingVideo = null; // Track which video is playing on desktop
 
-            function renderCarBrands(brands) {
-                makeList.innerHTML = brands.map(({brand, count}) => `
-                    <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
-                        <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400" value="${brand}">
-                        <span class="ml-2 text-gray-700 dark:text-dark-500">${brand}</span>
-                        <span class="ml-auto text-gray-500 dark:text-dark-400 text-sm">${count}</span>
-                    </label>
-                `).join('');
-            }
+            videoCards.forEach((card, index) => {
+                const video = card.querySelector('video');
+                const volumeIndicator = card.querySelector('.volume-indicator');
+                const detailsUrl = card.getAttribute('data-details-url');
+                if (!video || !volumeIndicator) return;
 
-            // Initialize with all brands
-            renderCarBrands(carBrands);
+                const volumeOff = volumeIndicator.querySelector('.volume-off');
+                const volumeOn = volumeIndicator.querySelector('.volume-on');
+                let volumeTimeout;
 
-            // Handle make search
-            makeSearch.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                const filteredBrands = carBrands.filter(({brand}) => 
-                    brand.toLowerCase().includes(query)
-                );
-                renderCarBrands(filteredBrands);
-            });
-
-            // Handle make selection
-            makeList.addEventListener('change', (e) => {
-                if (e.target.type === 'checkbox') {
-                    const selectedBrands = [...makeList.querySelectorAll('input:checked')]
-                        .map(input => input.value);
-                    filterManager.setFilter('make', selectedBrands);
-                }
-            });
-        });
-            </script>
-            
-    <script>
-        // Initialize feather icons
-        if (window.feather) {
-            try { feather.replace(); } catch (e) {}
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Toggle filter menus using inline display
-            const buttons = document.querySelectorAll('[id$="-filter-btn"]');
-            buttons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const menuId = btn.id.replace('-btn', '-menu');
-                    const menu = document.getElementById(menuId);
-
-                    // Close others
-                    document.querySelectorAll('[id$="-filter-menu"]').forEach(m => {
-                        if (m !== menu) m.style.display = 'none';
-                    });
-
-                    if (menu) {
-                        menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+                const updateVolumeIcon = (muted) => {
+                    if (volumeOff && volumeOn) {
+                        volumeOff.style.display = muted ? 'block' : 'none';
+                        volumeOn.style.display = muted ? 'none' : 'block';
                     }
-                });
-            });
+                };
 
-            // Keep menu open on internal clicks
-            document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
-                menu.addEventListener('click', e => e.stopPropagation());
-            });
+                const flashVolumeIndicator = () => {
+                    volumeIndicator.classList.remove('fade-out');
+                    clearTimeout(volumeTimeout);
+                    volumeTimeout = window.setTimeout(() => {
+                        volumeIndicator.classList.add('fade-out');
+                    }, 1500);
+                };
 
-            // Close on outside click
-            document.addEventListener('click', function() {
-                document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
-                    menu.style.display = 'none';
-                });
-            });
-        });
-    </script>
-
-    <script type="module">
-        import { carBrands } from './js/car-brands.js';
-        import { filterManager } from './js/filter-manager.js';
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const makeList = document.getElementById('make-list');
-            const makeSearch = document.getElementById('make-search');
-            if (!makeList || !makeSearch) return;
-
-            function render(brands) {
-                makeList.innerHTML = brands.map(({brand, count}) => `
-                    <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
-                        <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400" value="${brand}">
-                        <span class="ml-2 text-gray-700 dark:text-dark-500">${brand}</span>
-                        <span class="ml-auto text-gray-500 dark:text-dark-400 text-sm">${count}</span>
-                    </label>
-                `).join('');
-            }
-            render(carBrands);
-
-            makeSearch.addEventListener('input', (e) => {
-                const q = e.target.value.toLowerCase();
-                render(carBrands.filter(({brand}) => brand.toLowerCase().includes(q)));
-            });
-
-            makeList.addEventListener('change', () => {
-                const selected = Array.from(makeList.querySelectorAll('input:checked')).map(i => i.value);
-                filterManager.setFilter('make', selected);
-            });
-        });
-    </script>
-
-</body>
-</html>
-                import { locations, searchLocations } from './js/romanian-locations.js';
-                import { filterManager } from './js/filter-manager.js';
-                import { carBrands } from './js/car-brands.js';
-
-                // Initialize feather icons
-                document.addEventListener('DOMContentLoaded', () => {
-                    if (window.feather && typeof feather.replace === 'function') {
-                        feather.replace();
-                    }
-                });
-
-                // Also replace immediately in case DOM is already loaded
-                if (window.feather && typeof feather.replace === 'function') {
-                    try { feather.replace(); } catch (e) { /* ignore */ }
-                }
-
-                // Update nav to show avatar/name when logged in
-                (function updateNavAuthUI(){
-                    try {
-                        const avatar = localStorage.getItem('userAvatar');
-                        const name = localStorage.getItem('userName');
-                        const avatarEl = document.getElementById('nav-avatar');
-                        const nameEl = document.getElementById('nav-username');
-                        const userBtn = document.getElementById('user-btn');
-                        const iconSvg = userBtn && userBtn.querySelector('svg');
-
-                        if (avatar) {
-                            avatarEl.src = avatar;
-                            avatarEl.classList.remove('hidden');
-                            if (iconSvg) iconSvg.classList.add('hidden');
-                        } else {
-                            avatarEl.classList.add('hidden');
-                            if (iconSvg) iconSvg.classList.remove('hidden');
-                        }
-
-                        if (name) {
-                            nameEl.textContent = name;
-                            nameEl.classList.remove('hidden');
-                        } else {
-                            nameEl.classList.add('hidden');
-                        }
-                    } catch (err) { console.error('updateNavAuthUI error', err); }
-                })();
-
-                // Bind user button immediately (script is at end of body)
-                (function bindUserButton(){
-                    const userBtn = document.getElementById('user-btn');
-                    if (!userBtn) return;
-
-                    userBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        try {
-                            const authToken = localStorage.getItem('authToken');
-                            if (!authToken) {
-                                const authModal = document.createElement('auth-modal');
-                                document.body.appendChild(authModal);
-                            } else {
-                                const dropdown = document.createElement('user-dropdown');
-                                // position dropdown near button
-                                const btnRect = userBtn.getBoundingClientRect();
-                                dropdown.style.position = 'fixed';
-                                dropdown.style.top = `${btnRect.bottom + window.scrollY}px`;
-                                dropdown.style.right = `${window.innerWidth - btnRect.right}px`;
-                                document.body.appendChild(dropdown);
-                            }
-                        } catch (err) {
-                            // If anything goes wrong, fallback to opening modal
-                            const authModal = document.createElement('auth-modal');
-                            document.body.appendChild(authModal);
-                            console.error('user-btn handler error:', err);
-                        }
-                    });
-                })();
-
-                // Toggle filter menus
-                // Initialize car makes list
-                const makeList = document.getElementById('make-list');
-                const makeSearch = document.getElementById('make-search');
+                video.setAttribute('playsinline', '');
+                video.setAttribute('webkit-playsinline', '');
+                video.muted = true;
                 
-                function renderCarBrands(brands) {
-                    makeList.innerHTML = brands.map(({brand, count}) => `
-                        <label class="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-dark-200 cursor-pointer">
-                            <input type="checkbox" class="rounded text-indigo-600 dark:text-indigo-400" value="${brand}">
-                            <span class="ml-2 text-gray-700 dark:text-dark-500">${brand}</span>
-                            <span class="ml-auto text-gray-500 dark:text-dark-400 text-sm">${count}</span>
-                        </label>
-                    `).join('');
-                }
+                // Force iOS to load video metadata
+                video.load();
 
-                // Initialize with all brands
-                renderCarBrands(carBrands);
-
-                // Handle make search
-                makeSearch.addEventListener('input', (e) => {
-                    const query = e.target.value.toLowerCase();
-                    const filteredBrands = carBrands.filter(({brand}) => 
-                        brand.toLowerCase().includes(query)
-                    );
-                    renderCarBrands(filteredBrands);
-                });
-
-                // Handle make selection
-                makeList.addEventListener('change', (e) => {
-                    if (e.target.type === 'checkbox') {
-                        const selectedBrands = [...makeList.querySelectorAll('input:checked')]
-                            .map(input => input.value);
-                        filterManager.setFilter('make', selectedBrands);
-                    }
-                });
-
-                // Toggle filter menus
-                document.querySelectorAll('[id$="-filter-btn"]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        const menuId = btn.id.replace('-btn', '-menu');
-                        const menu = document.getElementById(menuId);
-
-                        // Close all other menus
-                        document.querySelectorAll('[id$="-filter-menu"]').forEach(m => {
-                            if (m.id !== menuId) m.classList.add('hidden');
-                        });
-
-                        // Toggle this menu
-                        if (menu) {
-                            menu.classList.toggle('hidden');
-                        }
-                    });
-                });
-
-                // Prevent menu clicks from closing the menu
-                document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
-                    menu.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                    });
-                });
-
-                // Close menus when clicking outside
-                document.addEventListener('click', () => {
-                    document.querySelectorAll('[id$="-filter-menu"]').forEach(menu => {
-                        menu.classList.add('hidden');
-                    });
-                });
-
-                // Theme toggle (safe attach)
-                const themeToggle = document.getElementById('theme-toggle');
-                if (themeToggle) {
-                    themeToggle.addEventListener('click', () => {
-                        const isDark = document.documentElement.classList.toggle('dark');
-                        localStorage.theme = isDark ? 'dark' : 'light';
-                    });
-                }
-
-                // ========================================
-                // VIDEO HOVER-TO-PLAY WITH SOUND (Desktop & Mobile)
-                // ========================================
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 1024;
-                const videoCards = document.querySelectorAll('[data-video-card]');
-                const videoGrid = document.querySelector('.video-grid');
-                
-                console.log('Initializing videos, mobile:', isMobile, 'cards:', videoCards.length);
-                
-                videoCards.forEach((card, index) => {
-                    const video = card.querySelector('video');
-                    const volumeIndicator = card.querySelector('.volume-indicator');
-                    const volumeOff = volumeIndicator.querySelector('.volume-off');
-                    const volumeOn = volumeIndicator.querySelector('.volume-on');
-                    let volumeTimeout;
-                    
-                    console.log(`Video ${index}:`, video.src || video.querySelector('source')?.src);
-                    
-                    // Function to show volume indicator temporarily
-                    const flashVolumeIndicator = () => {
-                        volumeIndicator.classList.remove('fade-out');
-                        clearTimeout(volumeTimeout);
-                        volumeTimeout = setTimeout(() => {
-                            volumeIndicator.classList.add('fade-out');
-                        }, 1500);
-                    };
-                    
-                    // Function to update volume icon
-                    const updateVolumeIcon = (muted) => {
-                        if (muted) {
-                            volumeOff.style.display = 'block';
-                            volumeOn.style.display = 'none';
-                        } else {
-                            volumeOff.style.display = 'none';
-                            volumeOn.style.display = 'block';
-                        }
-                    };
-
-                    // Ensure video is properly set up
-                    video.setAttribute('playsinline', '');
-                    video.setAttribute('webkit-playsinline', '');
+                const showFirstFrame = () => {
                     video.muted = true;
-                    
-                    // Force video to load and show first frame
-                    const videoSource = video.querySelector('source');
-                    if (videoSource) {
-                        video.src = videoSource.src;
-                    }
-                    video.load();
-                    
-                    // Strategy: Play briefly then pause to show first frame
-                    // This works better cross-browser than just setting currentTime
-                    const showFirstFrame = () => {
-                        video.muted = true;
-                        video.play().then(() => {
-                            console.log(`Video ${index} playing to show first frame`);
-                            // Pause after a brief moment to show first frame
-                            setTimeout(() => {
-                                if (!isMobile || index !== 0) {
-                                    video.pause();
-                                    video.currentTime = 0;
-                                }
-                            }, 100);
-                        }).catch(err => {
-                            console.log(`Video ${index} autoplay failed (normal):`, err.message);
-                            // Try setting currentTime as fallback
-                            video.currentTime = 0.1;
-                        });
-                    };
-                    
-                    // Wait for video to be ready
-                    video.addEventListener('loadeddata', () => {
-                        console.log(`Video ${index} loaded, duration:`, video.duration);
-                        showFirstFrame();
-                    }, { once: true });
-
-                    let userMutedPreference = isMobile ? true : false;
-                    
-                    if (isMobile) {
-                        // ========================================
-                        // MOBILE: TikTok-style snap scrolling with autoplay
-                        // ========================================
-                        
-                        // Intersection Observer for snap scroll autoplay
-                        const observer = new IntersectionObserver((entries) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
-                                    // Video is in view, play it
-                                    video.muted = userMutedPreference;
-                                    const playPromise = video.play();
-                                    if (playPromise !== undefined) {
-                                        playPromise.then(() => {
-                                            console.log(`Video ${index} playing`);
-                                            updateVolumeIcon(video.muted);
-                                            flashVolumeIndicator();
-                                        }).catch(err => {
-                                            console.log(`Video ${index} play failed:`, err.message);
-                                        });
+                    const playPromise = video.play();
+                    if (playPromise && typeof playPromise.then === 'function') {
+                        playPromise.then(() => {
+                            window.setTimeout(() => {
+                                // On mobile, pause all except first; on desktop, pause all initially
+                                if (isMobile) {
+                                    if (index !== 0) {
+                                        video.pause();
+                                        video.currentTime = 0;
                                     }
                                 } else {
-                                    // Video out of view, pause it
-                                    video.pause();
-                                    video.currentTime = 0;
+                                    // Desktop: pause after showing first frame, except for first video
+                                    if (index !== 0) {
+                                        video.pause();
+                                        video.currentTime = 0;
+                                    } else {
+                                        // First video autoplays on desktop
+                                        currentlyPlayingVideo = video;
+                                    }
                                 }
-                            });
-                        }, { threshold: [0.75] });
-                        
-                        observer.observe(card);
-                        
-                        // Toggle mute on tap
-                        card.addEventListener('click', (e) => {
-                            // Don't toggle if clicking a link or button
-                            if (e.target.closest('a, button')) return;
-                            
-                            video.muted = !video.muted;
-                            userMutedPreference = video.muted;
-                            updateVolumeIcon(video.muted);
-                            flashVolumeIndicator();
-                            
-                            if (video.paused) {
-                                video.play().catch(() => {});
-                            }
-                        });
-                    } else {
-                        // ========================================
-                        // DESKTOP: Hover to play with sound
-                        // ========================================
-                        card.addEventListener('mouseenter', () => {
-                            video.muted = userMutedPreference;
-                            const playAttempt = video.play();
-                            if (playAttempt !== undefined) {
-                                playAttempt.then(() => {
-                                    updateVolumeIcon(video.muted);
-                                    flashVolumeIndicator();
-                                }).catch(() => {
-                                    // Keep muted if browser blocks unmuted playback
-                                    video.muted = true;
-                                    userMutedPreference = true;
-                                    updateVolumeIcon(true);
-                                    flashVolumeIndicator();
-                                });
-                            }
-                        });
-                        
-                        card.addEventListener('mouseleave', () => {
-                            video.pause();
-                            video.currentTime = 0; // Reset to start
-                            flashVolumeIndicator();
-                        });
-                        
-                        // Click to toggle mute while playing
-                        card.addEventListener('click', (e) => {
-                            // Don't toggle if clicking a link or button
-                            if (e.target.closest('a, button')) return;
-                            
-                            if (!video.paused) {
-                                video.muted = !video.muted;
-                                userMutedPreference = video.muted;
-                                updateVolumeIcon(video.muted);
-                                flashVolumeIndicator();
-                            }
-                        });
-                        
-                        // Click volume indicator to toggle sound
-                        volumeIndicator.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            if (!video.paused) {
-                                video.muted = !video.muted;
-                                userMutedPreference = video.muted;
-                                updateVolumeIcon(video.muted);
-                                flashVolumeIndicator();
-                            }
+                            }, 100);
+                        }).catch(() => {
+                            video.currentTime = 0.1;
                         });
                     }
-                    
-                    // Initialize volume indicator
-                    updateVolumeIcon(video.muted);
-                    setTimeout(() => {
-                        volumeIndicator.classList.add('fade-out');
-                    }, 2000);
-                });
-                
-                // ========================================
-                // REGISTER SERVICE WORKER FOR PWA
-                // ========================================
-                if ('serviceWorker' in navigator) {
-                    window.addEventListener('load', () => {
-                        navigator.serviceWorker.register('/service-worker.js')
-                            .then(reg => console.log('Service Worker registered'))
-                            .catch(err => console.log('Service Worker registration failed:', err));
-                    });
+                };
+
+                if (video.readyState >= 2) {
+                    showFirstFrame();
+                } else {
+                    video.addEventListener('loadeddata', showFirstFrame, { once: true });
                 }
-            </script>
+
+                let userMutedPreference = false;
+
+                const applyMuteState = (muted) => {
+                    video.muted = muted;
+                    userMutedPreference = muted;
+                    updateVolumeIcon(muted);
+                    flashVolumeIndicator();
+                };
+
+                const toggleAudio = () => {
+                    const targetMuted = !video.muted;
+                    applyMuteState(targetMuted);
+
+                    if (!targetMuted && video.paused) {
+                        const resumeAttempt = video.play();
+                        if (resumeAttempt && typeof resumeAttempt.catch === 'function') {
+                            resumeAttempt.catch(() => applyMuteState(true));
+                        }
+                    }
+                };
+
+                if (isMobile) {
+                    const observer = new IntersectionObserver(entries => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
+                                video.muted = userMutedPreference;
+                                const playAttempt = video.play();
+                                if (playAttempt && typeof playAttempt.then === 'function') {
+                                    playAttempt.then(() => {
+                                        updateVolumeIcon(video.muted);
+                                        flashVolumeIndicator();
+                                    }).catch(() => {
+                                        video.muted = true;
+                                        userMutedPreference = true;
+                                        updateVolumeIcon(true);
+                                        flashVolumeIndicator();
+                                    });
+                                }
+                            } else {
+                                video.pause();
+                                video.currentTime = 0;
+                            }
+                        });
+                    }, { threshold: [0.75] });
+
+                    observer.observe(card);
+
+                } else {
+                    // Desktop: TikTok-style autoplay behavior
+                    card.addEventListener('mouseenter', () => {
+                        // Pause currently playing video if it's different
+                        if (currentlyPlayingVideo && currentlyPlayingVideo !== video) {
+                            currentlyPlayingVideo.pause();
+                        }
+                        
+                        // Play this video
+                        video.muted = userMutedPreference;
+                        const playAttempt = video.play();
+                        if (playAttempt && typeof playAttempt.then === 'function') {
+                            playAttempt.then(() => {
+                                currentlyPlayingVideo = video;
+                                updateVolumeIcon(video.muted);
+                                flashVolumeIndicator();
+                            }).catch(() => {
+                                video.muted = true;
+                                userMutedPreference = true;
+                                updateVolumeIcon(true);
+                                flashVolumeIndicator();
+                            });
+                        }
+                    });
+
+                    // On desktop, don't pause on mouse leave - let video continue playing
+                    // This creates the TikTok effect where videos play until you hover another one
+                }
+
+                volumeIndicator.addEventListener('click', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggleAudio();
+                });
+
+                if (detailsUrl) {
+                    // Handle card click (excluding links, buttons, and volume indicator)
+                    card.addEventListener('click', event => {
+                        if (event.target.closest('a, button, .volume-indicator')) return;
+
+                        try {
+                            sessionStorage.setItem('detailsScrollTarget', 'description');
+                        } catch (err) {
+                            console.warn('Unable to persist scroll preference', err);
+                        }
+
+                        window.location.href = detailsUrl;
+                    });
+                    
+                    // Handle title link click - also scroll to description
+                    const titleLink = card.querySelector('a[href]');
+                    if (titleLink) {
+                        titleLink.addEventListener('click', event => {
+                            try {
+                                sessionStorage.setItem('detailsScrollTarget', 'description');
+                            } catch (err) {
+                                console.warn('Unable to persist scroll preference', err);
+                            }
+                            // Let the default link navigation happen
+                        });
+                    }
+                }
+
+                updateVolumeIcon(video.muted);
+                window.setTimeout(() => volumeIndicator.classList.add('fade-out'), 2000);
+            });
+        };
+
+        const registerServiceWorker = () => {
+            if (!('serviceWorker' in navigator)) return;
+
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch(err => console.error('Service Worker registration failed:', err));
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyFeatherIcons();
+            applyFiltersFromSearch();
+            setupFilterMenus();
+            setupMakeFilter();
+            setupThemeToggle();
+            bindUserButton();
+            updateNavAuthUI();
+            initVideos();
+            window.setTimeout(applyFeatherIcons, 100);
+        });
+
+        applyFeatherIcons();
+        window.addEventListener('load', registerServiceWorker);
+    </script>
 </body>
 </html>

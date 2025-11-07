@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Ad Details - VidX</title>
     <script>
-        // Add dark mode class if needed before page loads
-        if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
+        (function() {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        })();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -60,13 +64,45 @@
         </div>
     </nav>
 
+    <!-- Vertical Home Button (Left Edge) -->
+    <a href="index.html" id="vertical-home-btn" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 8px 8px 0;">
+        <div class="relative flex items-center justify-center">
+            <i data-feather="home" class="h-5 w-5 sm:h-6 sm:w-6"></i>
+        </div>
+    </a>
+
+    <style>
+        #vertical-home-btn {
+            width: 36px;
+            height: 48px;
+        }
+        
+        @media (min-width: 640px) {
+            #vertical-home-btn {
+                width: 44px;
+                height: 100px;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem 0.5rem;
+            }
+            #vertical-home-btn::after {
+                content: 'HOME';
+                font-size: 0.625rem;
+                font-weight: 500;
+                letter-spacing: 0.05em;
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+            }
+        }
+    </style>
+
     <!-- Ad Details Container -->
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Video/Images Section -->
             <div>
                 <div class="bg-black rounded-lg overflow-hidden" style="aspect-ratio: 9/16;">
-                    <video id="ad-video" class="w-full h-full object-contain" controls autoplay muted loop playsinline>
+                    <video id="ad-video" class="w-full h-full object-contain" controls autoplay loop playsinline>
                         <source id="video-source" src="" type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
@@ -107,7 +143,7 @@
                 </div>
 
                 <!-- Description -->
-                <div class="border-t border-gray-200 dark:border-dark-200 pt-6">
+                <div class="border-t border-gray-200 dark:border-dark-200 pt-6" data-scroll-target="description">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-3">Description</h2>
                     <p id="ad-description" class="text-gray-700 dark:text-dark-500 whitespace-pre-line"></p>
                 </div>
@@ -245,6 +281,32 @@ Immaculate inside and out.`,
             }
         };
 
+        const scrollPreferenceKey = 'detailsScrollTarget';
+
+        const maybeScrollToDescription = () => {
+            let preference;
+            try {
+                preference = sessionStorage.getItem(scrollPreferenceKey);
+                if (preference) {
+                    sessionStorage.removeItem(scrollPreferenceKey);
+                }
+            } catch (err) {
+                console.warn('Unable to access session storage for scroll preference', err);
+                return;
+            }
+
+            if (preference !== 'description') return;
+
+            const targetEl = document.querySelector('[data-scroll-target="description"]');
+            if (!targetEl) return;
+
+            window.setTimeout(() => {
+                const rect = targetEl.getBoundingClientRect();
+                const scrollTarget = Math.max(rect.top + window.scrollY - (window.innerHeight * 0.33), 0);
+                window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+            }, 250);
+        };
+
         // Get ad ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const adId = urlParams.get('ad');
@@ -268,14 +330,25 @@ Immaculate inside and out.`,
             document.getElementById('seller-name').textContent = ad.seller;
             document.getElementById('posted-date').textContent = `${ad.postedDate} · ${ad.location}`;
             document.getElementById('seller-avatar').src = ad.avatar;
+            const videoEl = document.getElementById('ad-video');
             document.getElementById('video-source').src = ad.video;
-            document.getElementById('ad-video').load();
+            videoEl.load();
+            videoEl.muted = false;
+            videoEl.volume = 1;
+            const tryPlay = videoEl.play();
+            if (tryPlay && typeof tryPlay.catch === 'function') {
+                tryPlay.catch(() => {
+                    // Autoplay with sound might be rejected; fall back to showing controls without muting
+                });
+            }
             
             // Update page title
             document.title = `${ad.title} - VidX`;
             
             // Reinitialize feather icons
             feather.replace();
+
+            maybeScrollToDescription();
         } else {
             // Ad not found
             document.querySelector('.max-w-6xl').innerHTML = `

@@ -26,37 +26,79 @@ class UserDropdown extends HTMLElement {
     });
     this._portal.innerHTML = `
       <style>
-        /* DEBUG outlines: visible border around portal and content to help diagnose stacking/pointer issues */
-        .user-dropdown-portal { outline: 2px dashed rgba(255,0,0,0.5); }
+        .user-dropdown-portal {
+          pointer-events: auto;
+        }
         .user-dropdown-portal .dropdown-content {
           pointer-events: auto;
           position: absolute;
-          background: white;
-          min-width: 200px;
-          border-radius: 8px;
-          box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+          background: #ffffff;
+          min-width: 220px;
+          border-radius: 12px;
+          box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
           padding: 8px 0;
           z-index: 99999;
-          outline: 2px dashed rgba(0,0,255,0.35);
+          border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        .dark .user-dropdown-portal .dropdown-content {
+          background: #242526;
+          border-color: rgba(255, 255, 255, 0.08);
+          box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
         }
         .user-dropdown-portal .dropdown-item {
-          padding: 12px 16px;
-          display: block;
-          color: #374151;
-          cursor: pointer;
-          text-decoration: none;
-          font-size: 14px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 16px;
+          width: 100%;
           background: transparent;
           border: none;
-          width: 100%;
-          text-align: left;
+          color: #374151;
+          font-size: 14px;
+          font-weight: 500;
+          text-decoration: none;
+          cursor: pointer;
+          border-radius: 6px;
+          transition: background-color 0.15s ease, color 0.15s ease;
+          appearance: none;
         }
-        .user-dropdown-portal .dropdown-item:hover { background: #f3f4f6; }
-        .user-dropdown-portal .dropdown-divider { border-top: 1px solid #e5e7eb; margin: 6px 0; }
-
+        .user-dropdown-portal .dropdown-item:hover,
+        .user-dropdown-portal .dropdown-item:focus {
+          background: rgba(99, 102, 241, 0.12);
+          color: #312e81;
+          outline: none;
+        }
+        .user-dropdown-portal .dropdown-item:focus-visible {
+          outline: 2px solid rgba(99, 102, 241, 0.65);
+          outline-offset: 2px;
+        }
+        .dark .user-dropdown-portal .dropdown-item {
+          color: #E4E6EB;
+        }
+        .dark .user-dropdown-portal .dropdown-item:hover,
+        .dark .user-dropdown-portal .dropdown-item:focus {
+          background: rgba(99, 102, 241, 0.24);
+          color: #EEF2FF;
+        }
+        .user-dropdown-portal .dropdown-divider {
+          border-top: 1px solid rgba(229, 231, 235, 0.8);
+          margin: 6px 0;
+        }
+        .dark .user-dropdown-portal .dropdown-divider {
+          border-color: rgba(255, 255, 255, 0.08);
+        }
         @media (max-width: 640px) {
-          .user-dropdown-portal .dropdown-content { left: 0 !important; right: 0 !important; top: 56px !important; border-radius: 0; min-width: auto; }
-          .user-dropdown-portal .dropdown-item { padding: 16px; font-size: 16px; }
+          .user-dropdown-portal .dropdown-content {
+            left: 0 !important;
+            right: 0 !important;
+            top: 56px !important;
+            border-radius: 0;
+            min-width: auto;
+          }
+          .user-dropdown-portal .dropdown-item {
+            padding: 16px;
+            font-size: 16px;
+          }
         }
       </style>
       <div class="dropdown-content" role="menu">
@@ -77,17 +119,19 @@ class UserDropdown extends HTMLElement {
     // stopPropagation on menu items so document click doesn't immediately close the menu
     this._menuItems.forEach((it) => {
       it.addEventListener('click', (ev) => {
-        console.log('[user-dropdown] menu-item click:', it.textContent && it.textContent.trim(), { target: it, event: ev });
         ev.stopPropagation();
+        // Close menu after navigation clicks to keep UI tidy
+        if (it.tagName.toLowerCase() === 'a') {
+          this._hidePortal();
+        }
       });
     });
 
-    // Log clicks on portal and content to observe event flow
+    // close when clicking outside the content
     this._portal.addEventListener('click', (ev) => {
-      console.log('[user-dropdown] portal clicked', { target: ev.target, path: ev.composedPath && ev.composedPath() });
-    });
-    this._portalContent.addEventListener('click', (ev) => {
-      console.log('[user-dropdown] content clicked', { target: ev.target, path: ev.composedPath && ev.composedPath() });
+      if (!this._portalContent.contains(ev.target)) {
+        this._hidePortal();
+      }
     });
 
     // Logout handler
