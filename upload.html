@@ -68,6 +68,19 @@
         .animate-spin {
             animation: spin 1s linear infinite;
         }
+        
+        /* Improve form field visibility in dark mode */
+        .dark select {
+            border: 1px solid #4E4F50 !important;
+            background-color: #242526 !important;
+            color: #E4E6EB !important;
+        }
+        
+        .dark select:focus {
+            border-color: #818cf8 !important;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1) !important;
+            outline: none !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">

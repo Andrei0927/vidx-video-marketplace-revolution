@@ -38,6 +38,33 @@
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
+    <style>
+        /* Improve form field visibility in dark mode */
+        .dark input[type="text"],
+        .dark input[type="number"],
+        .dark input[type="email"],
+        .dark select,
+        .dark textarea {
+            border: 1px solid #4E4F50 !important;
+            background-color: #242526 !important;
+            color: #E4E6EB !important;
+        }
+        
+        .dark input[type="text"]:focus,
+        .dark input[type="number"]:focus,
+        .dark input[type="email"]:focus,
+        .dark select:focus,
+        .dark textarea:focus {
+            border-color: #818cf8 !important;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1) !important;
+            outline: none !important;
+        }
+        
+        .dark input::placeholder,
+        .dark textarea::placeholder {
+            color: #6B6C6D !important;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
     <!-- Navigation -->
