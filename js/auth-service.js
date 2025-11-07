@@ -118,6 +118,11 @@ class AuthService {
     return !!(localStorage.getItem('sessionToken') || localStorage.getItem('authToken') || localStorage.getItem('userId'));
   }
 
+  generateSessionToken() {
+    // Generate a random session token
+    return 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
+
   // ========================================
   // LocalStorage-based auth (for remote/iOS)
   // ========================================
