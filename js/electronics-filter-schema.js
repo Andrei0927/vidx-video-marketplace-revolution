@@ -1,43 +1,27 @@
 /**
  * Electronics & Technology Filter Schema
  * For vidx-video-marketplace-revolution
+ * Inspired by OLX, eBay, Amazon patterns
  */
 
 const electronicsFilterSchema = {
     // Main category structure
     categories: {
-        type: 'single-select',
-        label: 'Type',
+        type: 'dropdown',
+        label: 'Category',
+        width: 'full',
+        alwaysVisible: true,
         options: [
-            { id: 'all', value: '', label: 'All Electronics', count: null },
-            { id: 'phones', value: 'Phones & Tablets', label: 'Phones & Tablets', count: null },
-            { id: 'computers', value: 'Computers & Laptops', label: 'Computers & Laptops', count: null },
-            { id: 'tv-audio', value: 'TV & Audio', label: 'TV & Audio', count: null },
-            { id: 'cameras', value: 'Cameras & Photography', label: 'Cameras & Photography', count: null },
-            { id: 'gaming', value: 'Gaming & Consoles', label: 'Gaming & Consoles', count: null },
-            { id: 'wearables', value: 'Wearables & Smart Devices', label: 'Wearables & Smart Devices', count: null },
-            { id: 'accessories', value: 'Accessories & Parts', label: 'Accessories & Parts', count: null }
+            { id: 'all', value: '', label: '📱 Choose Category - All Electronics' },
+            { id: 'phones', value: 'Phones & Tablets', label: '📱 Phones & Tablets' },
+            { id: 'computers', value: 'Computers & Laptops', label: '💻 Computers & Laptops' },
+            { id: 'tv-audio', value: 'TV & Audio', label: '📺 TV & Audio' },
+            { id: 'cameras', value: 'Cameras & Photography', label: '📷 Cameras & Photography' },
+            { id: 'gaming', value: 'Gaming & Consoles', label: '🎮 Gaming & Consoles' },
+            { id: 'wearables', value: 'Wearables & Smart Devices', label: '⌚ Wearables & Smart Devices' },
+            { id: 'accessories', value: 'Accessories & Parts', label: '🔌 Accessories & Parts' },
+            { id: 'appliances', value: 'Home Appliances', label: '🏠 Home Appliances' }
         ]
-    },
-
-    // Price Range
-    price: {
-        type: 'range',
-        label: 'Price',
-        currency: {
-            default: 'EUR',
-            options: ['EUR', 'USD', 'RON', 'GBP']
-        },
-        range: {
-            min: 0,
-            max: 10000,
-            step: 50,
-            unit: '€'
-        },
-        inputs: {
-            from: { placeholder: 'Min price', id: 'price-from' },
-            to: { placeholder: 'Max price', id: 'price-to' }
-        }
     },
 
     // Brand
@@ -45,6 +29,7 @@ const electronicsFilterSchema = {
         type: 'dropdown',
         label: 'Brand',
         required: false,
+        alwaysVisible: true,
         options: [
             { value: '', label: 'Any' },
             // Phones & Tablets
@@ -92,19 +77,36 @@ const electronicsFilterSchema = {
         ]
     },
 
-    // Model (text input for electronics)
-    model: {
-        type: 'text',
-        label: 'Model',
-        placeholder: 'e.g., iPhone 15 Pro, Galaxy S24',
-        optional: true
+    // Price Range
+    price: {
+        type: 'range',
+        label: 'Price',
+        width: 'half',
+        alwaysVisible: true,
+        currency: {
+            default: 'EUR',
+            options: ['EUR', 'USD', 'RON', 'GBP']
+        },
+        range: {
+            min: 0,
+            max: 10000,
+            step: 50,
+            unit: '€'
+        },
+        inputs: {
+            from: { placeholder: 'Min price', id: 'price-from' },
+            to: { placeholder: 'Max price', id: 'price-to' }
+        }
     },
 
     // Condition
     condition: {
-        type: 'multi-select',
+        type: 'dropdown',
         label: 'Condition',
+        width: 'half',
+        alwaysVisible: true,
         options: [
+            { value: '', label: 'Any' },
             { value: 'New', label: 'Brand New' },
             { value: 'Like New', label: 'Like New' },
             { value: 'Excellent', label: 'Excellent' },
@@ -112,6 +114,24 @@ const electronicsFilterSchema = {
             { value: 'Fair', label: 'Fair' },
             { value: 'For Parts', label: 'For Parts/Not Working' }
         ]
+    },
+
+    // Location
+    location: {
+        type: 'text',
+        label: 'Location',
+        placeholder: 'City or region...',
+        alwaysVisible: true,
+        helpText: 'Enter city, region, or postal code'
+    },
+
+    // Model (text input for electronics)
+    model: {
+        type: 'text',
+        label: 'Model',
+        placeholder: 'e.g., iPhone 15 Pro, Galaxy S24',
+        collapsible: true,
+        optional: true
     },
 
     // Warranty
