@@ -9,92 +9,20 @@
 const automotiveFilterSchema = {
     // Main category structure (like OLX subcategories)
     categories: {
-        type: 'single-select',
-        label: 'Type',
+        type: 'dropdown',
+        label: 'Category',
         width: 'full',
         options: [
-            { id: 'all', value: '', label: 'All Vehicles', count: null },
-            { id: 'cars', value: 'Cars', label: 'Cars', count: null },
-            { id: 'commercial', value: 'Commercial', label: 'Commercial Vehicles', count: null },
-            { id: 'trucks', value: 'Trucks - Trailers - Caravans', label: 'Trucks - Trailers - Caravans', count: null },
-            { id: 'motorcycles', value: 'Motorcycles', label: 'Motorcycles', count: null },
-            { id: 'scooters', value: 'Scooters - ATV - UTV', label: 'Scooters - ATV - UTV', count: null },
-            { id: 'boats', value: 'Boats', label: 'Boats', count: null },
-            { id: 'industrial', value: 'Industrial & farm vehicles', label: 'Industrial & Farm Vehicles', count: null }
-        ]
-    },
-
-    // Body Type (Caroserie in Romanian)
-    bodyType: {
-        type: 'multi-select',
-        label: 'Body Type',
-        collapsible: true,
-        options: [
-            { value: 'Sedan', label: 'Sedan' },
-            { value: 'Coupe', label: 'Coupe' },
-            { value: 'Convertible', label: 'Convertible' },
-            { value: 'Hatchback', label: 'Hatchback' },
-            { value: 'Estate', label: 'Estate / Wagon' },
-            { value: 'Off-road', label: 'Off-road / 4x4' },
-            { value: 'SUV', label: 'SUV / Crossover' },
-            { value: 'Minibus', label: 'Minibus' },
-            { value: 'People carrier', label: 'People Carrier / MPV' },
-            { value: 'Pickup', label: 'Pickup Truck' }
-        ]
-    },
-
-    // Price Range (Pret)
-    price: {
-        type: 'range',
-        label: 'Price',
-        width: 'half',
-        currency: {
-            default: 'EUR',
-            options: ['EUR', 'USD', 'RON', 'GBP']
-        },
-        range: {
-            min: 0,
-            max: 500000,
-            step: 500,
-            unit: '€'
-        },
-        inputs: {
-            from: { placeholder: 'Min price', id: 'price-from' },
-            to: { placeholder: 'Max price', id: 'price-to' }
-        }
-    },
-
-    // Year of Manufacture (An de fabricatie)
-    year: {
-        type: 'range',
-        label: 'Year',
-        width: 'half',
-        range: {
-            min: 1950,
-            max: new Date().getFullYear() + 1,
-            step: 1,
-            unit: ''
-        },
-        inputs: {
-            from: { placeholder: 'From year', id: 'year-from' },
-            to: { placeholder: 'To year', id: 'year-to' }
-        }
-    },
-
-    // Mileage (Rulaj/Kilometraj)
-    mileage: {
-        type: 'range',
-        label: 'Mileage (km)',
-        range: {
-            min: 0,
-            max: 500000,
-            step: 1000,
-            unit: 'km'
-        },
-        inputs: {
-            from: { placeholder: 'Min km', id: 'mileage-from' },
-            to: { placeholder: 'Max km', id: 'mileage-to' }
-        }
+            { id: 'all', value: '', label: '🚗 Choose Category - All Vehicles' },
+            { id: 'cars', value: 'Cars', label: '🚗 Cars' },
+            { id: 'commercial', value: 'Commercial', label: '🚐 Commercial Vehicles' },
+            { id: 'trucks', value: 'Trucks - Trailers - Caravans', label: '🚛 Trucks - Trailers - Caravans' },
+            { id: 'motorcycles', value: 'Motorcycles', label: '🏍️ Motorcycles' },
+            { id: 'scooters', value: 'Scooters - ATV - UTV', label: '🛵 Scooters - ATV - UTV' },
+            { id: 'boats', value: 'Boats', label: '⛵ Boats' },
+            { id: 'industrial', value: 'Industrial & farm vehicles', label: '🚜 Industrial & Farm Vehicles' }
+        ],
+        alwaysVisible: true
     },
 
     // Make/Brand (Marca)
@@ -102,6 +30,7 @@ const automotiveFilterSchema = {
         type: 'dropdown',
         label: 'Make',
         required: false,
+        alwaysVisible: true,
         options: [
             { value: '', label: 'Any' },
             { value: 'Abarth', label: 'Abarth' },
@@ -216,9 +145,108 @@ const automotiveFilterSchema = {
         label: 'Model',
         required: false,
         dependsOn: 'make',
+        alwaysVisible: true,
         options: [
             { value: '', label: 'Any' }
             // Populated dynamically based on make from carModels object
+        ]
+    },
+
+    // Price Range (Pret)
+    price: {
+        type: 'range',
+        label: 'Price',
+        width: 'half',
+        alwaysVisible: true,
+        currency: {
+            default: 'EUR',
+            options: ['EUR', 'USD', 'RON', 'GBP']
+        },
+        range: {
+            min: 0,
+            max: 500000,
+            step: 500,
+            unit: '€'
+        },
+        inputs: {
+            from: { placeholder: 'Min price', id: 'price-from' },
+            to: { placeholder: 'Max price', id: 'price-to' }
+        }
+    },
+
+    // Year of Manufacture (An de fabricatie)
+    year: {
+        type: 'range',
+        label: 'Year',
+        width: 'half',
+        alwaysVisible: true,
+        range: {
+            min: 1950,
+            max: new Date().getFullYear() + 1,
+            step: 1,
+            unit: ''
+        },
+        inputs: {
+            from: { placeholder: 'From year', id: 'year-from' },
+            to: { placeholder: 'To year', id: 'year-to' }
+        }
+    },
+
+    // Mileage (Rulaj/Kilometraj)
+    mileage: {
+        type: 'range',
+        label: 'Mileage (km)',
+        alwaysVisible: true,
+        range: {
+            min: 0,
+            max: 500000,
+            step: 1000,
+            unit: 'km'
+        },
+        inputs: {
+            from: { placeholder: 'Min km', id: 'mileage-from' },
+            to: { placeholder: 'Max km', id: 'mileage-to' }
+        }
+    },
+
+    // Transmission (Cutie de viteze)
+    transmission: {
+        type: 'radio',
+        label: 'Transmission',
+        alwaysVisible: true,
+        options: [
+            { value: '', label: 'Any' },
+            { value: 'Manual', label: 'Manual' },
+            { value: 'Automatic', label: 'Automatic' },
+            { value: 'Semi-automatic', label: 'Semi-automatic' }
+        ]
+    },
+
+    // Location
+    location: {
+        type: 'text',
+        label: 'Location',
+        placeholder: 'City or region...',
+        alwaysVisible: true,
+        helpText: 'Enter city, region, or postal code'
+    },
+
+    // Body Type (Caroserie in Romanian)
+    bodyType: {
+        type: 'multi-select',
+        label: 'Body Type',
+        collapsible: true,
+        options: [
+            { value: 'Sedan', label: 'Sedan' },
+            { value: 'Coupe', label: 'Coupe' },
+            { value: 'Convertible', label: 'Convertible' },
+            { value: 'Hatchback', label: 'Hatchback' },
+            { value: 'Estate', label: 'Estate / Wagon' },
+            { value: 'Off-road', label: 'Off-road / 4x4' },
+            { value: 'SUV', label: 'SUV / Crossover' },
+            { value: 'Minibus', label: 'Minibus' },
+            { value: 'People carrier', label: 'People Carrier / MPV' },
+            { value: 'Pickup', label: 'Pickup Truck' }
         ]
     },
 
@@ -232,7 +260,7 @@ const automotiveFilterSchema = {
         helpText: 'Enter the specific trim level or variant you\'re looking for'
     },
 
-        // Fuel Type (Combustibil)
+    // Fuel Type (Combustibil)
     fuel: {
         type: 'multi-select',
         label: 'Fuel Type',
@@ -247,19 +275,6 @@ const automotiveFilterSchema = {
             { value: 'CNG', label: 'CNG / Natural Gas' },
             { value: 'Hydrogen', label: 'Hydrogen / Fuel Cell' },
             { value: 'E85', label: 'E85 / Bioethanol' }
-        ]
-    },
-
-    // Transmission (Cutie de viteze)
-    transmission: {
-        type: 'radio',
-        label: 'Transmission',
-        collapsible: true,
-        options: [
-            { value: '', label: 'Any' },
-            { value: 'Manual', label: 'Manual' },
-            { value: 'Automatic', label: 'Automatic' },
-            { value: 'Semi-automatic', label: 'Semi-automatic' }
         ]
     },
 

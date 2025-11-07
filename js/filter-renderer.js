@@ -29,12 +29,31 @@ class FilterRenderer {
 
         this.container.innerHTML = '';
         
+        // Separate filters into always-visible and advanced
+        const alwaysVisible = [];
+        const advanced = [];
+        
         Object.entries(this.schema).forEach(([key, config]) => {
+            if (config.alwaysVisible) {
+                alwaysVisible.push([key, config]);
+            } else {
+                advanced.push([key, config]);
+            }
+        });
+        
+        // Render always-visible filters
+        alwaysVisible.forEach(([key, config]) => {
             const filterElement = this.renderFilter(key, config);
             if (filterElement) {
                 this.container.appendChild(filterElement);
             }
         });
+        
+        // Render advanced filters in collapsible section
+        if (advanced.length > 0) {
+            const advancedSection = this.renderAdvancedFiltersSection(advanced);
+            this.container.appendChild(advancedSection);
+        }
 
         // Add action buttons
         this.renderActionButtons();
@@ -84,6 +103,69 @@ class FilterRenderer {
                 return null;
         }
 
+        return wrapper;
+    }
+
+    /**
+     * Render Advanced Filters Section (collapsible mega-section)
+     */
+    renderAdvancedFiltersSection(advancedFilters) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'filter-full border border-indigo-200 dark:border-indigo-900 rounded-lg mt-4 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950 dark:to-purple-950';
+        
+        const toggle = document.createElement('div');
+        toggle.className = 'filter-toggle flex justify-between items-center p-4 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900 rounded-t-lg';
+        toggle.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i data-feather="sliders" class="h-5 w-5 text-indigo-600 dark:text-indigo-400"></i>
+                <span class="font-semibold text-indigo-900 dark:text-indigo-100">Advanced Filters</span>
+                <span class="text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900 px-2 py-0.5 rounded-full">${advancedFilters.length} filters</span>
+            </div>
+            <i data-feather="chevron-down" class="h-5 w-5 text-indigo-600 dark:text-indigo-400 transition-transform"></i>
+        `;
+        
+        const content = document.createElement('div');
+        content.className = 'filter-section';
+        content.id = 'advanced-filters-section';
+        
+        // Create a grid for advanced filters
+        const grid = document.createElement('div');
+        grid.className = 'filter-compact-grid p-4 pt-2';
+        
+        advancedFilters.forEach(([key, config]) => {
+            const filterElement = this.renderFilter(key, config);
+            if (filterElement) {
+                grid.appendChild(filterElement);
+            }
+        });
+        
+        content.appendChild(grid);
+        
+        // Add toggle functionality
+        toggle.addEventListener('click', () => {
+            content.classList.toggle('active');
+            const icon = toggle.querySelector('i[data-feather="chevron-down"]');
+            if (content.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+            // Re-render feather icons for the newly revealed content
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+        
+        wrapper.appendChild(toggle);
+        wrapper.appendChild(content);
+        
+        // Re-render feather icons
+        setTimeout(() => {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        }, 0);
+        
         return wrapper;
     }
 
