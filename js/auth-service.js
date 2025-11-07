@@ -202,6 +202,40 @@ class AuthService {
     }
   }
 
+  async changePassword(currentPassword, newPassword) {
+    try {
+      // If no API server (remote deployment), use localStorage
+      if (!this.baseUrl) {
+        return this.changePasswordLocal(currentPassword, newPassword);
+      }
+
+      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      if (!sessionToken) {
+        throw new Error('Not logged in');
+      }
+
+      const response = await fetch(`${this.baseUrl}/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionToken}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to change password');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Change password error:', error);
+      throw error;
+    }
+  }
+
   generateSessionToken() {
     // Generate a random session token
     return 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -397,6 +431,38 @@ class AuthService {
     return {
       message: 'Password reset successfully',
       email
+    };
+  }
+  
+  changePasswordLocal(currentPassword, newPassword) {
+    // Get current user email
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      throw new Error('Not logged in');
+    }
+    
+    // Get users
+    const users = this._seedDefaultUsers();
+    
+    // Find current user
+    const user = users.find(u => u.email === userEmail);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    // Verify current password
+    if (user.password !== currentPassword) {
+      throw new Error('Current password is incorrect');
+    }
+    
+    // Update password
+    user.password = newPassword;
+    localStorage.setItem('vidx_users', JSON.stringify(users));
+    
+    console.log('[AuthService] Password changed successfully for:', userEmail);
+    
+    return {
+      message: 'Password changed successfully'
     };
   }
 }

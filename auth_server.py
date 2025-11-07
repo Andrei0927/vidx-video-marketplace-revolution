@@ -89,6 +89,8 @@ class AuthHandler(BaseHTTPRequestHandler):
                 self.handle_login()
             elif parsed_path.path == '/api/auth/logout':
                 self.handle_logout()
+            elif parsed_path.path == '/api/auth/change-password':
+                self.handle_change_password()
             elif parsed_path.path == '/api/auth/password-reset/request':
                 self.handle_password_reset_request()
             elif parsed_path.path == '/api/auth/password-reset/verify':
@@ -480,6 +482,64 @@ class AuthHandler(BaseHTTPRequestHandler):
             'email': email
         })
         print(f"✅ Password reset completed for {email}")
+    
+    def handle_change_password(self):
+        """Change password for authenticated user"""
+        # Get auth token
+        auth_header = self.headers.get('Authorization', '')
+        token = auth_header.replace('Bearer ', '') if auth_header.startswith('Bearer ') else None
+        
+        if not token:
+            self._send_json({'error': 'Not authenticated'}, 401)
+            return
+        
+        data = self._get_post_data()
+        
+        current_password = data.get('currentPassword', '')
+        new_password = data.get('newPassword', '')
+        
+        if not current_password or not new_password:
+            self._send_json({'error': 'Current password and new password are required'}, 400)
+            return
+        
+        if len(new_password) < 8:
+            self._send_json({'error': 'New password must be at least 8 characters'}, 400)
+            return
+        
+        db = self._load_db()
+        
+        # Find session
+        session = next((s for s in db['sessions'] if s['token'] == token), None)
+        if not session:
+            self._send_json({'error': 'Invalid session'}, 401)
+            return
+        
+        # Find user
+        user = next((u for u in db['users'] if u['id'] == session['userId']), None)
+        if not user:
+            self._send_json({'error': 'User not found'}, 404)
+            return
+        
+        # Verify current password
+        if not verify_password(current_password, user['password']):
+            self._send_json({'error': 'Current password is incorrect'}, 401)
+            return
+        
+        # Check if new password is same as current
+        if verify_password(new_password, user['password']):
+            self._send_json({'error': 'New password must be different from current password'}, 400)
+            return
+        
+        # Update password
+        user['password'] = hash_password(new_password)
+        user['updatedAt'] = datetime.utcnow().isoformat() + 'Z'
+        
+        self._save_db(db)
+        
+        self._send_json({
+            'message': 'Password changed successfully'
+        })
+        print(f"✅ Password changed for {user['email']}")
 
 def run(port=3001):
     """Start the authentication server"""
@@ -494,6 +554,7 @@ def run(port=3001):
     print(f'  POST /api/auth/logout                      - Logout user')
     print(f'  GET  /api/auth/me                          - Get current user')
     print(f'  GET  /api/auth/verify                      - Verify token')
+    print(f'  POST /api/auth/change-password             - Change password (auth required)')
     print(f'  POST /api/auth/password-reset/request      - Request password reset')
     print(f'  POST /api/auth/password-reset/verify       - Verify reset code')
     print(f'  POST /api/auth/password-reset/reset        - Reset password')

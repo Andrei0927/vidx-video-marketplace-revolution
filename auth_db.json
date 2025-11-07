@@ -4,9 +4,9 @@
       "id": 1,
       "name": "John Doe",
       "email": "demo@example.com",
-      "password": "73f068ee17299cbb1c185d53fae335b0$04e0afff793b6862a5adea16e897e5784627c1f97c2ef63137b70177868faede",
+      "password": "45279155b8a6e63041ecc38d99c722c1$bd56708d2a66f221a29a93ed141e491604d272f93121786960501f7f6bc2dd32",
       "createdAt": "2025-11-07T00:00:00.000Z",
-      "updatedAt": "2025-11-07T00:00:00.000Z"
+      "updatedAt": "2025-11-07T05:20:14.687811Z"
     },
     {
       "id": 2,
@@ -74,34 +74,6 @@
       "expiresAt": null
     },
     {
-      "id": 2,
-      "userId": 1,
-      "token": "i78dre64qbpmhnoloxt",
-      "createdAt": "2025-11-06T17:09:14.753Z",
-      "expiresAt": null
-    },
-    {
-      "id": 3,
-      "userId": 1,
-      "token": "8ck1uqg7srhmhnyrss3",
-      "createdAt": "2025-11-06T21:53:55.827Z",
-      "expiresAt": null
-    },
-    {
-      "id": 4,
-      "userId": 1,
-      "token": "ddqvg5d6jiqmho3wcig",
-      "createdAt": "2025-11-07T00:17:26.104Z",
-      "expiresAt": null
-    },
-    {
-      "id": 5,
-      "userId": 1,
-      "token": "7os5kkmfptwmhoayjsw",
-      "createdAt": "2025-11-07T03:35:06.176Z",
-      "expiresAt": null
-    },
-    {
       "id": 6,
       "userId": 3,
       "token": "-budXEQblQgSFKu0-wOcGQu2l6rb8SbKTIO4l3hEEOA",
@@ -155,6 +127,41 @@
       "userId": 8,
       "token": "b1k7s0QzPr6uQ1A5CoQ72MNdCmPbfXQtakMX7ZS6uSA",
       "createdAt": "2025-11-07T04:18:26.281382Z",
+      "expiresAt": null
+    },
+    {
+      "id": 16,
+      "userId": 1,
+      "token": "p3ur_1RfFpgk6HTvD0UUTJt7nZUQJIqB_CsoDrCE6so",
+      "createdAt": "2025-11-07T05:08:52.717839Z",
+      "expiresAt": null
+    },
+    {
+      "id": 17,
+      "userId": 1,
+      "token": "CEG9B5MJ7HgSjh6M8HjF_ZgLMTircGP6l7uT0NhodU0",
+      "createdAt": "2025-11-07T05:14:30.628928Z",
+      "expiresAt": null
+    },
+    {
+      "id": 18,
+      "userId": 1,
+      "token": "lk_dFCoNpESY9y6uCqRQPLHqGYl1p2kBPVLsLDw8iiU",
+      "createdAt": "2025-11-07T05:15:13.494773Z",
+      "expiresAt": null
+    },
+    {
+      "id": 19,
+      "userId": 1,
+      "token": "8k-Xz5CK_rDAkpPr6XCWmmcwplN9lJcxNUaKUrb9-6g",
+      "createdAt": "2025-11-07T05:15:18.982823Z",
+      "expiresAt": null
+    },
+    {
+      "id": 20,
+      "userId": 1,
+      "token": "la40ilHpXvcM6_f4JZNomSwwaEwGnGvQ_HArIDxdOEo",
+      "createdAt": "2025-11-07T05:16:35.617166Z",
       "expiresAt": null
     }
   ],
@@ -238,6 +245,16 @@
       "location": "",
       "createdAt": "2025-11-07T04:18:26.281280Z",
       "updatedAt": "2025-11-07T04:18:26.281285Z"
+    }
+  ],
+  "resetTokens": [
+    {
+      "id": 1,
+      "userId": 1,
+      "code": "865850",
+      "createdAt": "2025-11-07T05:08:32.761432Z",
+      "expiresAt": "2025-11-07T06:08:32.761421Z",
+      "used": true
     }
   ]
 }

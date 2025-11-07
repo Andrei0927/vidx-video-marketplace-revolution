@@ -95,9 +95,9 @@
         <!-- Section 2: Password reset -->
         <section class="mb-8 bg-white dark:bg-dark-100 p-6 rounded-lg shadow">
           <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-dark-600">Password</h2>
-          <p class="text-sm text-gray-600 dark:text-dark-500">Click the button below to reset your password. (Demo: no email will be sent.)</p>
+          <p class="text-sm text-gray-600 dark:text-dark-500 mb-2">Change your password to keep your account secure.</p>
           <div class="mt-4">
-            <button id="reset-password" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 dark:hover:bg-yellow-400">Reset password</button>
+            <button id="change-password-btn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 dark:hover:bg-indigo-500">Change Password</button>
           </div>
         </section>
 
@@ -119,6 +119,7 @@
     </div>
     <script type="module" src="components/auth-modal.js"></script>
     <script type="module" src="components/user-dropdown.js"></script>
+    <script type="module" src="components/change-password.js"></script>
     <script type="module">
         import authService from './js/auth-service.js';
     </script>
@@ -205,6 +206,25 @@
         const isLoggedIn = () => {
             return authService.isLoggedIn();
         };
+
+        // Handle change password button
+        const changePasswordBtn = document.getElementById('change-password-btn');
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', () => {
+                const modal = document.createElement('change-password');
+                
+                modal.addEventListener('password-changed', () => {
+                    console.log('Password changed successfully');
+                    // Could show a toast notification here
+                });
+                
+                modal.addEventListener('close', () => {
+                    console.log('Change password modal closed');
+                });
+                
+                document.body.appendChild(modal);
+            });
+        }
 
     </script>
 </body>
