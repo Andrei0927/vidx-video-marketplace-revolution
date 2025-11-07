@@ -242,6 +242,55 @@
                 margin-bottom: 0;
             }
         }
+        
+        /* Category Quick Links */
+        .category-quick-links {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 0.5rem;
+        }
+        
+        .category-quick-links::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-link {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .category-link:hover {
+            background: #f9fafb;
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+        
+        .dark .category-link {
+            background: #242526;
+            border-color: #4E4F50;
+            color: #B0B3B8;
+        }
+        
+        .dark .category-link:hover {
+            background: #3A3B3C;
+            border-color: #6366f1;
+            color: #818cf8;
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
@@ -290,6 +339,22 @@
                 Automotive Search
             </h1>
             <p class="text-gray-600 dark:text-dark-500">Filter and find your perfect vehicle</p>
+            
+            <!-- Category Quick Links -->
+            <div class="category-quick-links mt-4">
+                <a href="search-electronics.html" class="category-link">
+                    <span>📱</span>
+                    <span>Electronics</span>
+                </a>
+                <a href="search-fashion.html" class="category-link">
+                    <span>👕</span>
+                    <span>Fashion</span>
+                </a>
+                <a href="search-home.html" class="category-link">
+                    <span>🏡</span>
+                    <span>Home & Garden</span>
+                </a>
+            </div>
         </div>
 
         <!-- Filters Card -->

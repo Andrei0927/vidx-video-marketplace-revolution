@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Search Electronics - VidX</title>
+    <title>Search Electronics & Technology - VidX</title>
     <script>
         (function() {
             const storedTheme = localStorage.getItem('theme');
@@ -231,7 +231,7 @@
             margin-bottom: 1.5rem;
         }
         
-        @media (min-width: 768px) {
+                @media (min-width: 768px) {
             .filter-compact-grid {
                 display: grid;
             }
@@ -242,6 +242,122 @@
                 margin-bottom: 0;
             }
         }
+        
+        /* Category Quick Links */
+        .category-quick-links {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 0.5rem;
+        }
+        
+        .category-quick-links::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-link {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .category-link:hover {
+            background: #f9fafb;
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+        
+        .dark .category-link {
+            background: #242526;
+            border-color: #4E4F50;
+            color: #B0B3B8;
+        }
+        
+        .dark .category-link:hover {
+            background: #3A3B3C;
+            border-color: #6366f1;
+            color: #818cf8;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 flex items-center">
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                    <button id="login-btn" class="hidden px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                        Login
+                    </button>
+                    <!-- User Menu Container -->
+                    <div id="user-menu-container" class="hidden relative">
+                        <button id="user-avatar-btn" class="flex items-center space-x-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200 transition">
+                            <img id="user-avatar" src="" alt="User" class="h-8 w-8 rounded-full">
+                            <span id="user-name" class="hidden sm:inline-block text-sm font-medium text-gray-700 dark:text-dark-500"></span>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-dark-100 rounded-lg shadow-lg dark:shadow-dark-200 border border-gray-200 dark:border-dark-300 py-1 z-50">
+                            <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">My Profile</a>
+                            <a href="my-ads.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">My ads</a>
+                            <div class="border-t border-gray-200 dark:border-dark-300 my-1"></div>
+                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">Log out</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search & Filters -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-2">
+                <i data-feather="smartphone" class="inline-block h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                Electronics & Technology Search
+            </h1>
+            <p class="text-gray-600 dark:text-dark-500">Find the perfect device with advanced filters</p>
+            
+            <!-- Category Quick Links -->
+            <div class="category-quick-links mt-4">
+                <a href="search.html" class="category-link">
+                    <span>🚗</span>
+                    <span>Automotive</span>
+                </a>
+                <a href="search-fashion.html" class="category-link">
+                    <span>👕</span>
+                    <span>Fashion</span>
+                </a>
+                <a href="search-home.html" class="category-link">
+                    <span>🏡</span>
+                    <span>Home & Garden</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
@@ -284,14 +400,38 @@
         </div>
 
         <!-- Filters Section -->
-        <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md p-6 mb-8">
+        <!-- Filters Card -->
+        <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-6 flex items-center">
-                <i data-feather="filter" class="h-5 w-5 mr-2 text-indigo-600"></i>
+                <i data-feather="filter" class="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400"></i>
                 Filters
             </h2>
             <div id="filter-container" class="filter-compact-grid"></div>
             <div id="active-filters" class="mt-6 flex flex-wrap gap-2"></div>
         </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-dark-100 mt-12 border-t border-gray-200 dark:border-dark-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center text-gray-600 dark:text-dark-400 text-sm">
+                <p>&copy; 2025 VidX. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Feather Icons -->
+    <script>
+        feather.replace();
+    </script>
+
+    <!-- Auth Modal Component -->
+    <script type="module" src="components/auth-modal.js"></script>
+    <script type="module" src="components/user-dropdown.js"></script>
+
+    <!-- Auth Check -->
+    <script>
+        async function checkAuth() {
 
         <!-- Results Section -->
         <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md p-6">
@@ -352,7 +492,7 @@
                     window.location.href = 'electronics.html';
                 },
                 onClear: () => {
-                    clearResults();
+                    console.log('Filters cleared');
                 }
             }
         );
@@ -402,24 +542,6 @@
                 feather.replace();
             }
         }
-
-        function clearResults() {
-            document.getElementById('results-grid').innerHTML = `
-                <div class="col-span-full text-center py-12">
-                    <i data-feather="search" class="h-16 w-16 text-gray-300 dark:text-dark-300 mx-auto mb-4"></i>
-                    <p class="text-gray-500 dark:text-dark-400 text-lg">Select your filters and click "Apply Filters" to see results</p>
-                </div>
-            `;
-            document.getElementById('result-count').textContent = '0 items found';
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        }
-
-        // Handle upload button
-        document.getElementById('upload-btn')?.addEventListener('click', () => {
-            window.location.href = 'upload.html';
-        });
 
         // Initialize feather icons
         feather.replace();
