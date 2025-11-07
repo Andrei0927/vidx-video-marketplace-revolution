@@ -118,6 +118,90 @@ class AuthService {
     return !!(localStorage.getItem('sessionToken') || localStorage.getItem('authToken') || localStorage.getItem('userId'));
   }
 
+  async requestPasswordReset(email) {
+    try {
+      // If no API server (remote deployment), use localStorage
+      if (!this.baseUrl) {
+        return this.requestPasswordResetLocal(email);
+      }
+
+      const response = await fetch(`${this.baseUrl}/password-reset/request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to request password reset');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Password reset request error:', error);
+      throw error;
+    }
+  }
+
+  async verifyResetCode(email, code) {
+    try {
+      // If no API server (remote deployment), use localStorage
+      if (!this.baseUrl) {
+        return this.verifyResetCodeLocal(email, code);
+      }
+
+      const response = await fetch(`${this.baseUrl}/password-reset/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, code })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Invalid code');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Code verification error:', error);
+      throw error;
+    }
+  }
+
+  async resetPassword(email, code, newPassword) {
+    try {
+      // If no API server (remote deployment), use localStorage
+      if (!this.baseUrl) {
+        return this.resetPasswordLocal(email, code, newPassword);
+      }
+
+      const response = await fetch(`${this.baseUrl}/password-reset/reset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, code, newPassword })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to reset password');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Password reset error:', error);
+      throw error;
+    }
+  }
+
   generateSessionToken() {
     // Generate a random session token
     return 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -206,6 +290,113 @@ class AuthService {
       },
       profile,
       session
+    };
+  }
+  
+  requestPasswordResetLocal(email) {
+    // Get users from localStorage
+    const users = this._seedDefaultUsers();
+    
+    // Find user
+    const user = users.find(u => u.email === email);
+    
+    // Generate 6-digit code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Store reset token in localStorage
+    const resetTokens = JSON.parse(localStorage.getItem('vidx_reset_tokens') || '[]');
+    
+    // Remove old tokens for this email
+    const filteredTokens = resetTokens.filter(t => t.email !== email);
+    
+    if (user) {
+      // Add new token (expires in 1 hour)
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+      filteredTokens.push({
+        email,
+        code: resetCode,
+        createdAt: new Date().toISOString(),
+        expiresAt,
+        used: false
+      });
+      
+      localStorage.setItem('vidx_reset_tokens', JSON.stringify(filteredTokens));
+      
+      console.log('[AuthService] Password reset code generated:', resetCode);
+      
+      return {
+        message: 'If an account exists with this email, a reset code has been sent',
+        resetCode,  // In production, this would be sent via email
+        devNote: 'Reset code shown for development only'
+      };
+    }
+    
+    // Don't reveal if email doesn't exist
+    console.log('[AuthService] Password reset requested for non-existent email:', email);
+    return {
+      message: 'If an account exists with this email, a reset code has been sent'
+    };
+  }
+  
+  verifyResetCodeLocal(email, code) {
+    const resetTokens = JSON.parse(localStorage.getItem('vidx_reset_tokens') || '[]');
+    
+    // Find valid token
+    const now = new Date().toISOString();
+    const token = resetTokens.find(t => 
+      t.email === email &&
+      t.code === code &&
+      !t.used &&
+      t.expiresAt > now
+    );
+    
+    if (!token) {
+      throw new Error('Invalid or expired code');
+    }
+    
+    return {
+      valid: true,
+      message: 'Code verified successfully'
+    };
+  }
+  
+  resetPasswordLocal(email, code, newPassword) {
+    // Get users and tokens
+    const users = this._seedDefaultUsers();
+    const resetTokens = JSON.parse(localStorage.getItem('vidx_reset_tokens') || '[]');
+    
+    // Find user
+    const user = users.find(u => u.email === email);
+    if (!user) {
+      throw new Error('Invalid code');
+    }
+    
+    // Find valid token
+    const now = new Date().toISOString();
+    const tokenIndex = resetTokens.findIndex(t => 
+      t.email === email &&
+      t.code === code &&
+      !t.used &&
+      t.expiresAt > now
+    );
+    
+    if (tokenIndex === -1) {
+      throw new Error('Invalid or expired code');
+    }
+    
+    // Update password
+    user.password = newPassword;
+    localStorage.setItem('vidx_users', JSON.stringify(users));
+    
+    // Mark token as used
+    resetTokens[tokenIndex].used = true;
+    localStorage.setItem('vidx_reset_tokens', JSON.stringify(resetTokens));
+    
+    console.log('[AuthService] Password reset completed for:', email);
+    
+    return {
+      message: 'Password reset successfully',
+      email
     };
   }
 }

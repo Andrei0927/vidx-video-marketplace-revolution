@@ -221,6 +221,32 @@ class AuthModal extends HTMLElement {
       .loading .btn-text {
         opacity: 0.7;
       }
+
+      .forgot-password {
+        text-align: center;
+        margin-top: 12px;
+        font-size: 13px;
+      }
+
+      .forgot-password a {
+        color: #6366f1;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .forgot-password a:hover {
+        color: #4f46e5;
+        text-decoration: underline;
+      }
+
+      :host-context(.dark) .forgot-password a {
+        color: #818cf8;
+      }
+
+      :host-context(.dark) .forgot-password a:hover {
+        color: #6366f1;
+      }
     `;
 
     // Define markup
@@ -250,6 +276,10 @@ class AuthModal extends HTMLElement {
               <span class="btn-text">Login</span>
             </button>
             <div class="error-message" id="login-error"></div>
+            
+            <div class="forgot-password">
+              <a id="forgot-password-link">Forgot Password?</a>
+            </div>
           </div>
 
           <div id="register-form" style="display: none;">
@@ -319,6 +349,10 @@ class AuthModal extends HTMLElement {
 
     loginBtn?.addEventListener('click', () => this.handleLogin());
     registerBtn?.addEventListener('click', () => this.handleRegister());
+
+    // Forgot password link
+    const forgotPasswordLink = this.shadowRoot.getElementById('forgot-password-link');
+    forgotPasswordLink?.addEventListener('click', () => this.openPasswordReset());
 
     // Add keyboard support
     this.shadowRoot.addEventListener('keydown', (e) => {
@@ -565,6 +599,27 @@ class AuthModal extends HTMLElement {
       document.removeEventListener('keydown', this._escHandler);
       this.remove();
     }
+  }
+
+  openPasswordReset() {
+    // Close this modal
+    this.remove();
+    
+    // Import and open password reset component
+    import('./password-reset.js').then(() => {
+      const passwordReset = document.createElement('password-reset');
+      
+      // Handle login request from password reset
+      passwordReset.addEventListener('login-requested', () => {
+        // Re-open auth modal
+        const authModal = document.createElement('auth-modal');
+        document.body.appendChild(authModal);
+      });
+      
+      document.body.appendChild(passwordReset);
+    }).catch(error => {
+      console.error('Failed to load password reset component:', error);
+    });
   }
 }
 
