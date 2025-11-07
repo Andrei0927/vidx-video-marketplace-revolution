@@ -5,7 +5,7 @@ class AuthService {
     if (!baseUrl) {
       // If on localhost, use the local API server
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        this.baseUrl = 'http://localhost:3001';
+        this.baseUrl = 'http://localhost:3001/api/auth';
       } else {
         // For remote/production, use mock/localStorage-based auth
         this.baseUrl = null; // Will use localStorage for demo
@@ -22,15 +22,8 @@ class AuthService {
         return this.registerLocal(userData);
       }
 
-      // First check if user exists
-      const existingUser = await this.findUserByEmail(userData.email);
-      if (existingUser) {
-        throw new Error('Email already registered');
-      }
-
-      // In a real app, we'd hash the password on the server
-      // For demo, we're just storing it (don't do this in production!)
-      const response = await fetch(`${this.baseUrl}/users`, {
+      // Call new auth API
+      const response = await fetch(`${this.baseUrl}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -43,13 +36,12 @@ class AuthService {
       });
 
       if (!response.ok) {
-        throw new Error('Registration failed');
+        const error = await response.json();
+        throw new Error(error.error || 'Registration failed');
       }
 
       const result = await response.json();
-      // server returns { user: {...}, profile: {...} }
-      const user = result.user || result;
-      return user;
+      return result;
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
@@ -63,32 +55,29 @@ class AuthService {
         return this.loginLocal(email, password);
       }
 
-      const user = await this.findUserByEmail(email);
-      
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      // In a real app, we'd verify the password hash
-      // For demo, we're just comparing directly (don't do this in production!)
-      if (user.password !== password) {
-        throw new Error('Invalid password');
-      }
-
-      // Create session
-      const session = await this.createSession(user.id);
-      
-      // Get user profile
-      const profile = await this.getUserProfile(user.id);
-
-      return {
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email
+      // Call new auth API
+      const response = await fetch(`${this.baseUrl}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        profile,
-        session
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Login failed');
+      }
+
+      const result = await response.json();
+      
+      return {
+        user: result.user,
+        profile: result.profile,
+        session: result.token
       };
     } catch (error) {
       console.error('Login error:', error);
@@ -98,73 +87,24 @@ class AuthService {
 
   async logout(sessionToken) {
     try {
-      // Find and delete session
-      const response = await fetch(`${this.baseUrl}/sessions?token=${sessionToken}`, {
-        method: 'DELETE'
-      });
-
-      if (!response.ok) {
-        throw new Error('Logout failed');
+      // If no API server, just clear localStorage
+      if (!this.baseUrl) {
+        return true;
       }
 
-      return true;
-    } catch (error) {
-      console.error('Logout error:', error);
-      throw error;
-    }
-  }
-
-  async findUserByEmail(email) {
-    try {
-      const response = await fetch(`${this.baseUrl}/users?email=${email}`);
-      const users = await response.json();
-      return users[0] || null;
-    } catch (error) {
-      console.error('Find user error:', error);
-      throw error;
-    }
-  }
-
-  async getUserProfile(userId) {
-    try {
-      const response = await fetch(`${this.baseUrl}/profiles?userId=${userId}`);
-      const profiles = await response.json();
-      return profiles[0] || null;
-    } catch (error) {
-      console.error('Get profile error:', error);
-      throw error;
-    }
-  }
-
-  async createSession(userId) {
-    try {
-      const token = this.generateSessionToken();
-      const response = await fetch(`${this.baseUrl}/sessions`, {
+      // Call logout endpoint
+      const response = await fetch(`${this.baseUrl}/logout`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId,
-          token,
-          createdAt: new Date().toISOString()
-        })
+          'Authorization': `Bearer ${sessionToken}`
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create session');
-      }
-
-      return token;
+      return response.ok;
     } catch (error) {
-      console.error('Create session error:', error);
-      throw error;
+      console.error('Logout error:', error);
+      return true; // Don't block logout on error
     }
-  }
-
-  generateSessionToken() {
-    // In production, use a proper UUID library
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 
   isLoggedIn() {

@@ -1,0 +1,79 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "demo@example.com",
+      "password": "73f068ee17299cbb1c185d53fae335b0$04e0afff793b6862a5adea16e897e5784627c1f97c2ef63137b70177868faede",
+      "createdAt": "2025-11-07T00:00:00.000Z",
+      "updatedAt": "2025-11-07T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Test",
+      "email": "test@example.com",
+      "password": "039f98e6dae1f7accd08164d677b00a7$47f2be367d939045dc400bb1a155bf4653d015c4ffa5bf3bf3e1c6883ea1ca4c",
+      "createdAt": "2025-11-07T00:00:00.000Z",
+      "updatedAt": "2025-11-07T00:00:00.000Z"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 1,
+      "userId": 2,
+      "token": "5d3lkb4aew8mhmhoa6s",
+      "createdAt": "2025-11-05T21:07:32.116Z",
+      "expiresAt": null
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "token": "i78dre64qbpmhnoloxt",
+      "createdAt": "2025-11-06T17:09:14.753Z",
+      "expiresAt": null
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "token": "8ck1uqg7srhmhnyrss3",
+      "createdAt": "2025-11-06T21:53:55.827Z",
+      "expiresAt": null
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "token": "ddqvg5d6jiqmho3wcig",
+      "createdAt": "2025-11-07T00:17:26.104Z",
+      "expiresAt": null
+    },
+    {
+      "id": 5,
+      "userId": 1,
+      "token": "7os5kkmfptwmhoayjsw",
+      "createdAt": "2025-11-07T03:35:06.176Z",
+      "expiresAt": null
+    }
+  ],
+  "profiles": [
+    {
+      "id": 1,
+      "userId": 1,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=demo",
+      "bio": "Demo account for testing",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T00:00:00.000Z",
+      "updatedAt": "2025-11-07T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=test@example.com",
+      "bio": "",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T00:00:00.000Z",
+      "updatedAt": "2025-11-07T00:00:00.000Z"
+    }
+  ]
+}
