@@ -76,7 +76,7 @@
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
     <!-- Auth Modal -->
-    <auth-modal></auth-modal>
+    <auth-modal id="auth-modal"></auth-modal>
 
     <!-- Navigation -->
     <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
@@ -501,21 +501,27 @@
             
             if (sessionToken) {
                 // User is logged in - show user menu
-                loginBtn?.classList.add('hidden');
-                userMenu?.classList.remove('hidden');
+                if (loginBtn) loginBtn.classList.add('hidden');
+                if (userMenu) userMenu.classList.remove('hidden');
             } else {
                 // User is not logged in - show login button
-                loginBtn?.classList.remove('hidden');
-                userMenu?.classList.add('hidden');
+                if (loginBtn) loginBtn.classList.remove('hidden');
+                if (userMenu) userMenu.classList.add('hidden');
             }
         }
+
+        // Run auth check immediately (before component initialization)
+        checkAuth();
+
+        // Also run after a short delay to ensure components are initialized
+        setTimeout(checkAuth, 100);
 
         // Login button click handler
         const loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
             loginBtn.addEventListener('click', () => {
-                const authModal = document.querySelector('auth-modal');
-                if (authModal && authModal.open) {
+                const authModal = document.getElementById('auth-modal');
+                if (authModal && typeof authModal.open === 'function') {
                     authModal.open();
                 }
             });
@@ -530,9 +536,6 @@
         window.addEventListener('user-logout', () => {
             checkAuth();
         });
-
-        // Initial auth check
-        checkAuth();
 
         // Populate car makes dropdown
         const makeSelect = document.getElementById('make-select');
