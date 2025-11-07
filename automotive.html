@@ -562,6 +562,7 @@
     <script type="module">
         import { filterManager } from './js/filter-manager.js';
         import { carBrands } from './js/car-brands.js';
+        import './components/user-dropdown.js';
 
         const applyFeatherIcons = () => {
             if (window.feather && typeof window.feather.replace === 'function') {
@@ -731,9 +732,17 @@
 
                 try {
                     const authToken = localStorage.getItem('authToken');
-                    if (!authToken) {
+                    const sessionToken = localStorage.getItem('sessionToken');
+                    
+                    if (!authToken && !sessionToken) {
                         const authModal = document.createElement('auth-modal');
                         document.body.appendChild(authModal);
+                        return;
+                    }
+
+                    // Ensure user-dropdown is loaded
+                    if (!customElements.get('user-dropdown')) {
+                        console.error('user-dropdown component not loaded');
                         return;
                     }
 
