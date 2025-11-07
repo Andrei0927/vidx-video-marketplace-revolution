@@ -38,9 +38,46 @@
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
-    <script src="components/auth-modal.js"></script>
+    <script type="module" src="components/auth-modal.js"></script>
+    <script type="module" src="components/user-dropdown.js"></script>
+    <style>
+        .filter-section {
+            display: none;
+        }
+        .filter-section.active {
+            display: block;
+        }
+        .filter-toggle {
+            cursor: pointer;
+            user-select: none;
+        }
+        .filter-toggle:hover {
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+        .filter-grid {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .filter-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .filter-grid::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        .filter-grid::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 4px;
+        }
+        .filter-grid::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.7);
+        }
+    </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
+    <!-- Auth Modal -->
+    <auth-modal></auth-modal>
+
     <!-- Navigation -->
     <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,6 +93,7 @@
                         <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
                     </button>
+                    <user-dropdown></user-dropdown>
                 </div>
             </div>
         </div>
@@ -73,62 +111,340 @@
 
         <!-- Filters Card -->
         <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <!-- Quick Search -->
+            <div class="mb-6">
+                <input type="text" id="quick-search" placeholder="Search by make, model, or keyword..." 
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <!-- Collapsible Filter Sections -->
+            <div class="space-y-4">
+                <!-- Type Filter -->
+                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
+                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="type-section">
+                        <span class="font-medium text-gray-900 dark:text-dark-600">Type</span>
+                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
+                    </div>
+                    <div id="type-section" class="filter-section p-4 pt-0">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="type" value="Cars" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Cars</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="type" value="Commercial" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Commercial</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="type" value="Trucks - Trailers - Caravans" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Trucks & Trailers</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="type" value="Motorcycles" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Motorcycles</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="type" value="Scooters - ATV - UTV" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Scooters & ATV</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="type" value="Boats" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Boats</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="type" value="Industrial & farm vehicles" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Industrial & Farm</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price & Year Range -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Price Range -->
+                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
+                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Price Range</label>
+                        <div class="flex items-center space-x-4">
+                            <input type="number" id="price-from" placeholder="From" 
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">-</span>
+                            <input type="number" id="price-to" placeholder="To" 
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Year Range -->
+                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
+                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Year</label>
+                        <div class="flex items-center space-x-4">
+                            <input type="number" id="year-from" placeholder="From" 
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                            <span class="text-gray-500 dark:text-dark-400">-</span>
+                            <input type="number" id="year-to" placeholder="To" 
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body Type Filter -->
+                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
+                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="body-section">
+                        <span class="font-medium text-gray-900 dark:text-dark-600">Body Type</span>
+                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
+                    </div>
+                    <div id="body-section" class="filter-section p-4 pt-0">
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Coupe" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Coupe</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Cabrio" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Cabrio</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Sedan" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Sedan</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Pick-up" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Pick-up</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Hatchback" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Hatchback</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Estate" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Estate</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Off-road" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Off-road</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="Minibus" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Minibus</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="People carrier" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">People Carrier</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="bodyType" value="SUV" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">SUV</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Make Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Make</label>
-                    <select id="filter-make" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
-                        <option value="">All Makes</option>
-                        <option value="Volkswagen">Volkswagen</option>
-                        <option value="Audi">Audi</option>
-                    </select>
+                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
+                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="make-section">
+                        <span class="font-medium text-gray-900 dark:text-dark-600">Make</span>
+                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
+                    </div>
+                    <div id="make-section" class="filter-section p-4 pt-0">
+                        <input type="text" id="make-search" placeholder="Search make..." 
+                            class="w-full px-3 py-2 mb-3 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                        <div class="filter-grid grid grid-cols-2 md:grid-cols-4 gap-2" id="make-list"></div>
+                    </div>
                 </div>
 
-                <!-- Year Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Year</label>
-                    <select id="filter-year" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
-                        <option value="">All Years</option>
-                        <option value="2021">2021</option>
-                        <option value="2020">2020</option>
-                    </select>
+                <!-- Mileage Range -->
+                <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
+                    <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Mileage (km)</label>
+                    <div class="flex items-center space-x-4">
+                        <input type="number" id="mileage-from" placeholder="From" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                        <span class="text-gray-500 dark:text-dark-400">-</span>
+                        <input type="number" id="mileage-to" placeholder="To" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                    </div>
                 </div>
 
-                <!-- Transmission Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Transmission</label>
-                    <select id="filter-transmission" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
-                        <option value="">All Types</option>
-                        <option value="Manual">Manual</option>
-                        <option value="Automatic">Automatic</option>
-                    </select>
+                <!-- Fuel & Transmission -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Fuel Type -->
+                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
+                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Fuel Type</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="fuel" value="Petrol" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Petrol</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="fuel" value="Diesel" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Diesel</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="fuel" value="LPG" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">LPG</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="fuel" value="Hybrid" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Hybrid</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" name="fuel" value="Electric" class="rounded text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Electric</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Transmission -->
+                    <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
+                        <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Transmission</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="transmission" value="Automatic" class="text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Automatic</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="transmission" value="Manual" class="text-indigo-600">
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Manual</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="transmission" value="" class="text-indigo-600" checked>
+                                <span class="text-sm text-gray-700 dark:text-dark-500">Any</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Fuel Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-2">Fuel Type</label>
-                    <select id="filter-fuel" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
-                        <option value="">All Fuels</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="Petrol">Petrol</option>
-                    </select>
+                <!-- More Filters (Collapsed by default) -->
+                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
+                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="more-section">
+                        <span class="font-medium text-gray-900 dark:text-dark-600">More Filters</span>
+                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
+                    </div>
+                    <div id="more-section" class="filter-section p-4 pt-0 space-y-4">
+                        <!-- Displacement Range -->
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Displacement (L)</label>
+                            <div class="flex items-center space-x-4">
+                                <input type="number" id="displacement-from" placeholder="From" step="0.1"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                                <span class="text-gray-500 dark:text-dark-400">-</span>
+                                <input type="number" id="displacement-to" placeholder="To" step="0.1"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Power Range -->
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Power (HP)</label>
+                            <div class="flex items-center space-x-4">
+                                <input type="number" id="power-from" placeholder="From"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                                <span class="text-gray-500 dark:text-dark-400">-</span>
+                                <input type="number" id="power-to" placeholder="To"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
+                            </div>
+                        </div>
+
+                        <!-- Color -->
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Colour</label>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="White" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">White</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Black" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Black</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Gray" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Gray</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Silver" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Silver</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Blue" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Blue</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Red" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Red</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Green" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Green</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Yellow/Gold" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Yellow/Gold</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Brown/Beige" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Brown/Beige</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="color" value="Other" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Other</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Steering Wheel -->
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Steering Wheel</label>
+                            <div class="flex space-x-4">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="steering" value="Left-hand drive" class="text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Left-hand drive</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="steering" value="Right-hand drive" class="text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Right-hand drive</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="steering" value="" class="text-indigo-600" checked>
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Any</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Condition -->
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-dark-500 mb-2 text-sm">Condition</label>
+                            <div class="flex space-x-4">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="condition" value="New" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">New</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="condition" value="Used" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Used</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" name="condition" value="Damaged" class="rounded text-indigo-600">
+                                    <span class="text-sm text-gray-700 dark:text-dark-500">Damaged</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex gap-4">
-                <button id="apply-filters" class="flex-1 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition font-medium">
+            <div class="flex gap-4 mt-6">
+                <button id="apply-filters" class="flex-1 bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
                     <i data-feather="search" class="inline-block h-5 w-5 mr-2"></i>
-                    Search
-                </button>
-                <button id="view-all" class="flex-1 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium">
-                    <i data-feather="list" class="inline-block h-5 w-5 mr-2"></i>
-                    View All
+                    Apply Filters
                 </button>
                 <button id="clear-filters" class="px-6 py-3 border border-gray-300 dark:border-dark-300 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition font-medium text-gray-700 dark:text-dark-500">
-                    Clear
+                    <i data-feather="x" class="inline-block h-5 w-5 mr-2"></i>
+                    Clear All
                 </button>
             </div>
+
+            <!-- Active Filters Display -->
+            <div id="active-filters" class="mt-4 flex flex-wrap gap-2"></div>
         </div>
 
         <!-- Results Info -->
@@ -140,14 +456,30 @@
         <div id="no-results" class="hidden text-center py-12">
             <i data-feather="search" class="h-16 w-16 mx-auto text-gray-400 dark:text-dark-400 mb-4"></i>
             <h3 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-2">No Results Found</h3>
-            <p class="text-gray-600 dark:text-dark-500 mb-4">Try adjusting your filters or view all listings</p>
-            <button onclick="document.getElementById('view-all').click()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+            <p class="text-gray-600 dark:text-dark-500 mb-4">Try adjusting your filters or browse all listings</p>
+            <a href="automotive.html" class="inline-block bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
                 View All Listings
-            </button>
+            </a>
         </div>
     </div>
 
     <script>
+        // Car makes from the XML
+        const carMakes = [
+            'Abarth', 'Acura', 'Aiways', 'Aixam', 'Alfa Romeo', 'Aro', 'Aston Martin', 'Audi', 'Austin',
+            'Baic', 'Bentley', 'BMW', 'Bugatti', 'Buick', 'Cadillac', 'Chery', 'Chevrolet', 'Chrysler',
+            'Citroen', 'Comarth', 'Cupra', 'Dacia', 'Daewoo', 'Daihatsu', 'DFSK', 'Dodge', 'Dongwei',
+            'DS Automobiles', 'Ferrari', 'Fiat', 'Fisker', 'Ford', 'Forthing', 'Geely', 'GMC', 'Honda',
+            'Hummer', 'Hyundai', 'Ineos', 'Infiniti', 'Isuzu', 'JAC', 'Jaguar', 'Jeep', 'KG Mobility',
+            'Kia', 'Lada', 'Lamborghini', 'Lancia', 'Land Rover', 'Lexus', 'Ligier', 'Lincoln', 'Lotus',
+            'Lucid', 'Lynk&Co', 'Mahindra', 'Maserati', 'Mazda', 'McLaren', 'Maybach', 'Mercedes-Benz',
+            'MG', 'Microlino', 'Mini', 'Mitsubishi', 'Microcar', 'Morgan', 'Nio', 'Nissan', 'Opel',
+            'Peugeot', 'Plymouth', 'Polestar', 'Pontiac', 'Porsche', 'Renault', 'Rolls-Royce', 'Relive',
+            'Rover', 'Saab', 'Seat', 'Seres', 'Skoda', 'Smart', 'SsangYong', 'Skywell', 'Subaru',
+            'Suzuki', 'SWM', 'Tesla', 'Tazzari', 'Toyota', 'Trabant', 'Triumph', 'Vauxhall',
+            'Volkswagen', 'Volvo', 'Weismann', 'XEV', 'Xpeng', 'Zeekr', 'Other'
+        ];
+
         // Initialize feather icons
         if (window.feather) {
             feather.replace();
@@ -159,124 +491,195 @@
             themeToggle.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.theme = isDark ? 'dark' : 'light';
+                feather.replace();
             });
         }
 
-        // Ad database
-        const allAds = [
-            {
-                id: 'vw-transporter',
-                make: 'Volkswagen',
-                model: 'Transporter',
-                year: '2021',
-                transmission: 'Manual',
-                fuel: 'Diesel',
-                mileage: '45,000 km',
-                price: '€28,500',
-                location: 'Cluj-Napoca',
-                seller: 'John Doe',
-                video: 'Demo ads/VW.m4v',
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
-                postedDays: 2
-            },
-            {
-                id: 'audi-a5',
-                make: 'Audi',
-                model: 'A5',
-                year: '2020',
-                transmission: 'Automatic',
-                fuel: 'Petrol',
-                mileage: '32,000 km',
-                price: '€38,900',
-                location: 'București',
-                seller: 'Test User',
-                video: 'Demo ads/Audi.m4v',
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=test',
-                postedDays: 4
-            }
-        ];
+        // Populate car makes
+        const makeList = document.getElementById('make-list');
+        carMakes.forEach(make => {
+            const label = document.createElement('label');
+            label.className = 'flex items-center space-x-2 cursor-pointer';
+            label.innerHTML = `
+                <input type="checkbox" name="make" value="${make}" class="rounded text-indigo-600">
+                <span class="text-sm text-gray-700 dark:text-dark-500">${make}</span>
+            `;
+            makeList.appendChild(label);
+        });
 
-        // Get filter values
-        function getFilters() {
-            return {
-                make: document.getElementById('filter-make').value,
-                year: document.getElementById('filter-year').value,
-                transmission: document.getElementById('filter-transmission').value,
-                fuel: document.getElementById('filter-fuel').value
+        // Make search functionality
+        const makeSearch = document.getElementById('make-search');
+        makeSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const labels = makeList.querySelectorAll('label');
+            labels.forEach(label => {
+                const text = label.textContent.toLowerCase();
+                label.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+            });
+        });
+
+        // Filter toggle functionality
+        document.querySelectorAll('.filter-toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const sectionId = toggle.dataset.toggle;
+                const section = document.getElementById(sectionId);
+                const icon = toggle.querySelector('i[data-feather="chevron-down"]');
+                
+                section.classList.toggle('active');
+                
+                if (section.classList.contains('active')) {
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        // Get all filter values
+        function getAllFilters() {
+            const filters = {
+                quickSearch: document.getElementById('quick-search').value.trim(),
+                type: Array.from(document.querySelectorAll('input[name="type"]:checked')).map(cb => cb.value),
+                priceFrom: document.getElementById('price-from').value,
+                priceTo: document.getElementById('price-to').value,
+                yearFrom: document.getElementById('year-from').value,
+                yearTo: document.getElementById('year-to').value,
+                bodyType: Array.from(document.querySelectorAll('input[name="bodyType"]:checked')).map(cb => cb.value),
+                make: Array.from(document.querySelectorAll('input[name="make"]:checked')).map(cb => cb.value),
+                mileageFrom: document.getElementById('mileage-from').value,
+                mileageTo: document.getElementById('mileage-to').value,
+                fuel: Array.from(document.querySelectorAll('input[name="fuel"]:checked')).map(cb => cb.value),
+                transmission: document.querySelector('input[name="transmission"]:checked')?.value || '',
+                displacementFrom: document.getElementById('displacement-from').value,
+                displacementTo: document.getElementById('displacement-to').value,
+                powerFrom: document.getElementById('power-from').value,
+                powerTo: document.getElementById('power-to').value,
+                color: Array.from(document.querySelectorAll('input[name="color"]:checked')).map(cb => cb.value),
+                steering: document.querySelector('input[name="steering"]:checked')?.value || '',
+                condition: Array.from(document.querySelectorAll('input[name="condition"]:checked')).map(cb => cb.value)
             };
-        }
-
-        // Filter ads
-        function filterAds(filters) {
-            return allAds.filter(ad => {
-                if (filters.make && ad.make !== filters.make) return false;
-                if (filters.year && ad.year !== filters.year) return false;
-                if (filters.transmission && ad.transmission !== filters.transmission) return false;
-                if (filters.fuel && ad.fuel !== filters.fuel) return false;
-                return true;
+            
+            // Remove empty values
+            Object.keys(filters).forEach(key => {
+                if (Array.isArray(filters[key]) && filters[key].length === 0) {
+                    delete filters[key];
+                } else if (!Array.isArray(filters[key]) && !filters[key]) {
+                    delete filters[key];
+                }
             });
+            
+            return filters;
         }
 
-        // Store filters and redirect
-        function applyFiltersAndRedirect(filters) {
-            localStorage.setItem('automotiveFilters', JSON.stringify(filters));
-            window.location.href = 'automotive.html';
+        // Display active filters as tags
+        function displayActiveFilters(filters) {
+            const container = document.getElementById('active-filters');
+            container.innerHTML = '';
+            
+            let count = 0;
+            
+            Object.entries(filters).forEach(([key, value]) => {
+                if (key === 'quickSearch') return; // Skip quick search in tags
+                
+                const values = Array.isArray(value) ? value : [value];
+                values.forEach(val => {
+                    if (val) {
+                        count++;
+                        const tag = document.createElement('div');
+                        tag.className = 'inline-flex items-center space-x-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 px-3 py-1 rounded-full text-sm';
+                        tag.innerHTML = `
+                            <span>${key}: ${val}</span>
+                            <button class="hover:text-indigo-600 dark:hover:text-indigo-400" onclick="removeFilter('${key}', '${val}')">
+                                <i data-feather="x" class="h-4 w-4"></i>
+                            </button>
+                        `;
+                        container.appendChild(tag);
+                    }
+                });
+            });
+            
+            if (count > 0) {
+                feather.replace();
+            }
+            
+            return count;
         }
 
-        // Apply filters button
+        // Remove individual filter
+        window.removeFilter = function(key, value) {
+            // Find and uncheck the checkbox or clear the input
+            if (['type', 'bodyType', 'make', 'fuel', 'color', 'condition'].includes(key)) {
+                const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+                if (checkbox) checkbox.checked = false;
+            } else if (['transmission', 'steering'].includes(key)) {
+                const anyRadio = document.querySelector(`input[name="${key}"][value=""]`);
+                if (anyRadio) anyRadio.checked = true;
+            } else {
+                // Clear range inputs
+                const fromInput = document.getElementById(`${key.replace(/From|To/, '').toLowerCase()}-from`);
+                const toInput = document.getElementById(`${key.replace(/From|To/, '').toLowerCase()}-to`);
+                if (key.endsWith('From') && fromInput) fromInput.value = '';
+                if (key.endsWith('To') && toInput) toInput.value = '';
+            }
+            
+            updateActiveFilters();
+        };
+
+        // Update active filters display
+        function updateActiveFilters() {
+            const filters = getAllFilters();
+            const count = displayActiveFilters(filters);
+            
+            // Update results info
+            document.getElementById('results-info').textContent = 
+                count > 0 ? `${count} active filter(s)` : 'No filters applied';
+        }
+
+        // Apply filters and redirect
         document.getElementById('apply-filters').addEventListener('click', () => {
-            const filters = getFilters();
-            const results = filterAds(filters);
+            const filters = getAllFilters();
             
-            if (results.length === 0) {
-                document.getElementById('no-results').classList.remove('hidden');
-                document.getElementById('results-info').textContent = '';
-            } else {
-                applyFiltersAndRedirect(filters);
-            }
-        });
-
-        // View all button
-        document.getElementById('view-all').addEventListener('click', () => {
-            localStorage.removeItem('automotiveFilters');
+            // Save filters to localStorage
+            localStorage.setItem('automotiveFilters', JSON.stringify(filters));
+            
+            // Redirect to automotive feed
             window.location.href = 'automotive.html';
         });
 
-        // Clear filters
+        // Clear all filters
         document.getElementById('clear-filters').addEventListener('click', () => {
-            document.getElementById('filter-make').value = '';
-            document.getElementById('filter-year').value = '';
-            document.getElementById('filter-transmission').value = '';
-            document.getElementById('filter-fuel').value = '';
-            document.getElementById('no-results').classList.add('hidden');
-            document.getElementById('results-info').textContent = '';
-        });
-
-        // Show current filter count
-        function updateResultsInfo() {
-            const filters = getFilters();
-            const results = filterAds(filters);
-            const activeFilters = Object.values(filters).filter(v => v).length;
+            // Clear text inputs
+            document.getElementById('quick-search').value = '';
+            document.getElementById('price-from').value = '';
+            document.getElementById('price-to').value = '';
+            document.getElementById('year-from').value = '';
+            document.getElementById('year-to').value = '';
+            document.getElementById('mileage-from').value = '';
+            document.getElementById('mileage-to').value = '';
+            document.getElementById('displacement-from').value = '';
+            document.getElementById('displacement-to').value = '';
+            document.getElementById('power-from').value = '';
+            document.getElementById('power-to').value = '';
             
-            if (activeFilters > 0) {
-                document.getElementById('results-info').textContent = 
-                    `${results.length} result(s) match your ${activeFilters} filter(s)`;
-            } else {
-                document.getElementById('results-info').textContent = 
-                    `${allAds.length} total listings available`;
-            }
-        }
-
-        // Update on filter change
-        ['filter-make', 'filter-year', 'filter-transmission', 'filter-fuel'].forEach(id => {
-            document.getElementById(id).addEventListener('change', () => {
-                updateResultsInfo();
-                document.getElementById('no-results').classList.add('hidden');
-            });
+            // Uncheck all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Reset radios to "Any"
+            document.querySelectorAll('input[type="radio"][value=""]').forEach(radio => radio.checked = true);
+            
+            // Update display
+            updateActiveFilters();
         });
+
+        // Monitor all input changes
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"], input[type="number"]').forEach(input => {
+            input.addEventListener('change', updateActiveFilters);
+        });
+
+        document.getElementById('quick-search').addEventListener('input', updateActiveFilters);
 
         // Initial update
-        updateResultsInfo();
+        updateActiveFilters();
 
         // Replace feather icons after DOM updates
         setTimeout(() => feather.replace(), 100);
