@@ -155,60 +155,38 @@
                 <!-- AI Video Options -->
                 <div class="mt-8 border-t border-gray-200 dark:border-dark-200 pt-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600">AI Video Creation</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">Let AI create an engaging video from your images and description</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">We'll create an engaging video from your images with AI-generated voiceover and captions</p>
                     
                     <div class="mt-4 space-y-4">
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="enable-ai-video" name="enable-ai-video" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 dark:text-indigo-400 border-gray-300 dark:border-dark-200 rounded" checked>
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="enable-ai-video" class="font-medium text-gray-700 dark:text-dark-500">Enable AI Video Creation</label>
-                                <p class="text-gray-500 dark:text-dark-400">Automatically create a professional video with transitions and effects</p>
-                            </div>
+                        <div>
+                            <label for="ai-style" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Video Style</label>
+                            <select id="ai-style" name="ai-style" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option>Modern Slideshow</option>
+                                <option>Dynamic Zoom</option>
+                                <option>Cinematic</option>
+                                <option>Minimal</option>
+                            </select>
                         </div>
 
-                        <div id="ai-options" class="ml-7 space-y-4">
-                            <div>
-                                <label for="ai-style" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Video Style</label>
-                                <select id="ai-style" name="ai-style" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                    <option>Modern Slideshow</option>
-                                    <option>Dynamic Zoom</option>
-                                    <option>Cinematic</option>
-                                    <option>Minimal</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label for="ai-music" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Background Music</label>
+                            <select id="ai-music" name="ai-music" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option>Upbeat</option>
+                                <option>Calm</option>
+                                <option>Corporate</option>
+                                <option>No Music</option>
+                            </select>
+                        </div>
 
-                            <div>
-                                <label for="ai-music" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Background Music</label>
-                                <select id="ai-music" name="ai-music" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                    <option>Upbeat</option>
-                                    <option>Calm</option>
-                                    <option>Corporate</option>
-                                    <option>No Music</option>
-                                </select>
-                            </div>
-
-                            <div class="flex items-start">
-                                <div class="flex items-center h-5">
-                                    <input id="enable-voiceover" name="enable-voiceover" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 dark:text-indigo-400 border-gray-300 dark:border-dark-200 rounded" checked>
+                        <div class="bg-indigo-50 dark:bg-dark-200 border border-indigo-200 dark:border-dark-300 rounded-lg p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i data-feather="info" class="h-5 w-5 text-indigo-600 dark:text-indigo-400"></i>
                                 </div>
-                                <div class="ml-3 text-sm">
-                                    <label for="enable-voiceover" class="font-medium text-gray-700 dark:text-dark-500">Add AI Voiceover & Captions</label>
-                                    <p class="text-gray-500 dark:text-dark-400">Generate professional voiceover and captions from your description</p>
-                                </div>
-                            </div>
-
-                            <div class="bg-indigo-50 dark:bg-dark-200 border border-indigo-200 dark:border-dark-300 rounded-lg p-4">
-                                <div class="flex">
-                                    <div class="flex-shrink-0">
-                                        <i data-feather="info" class="h-5 w-5 text-indigo-600 dark:text-indigo-400"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <h3 class="text-sm font-medium text-indigo-800 dark:text-indigo-300">Powered by Revid.ai</h3>
-                                        <div class="mt-2 text-sm text-indigo-700 dark:text-indigo-400">
-                                            <p>Our AI will analyze your images and description to create a professional promotional video with voiceover and captions.</p>
-                                        </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-indigo-800 dark:text-indigo-300">Powered by Revid.ai</h3>
+                                    <div class="mt-2 text-sm text-indigo-700 dark:text-indigo-400">
+                                        <p>Our AI will analyze your images and description to create a professional promotional video with voiceover and captions automatically.</p>
                                     </div>
                                 </div>
                             </div>
@@ -246,20 +224,9 @@
         const previewSection = document.getElementById('preview-section');
         const previewContainer = document.getElementById('preview-container');
         const nextBtn = document.getElementById('next-btn');
-        const enableAIVideo = document.getElementById('enable-ai-video');
-        const aiOptions = document.getElementById('ai-options');
 
         // Store uploaded files
         let uploadedFiles = [];
-
-        // Toggle AI options
-        enableAIVideo.addEventListener('change', () => {
-            if (enableAIVideo.checked) {
-                aiOptions.classList.remove('hidden');
-            } else {
-                aiOptions.classList.add('hidden');
-            }
-        });
 
         // Handle drag and drop
         uploadArea.addEventListener('dragover', (e) => {
@@ -401,23 +368,41 @@
             }
         });
 
-        // Next button handler (will be implemented in next step)
+        // Next button handler - navigate to details page
         nextBtn.addEventListener('click', () => {
             // Store upload data in sessionStorage for next step
             const uploadData = {
-                files: uploadedFiles.map(f => f.name),
-                aiEnabled: enableAIVideo.checked,
+                fileCount: uploadedFiles.length,
+                fileNames: uploadedFiles.map(f => f.name),
                 style: document.getElementById('ai-style').value,
                 music: document.getElementById('ai-music').value,
-                voiceover: document.getElementById('enable-voiceover').checked
+                timestamp: new Date().toISOString()
             };
             
             sessionStorage.setItem('uploadData', JSON.stringify(uploadData));
             
-            // TODO: Navigate to details page
-            alert('Files uploaded! Next step: Add item details.\n\nUpload data has been saved to sessionStorage.');
-            console.log('Upload data:', uploadData);
-            console.log('Files:', uploadedFiles);
+            // Store actual file data as base64 (for demo purposes)
+            // In production, you'd upload to server here
+            const filePromises = uploadedFiles.map(file => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        resolve({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: e.target.result
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            Promise.all(filePromises).then(filesData => {
+                sessionStorage.setItem('uploadFiles', JSON.stringify(filesData));
+                // Navigate to upload details page
+                window.location.href = 'upload-details.html';
+            });
         });
     </script>
 </body>

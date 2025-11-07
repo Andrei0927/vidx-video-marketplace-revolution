@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Details - VidX</title>
+    <script>
+        (function() {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="/css/dark-mode.css">
+</head>
+<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 flex items-center">
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="upload.html" class="text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center">
+                        <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
+                        <span>Back</span>
+                    </a>
+                    <button id="theme-toggle" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Details Form -->
+    <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white dark:bg-dark-100 shadow dark:shadow-dark-200 rounded-lg overflow-hidden">
+            <!-- Progress Stepper -->
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-dark-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center opacity-50">
+                        <div class="flex-shrink-0 bg-green-600 dark:bg-green-500 rounded-full h-8 w-8 flex items-center justify-center">
+                            <i data-feather="check" class="h-5 w-5 text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-sm font-medium text-gray-900 dark:text-dark-600">Upload Media</h3>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-indigo-600 dark:bg-indigo-500 rounded-full h-8 w-8 flex items-center justify-center">
+                            <span class="text-white font-medium">2</span>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600">Add Details</h3>
+                            <p class="text-sm text-gray-500 dark:text-dark-400">Provide item information</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center opacity-50">
+                        <div class="flex-shrink-0 bg-gray-200 dark:bg-dark-200 rounded-full h-8 w-8 flex items-center justify-center">
+                            <span class="text-gray-600 dark:text-dark-400 font-medium">3</span>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-dark-400">Publish</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="details-form" class="px-6 py-8 space-y-6">
+                <!-- Category -->
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Category *</label>
+                    <select id="category" name="category" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">Select a category</option>
+                        <option value="automotive">Automotive</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="real-estate">Real Estate</option>
+                    </select>
+                </div>
+
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Title *</label>
+                    <input type="text" id="title" name="title" required placeholder="e.g., VW Transporter T6.1 2021" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Description *</label>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">This will be used to generate the AI voiceover script</p>
+                    <textarea id="description" name="description" rows="6" required placeholder="Describe your item in detail. Include key features, condition, and any important information..." class="mt-2 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                </div>
+
+                <!-- Price -->
+                <div>
+                    <label for="price" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Price *</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 dark:text-dark-400 sm:text-sm">€</span>
+                        </div>
+                        <input type="number" id="price" name="price" required placeholder="0.00" step="0.01" class="pl-7 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Location *</label>
+                    <input type="text" id="location" name="location" required placeholder="e.g., București, Cluj-Napoca" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+
+                <!-- Automotive Specific Fields -->
+                <div id="automotive-fields" class="hidden space-y-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 border-t border-gray-200 dark:border-dark-200 pt-6">Vehicle Details</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="make" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Make</label>
+                            <input type="text" id="make" name="make" placeholder="e.g., Volkswagen" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="model" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Model</label>
+                            <input type="text" id="model" name="model" placeholder="e.g., Transporter" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="year" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Year</label>
+                            <input type="number" id="year" name="year" placeholder="2021" min="1900" max="2025" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="mileage" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Mileage</label>
+                            <input type="text" id="mileage" name="mileage" placeholder="45,000 km" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="transmission" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Transmission</label>
+                            <select id="transmission" name="transmission" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option value="">Select</option>
+                                <option>Manual</option>
+                                <option>Automatic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="fuel" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Fuel Type</label>
+                            <select id="fuel" name="fuel" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option value="">Select</option>
+                                <option>Petrol</option>
+                                <option>Diesel</option>
+                                <option>Electric</option>
+                                <option>Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Navigation -->
+            <div class="px-6 py-4 bg-gray-50 dark:bg-dark-50 flex justify-between border-t border-gray-200 dark:border-dark-200">
+                <button onclick="window.location.href='upload.html'" class="px-4 py-2 border border-gray-300 dark:border-dark-200 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-dark-500 bg-white dark:bg-dark-100 hover:bg-gray-50 dark:hover:bg-dark-200">
+                    Back
+                </button>
+                <button id="next-btn" type="submit" form="details-form" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600">
+                    Next: Review & Publish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            feather.replace();
+        });
+
+        // Show/hide category-specific fields
+        const categorySelect = document.getElementById('category');
+        const automotiveFields = document.getElementById('automotive-fields');
+
+        categorySelect.addEventListener('change', () => {
+            if (categorySelect.value === 'automotive') {
+                automotiveFields.classList.remove('hidden');
+            } else {
+                automotiveFields.classList.add('hidden');
+            }
+        });
+
+        // Load upload data from previous step
+        try {
+            const uploadData = JSON.parse(sessionStorage.getItem('uploadData') || '{}');
+            console.log('Loaded upload data:', uploadData);
+            
+            // Show upload info
+            if (uploadData.fileCount) {
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'bg-green-50 dark:bg-dark-200 border border-green-200 dark:border-dark-300 rounded-lg p-4 mb-6';
+                infoDiv.innerHTML = `
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i data-feather="check-circle" class="h-5 w-5 text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-green-800 dark:text-green-300">Files uploaded successfully</h3>
+                            <div class="mt-2 text-sm text-green-700 dark:text-green-400">
+                                <p>${uploadData.fileCount} file(s) ready for AI video generation</p>
+                                <p class="text-xs mt-1">Style: ${uploadData.style} | Music: ${uploadData.music}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.querySelector('form').insertBefore(infoDiv, document.querySelector('form').firstChild);
+                feather.replace();
+            }
+        } catch (err) {
+            console.warn('Could not load upload data:', err);
+        }
+
+        // Form submission
+        const detailsForm = document.getElementById('details-form');
+        detailsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(detailsForm);
+            const detailsData = Object.fromEntries(formData.entries());
+            
+            // Merge with upload data
+            const uploadData = JSON.parse(sessionStorage.getItem('uploadData') || '{}');
+            const completeData = {
+                ...uploadData,
+                ...detailsData,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Store for next step
+            sessionStorage.setItem('adDetails', JSON.stringify(completeData));
+            
+            // Navigate to review page
+            window.location.href = 'upload-review.html';
+        });
+    </script>
+</body>
+</html>
