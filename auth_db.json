@@ -15,6 +15,54 @@
       "password": "039f98e6dae1f7accd08164d677b00a7$47f2be367d939045dc400bb1a155bf4653d015c4ffa5bf3bf3e1c6883ea1ca4c",
       "createdAt": "2025-11-07T00:00:00.000Z",
       "updatedAt": "2025-11-07T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "name": "Andrei",
+      "email": "testing@example.com",
+      "password": "2c47dcc2268514c67543663520ded180$9bccc280888450097c418cd468150503020bacc80ce7f62848c1c78e3199cc94",
+      "createdAt": "2025-11-07T04:06:16.287836Z",
+      "updatedAt": "2025-11-07T04:06:16.289314Z"
+    },
+    {
+      "id": 4,
+      "name": "New User",
+      "email": "newuser123@test.com",
+      "password": "eea72ec16e97bae6061e1861b1d30f46$5f69c5d936b2b49da109704fa5bf80bf659f5701620aa3289f0063d973fa8d41",
+      "createdAt": "2025-11-07T04:06:50.965601Z",
+      "updatedAt": "2025-11-07T04:06:50.965781Z"
+    },
+    {
+      "id": 5,
+      "name": "Andrei",
+      "email": "testing@test.com",
+      "password": "15cd14c2c9814a574ee6f96ca38a04eb$5350fef735481ac97fbe94bbf3f6b68b6920ccf5dbe313902d56eb9ff8568a89",
+      "createdAt": "2025-11-07T04:08:15.597768Z",
+      "updatedAt": "2025-11-07T04:08:15.597801Z"
+    },
+    {
+      "id": 6,
+      "name": "Test",
+      "email": "testing@test1.com",
+      "password": "a2d26aaaeecc514e37f624c0712ffacc$85faf93d450fe71c05b0b30bd709596c0a8da7c346c76df455a5b8c87bcd9ac4",
+      "createdAt": "2025-11-07T04:12:16.451780Z",
+      "updatedAt": "2025-11-07T04:12:16.451843Z"
+    },
+    {
+      "id": 7,
+      "name": "Finaltest",
+      "email": "finaltest@example.com",
+      "password": "42a22804e2c140ad7ecd7e46e9724957$fa45e073916ef7b11020239ac02428d771242a127bef3ae28c280f87023ae4b3",
+      "createdAt": "2025-11-07T04:15:47.299572Z",
+      "updatedAt": "2025-11-07T04:15:47.299627Z"
+    },
+    {
+      "id": 8,
+      "name": "SafariTest",
+      "email": "safari-test@example.com",
+      "password": "a61baee778947219ca22a994a54e5b11$fbec33b0e0ed299021125152f1c6793ca3c7aa85176727439184d21e8e1daa0d",
+      "createdAt": "2025-11-07T04:18:26.281215Z",
+      "updatedAt": "2025-11-07T04:18:26.281270Z"
     }
   ],
   "sessions": [
@@ -52,6 +100,62 @@
       "token": "7os5kkmfptwmhoayjsw",
       "createdAt": "2025-11-07T03:35:06.176Z",
       "expiresAt": null
+    },
+    {
+      "id": 6,
+      "userId": 3,
+      "token": "-budXEQblQgSFKu0-wOcGQu2l6rb8SbKTIO4l3hEEOA",
+      "createdAt": "2025-11-07T04:06:16.289423Z",
+      "expiresAt": null
+    },
+    {
+      "id": 8,
+      "userId": 4,
+      "token": "VbKNCRT7Af64WU7QBlIAJB9CoZr2nKczvTyQB4WxyTk",
+      "createdAt": "2025-11-07T04:06:50.965869Z",
+      "expiresAt": null
+    },
+    {
+      "id": 9,
+      "userId": 5,
+      "token": "REGDYtphEkxlKgrbqvwY63meA1CWsVOPx8m4DIRyf-8",
+      "createdAt": "2025-11-07T04:08:15.597917Z",
+      "expiresAt": null
+    },
+    {
+      "id": 10,
+      "userId": 5,
+      "token": "mvR-oEYoGrNw1zugMPLbzkuyw9Mxohhvqg5dM8MZ7sA",
+      "createdAt": "2025-11-07T04:08:15.608748Z",
+      "expiresAt": null
+    },
+    {
+      "id": 11,
+      "userId": 6,
+      "token": "EP4DmQ2oj0_t5v1VN0ufh8eBqrghIlIqpVAQXJdGBdU",
+      "createdAt": "2025-11-07T04:12:16.452011Z",
+      "expiresAt": null
+    },
+    {
+      "id": 13,
+      "userId": 6,
+      "token": "huwUB61U2-v2McjJimvQMsOnZU1-IFwsVOdNRlURNj4",
+      "createdAt": "2025-11-07T04:14:41.549741Z",
+      "expiresAt": null
+    },
+    {
+      "id": 14,
+      "userId": 7,
+      "token": "4SWd4fj0EUvOehNWKlwIW7FPvm9HWaGJLZxLu4h58Gw",
+      "createdAt": "2025-11-07T04:15:47.299846Z",
+      "expiresAt": null
+    },
+    {
+      "id": 15,
+      "userId": 8,
+      "token": "b1k7s0QzPr6uQ1A5CoQ72MNdCmPbfXQtakMX7ZS6uSA",
+      "createdAt": "2025-11-07T04:18:26.281382Z",
+      "expiresAt": null
     }
   ],
   "profiles": [
@@ -74,6 +178,66 @@
       "location": "",
       "createdAt": "2025-11-07T00:00:00.000Z",
       "updatedAt": "2025-11-07T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "userId": 3,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=testing@example.com",
+      "bio": "",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T04:06:16.289340Z",
+      "updatedAt": "2025-11-07T04:06:16.289350Z"
+    },
+    {
+      "id": 4,
+      "userId": 4,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=newuser123@test.com",
+      "bio": "",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T04:06:50.965797Z",
+      "updatedAt": "2025-11-07T04:06:50.965805Z"
+    },
+    {
+      "id": 5,
+      "userId": 5,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=testing@test.com",
+      "bio": "",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T04:08:15.597809Z",
+      "updatedAt": "2025-11-07T04:08:15.597812Z"
+    },
+    {
+      "id": 6,
+      "userId": 6,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=testing@test1.com",
+      "bio": "",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T04:12:16.451908Z",
+      "updatedAt": "2025-11-07T04:12:16.451930Z"
+    },
+    {
+      "id": 7,
+      "userId": 7,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=finaltest@example.com",
+      "bio": "",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T04:15:47.299669Z",
+      "updatedAt": "2025-11-07T04:15:47.299694Z"
+    },
+    {
+      "id": 8,
+      "userId": 8,
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=safari-test@example.com",
+      "bio": "",
+      "phone": "",
+      "location": "",
+      "createdAt": "2025-11-07T04:18:26.281280Z",
+      "updatedAt": "2025-11-07T04:18:26.281285Z"
     }
   ]
 }

@@ -182,23 +182,14 @@
                     
                     <div class="mt-4 space-y-4">
                         <div>
-                            <label for="ai-style" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Video Style</label>
-                            <select id="ai-style" name="ai-style" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                <option>Modern Slideshow</option>
-                                <option>Dynamic Zoom</option>
-                                <option>Cinematic</option>
-                                <option>Minimal</option>
-                            </select>
-                        </div>
-
-                        <div>
                             <label for="ai-music" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Background Music</label>
                             <select id="ai-music" name="ai-music" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                <option>Upbeat</option>
-                                <option>Calm</option>
-                                <option>Corporate</option>
-                                <option>No Music</option>
+                                <option value="upbeat">Upbeat & Energetic</option>
+                                <option value="calm">Calm & Professional</option>
+                                <option value="energetic">High Energy</option>
+                                <option value="none">No Music</option>
                             </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-dark-400">Choose background music that matches your item's vibe</p>
                         </div>
 
                         <div class="bg-indigo-50 dark:bg-dark-200 border border-indigo-200 dark:border-dark-300 rounded-lg p-4">
@@ -209,7 +200,13 @@
                                 <div class="ml-3">
                                     <h3 class="text-sm font-medium text-indigo-800 dark:text-indigo-300">Powered by Revid.ai</h3>
                                     <div class="mt-2 text-sm text-indigo-700 dark:text-indigo-400">
-                                        <p>Our AI will analyze your images and description to create a professional promotional video with voiceover and captions automatically.</p>
+                                        <p>Our AI will analyze your images and description to create a professional promotional video with:</p>
+                                        <ul class="list-disc list-inside mt-1 space-y-1">
+                                            <li>AI-generated script from your description</li>
+                                            <li>Professional voiceover (our signature voice)</li>
+                                            <li>Automatic captions for accessibility</li>
+                                            <li>TikTok-style slideshow format</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -445,7 +442,6 @@
             const uploadData = {
                 fileCount: uploadedFiles.length,
                 fileNames: uploadedFiles.map(f => f.name),
-                style: document.getElementById('ai-style').value,
                 music: document.getElementById('ai-music').value,
                 timestamp: new Date().toISOString()
             };

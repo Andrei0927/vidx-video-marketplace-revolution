@@ -167,7 +167,9 @@
     </div>
 
     <script type="module" src="components/user-dropdown.js"></script>
-    <script>
+    <script type="module">
+        import revidService from './js/revid-service.js';
+        
         feather.replace();
 
         // Theme toggle
@@ -312,8 +314,9 @@
                             <div class="ml-3">
                                 <h3 class="text-sm font-medium text-indigo-800 dark:text-indigo-300">AI Video Generation</h3>
                                 <div class="mt-2 text-sm text-indigo-700 dark:text-indigo-400">
-                                    <p><strong>Style:</strong> ${adData.style || 'Modern Slideshow'}</p>
-                                    <p><strong>Music:</strong> ${adData.music || 'Upbeat'}</p>
+                                    <p><strong>Music:</strong> ${formatMusicLabel(adData.music)}</p>
+                                    <p><strong>Voice:</strong> Professional AI voice (our signature sound)</p>
+                                    <p><strong>Format:</strong> TikTok-style slideshow with captions</p>
                                     <p class="mt-2">When you publish, Revid.ai will create a professional video with AI-generated voiceover and captions based on your description.</p>
                                 </div>
                             </div>
@@ -322,6 +325,16 @@
                 </div>
             `;
             feather.replace();
+        }
+
+        function formatMusicLabel(music) {
+            const musicLabels = {
+                'upbeat': 'Upbeat & Energetic',
+                'calm': 'Calm & Professional',
+                'energetic': 'High Energy',
+                'none': 'No Music'
+            };
+            return musicLabels[music] || 'Upbeat & Energetic';
         }
 
         // Publish button handler
@@ -336,48 +349,137 @@
             publishingProgress.classList.remove('hidden');
             publishBtn.disabled = true;
 
-            // Simulate AI video generation process
-            const steps = [
-                { label: 'Uploading images...', percent: 20, stepId: 'step-1' },
-                { label: 'Generating voiceover...', percent: 40, stepId: 'step-2' },
-                { label: 'Creating video...', percent: 70, stepId: 'step-3' },
-                { label: 'Adding captions...', percent: 90, stepId: 'step-4' },
-                { label: 'Finalizing...', percent: 100, stepId: null }
-            ];
-
-            for (let i = 0; i < steps.length; i++) {
-                await new Promise(resolve => setTimeout(resolve, 1500));
+            try {
+                // Step 1: Generate AI script (20%)
+                updateProgress('Generating AI script from description...', 20, 'step-1');
                 
-                const step = steps[i];
-                document.getElementById('progress-label').textContent = step.label;
-                document.getElementById('progress-percent').textContent = step.percent + '%';
-                document.getElementById('progress-bar').style.width = step.percent + '%';
-
-                if (step.stepId) {
-                    // Mark previous step complete
-                    if (i > 0 && steps[i-1].stepId) {
-                        const prevStep = document.getElementById(steps[i-1].stepId);
-                        prevStep.innerHTML = '<i data-feather="check-circle" class="h-4 w-4 mr-2 text-green-600"></i><span class="text-green-600">Complete</span>';
-                        feather.replace();
+                const scriptResult = await revidService.generateScript({
+                    description: adData.description,
+                    title: adData.title,
+                    category: adData.category,
+                    price: adData.price,
+                    details: {
+                        make: adData.make,
+                        model: adData.model,
+                        year: adData.year,
+                        mileage: adData.mileage,
+                        transmission: adData.transmission,
+                        fuel: adData.fuel
                     }
-                    // Show current step
-                    document.getElementById(step.stepId).classList.remove('hidden');
-                }
+                });
+
+                console.log('Generated script:', scriptResult);
+                completeStep('step-1');
+
+                // Step 2: Prepare images (40%)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                updateProgress('Processing images for video...', 40, 'step-2');
+                
+                // Convert base64 files back to File objects for Revid API
+                const imageFiles = uploadFiles
+                    .filter(f => f.type.startsWith('image/'))
+                    .map(f => {
+                        const byteString = atob(f.data.split(',')[1]);
+                        const ab = new ArrayBuffer(byteString.length);
+                        const ia = new Uint8Array(ab);
+                        for (let i = 0; i < byteString.length; i++) {
+                            ia[i] = byteString.charCodeAt(i);
+                        }
+                        const blob = new Blob([ab], { type: f.type });
+                        return new File([blob], f.name, { type: f.type });
+                    });
+
+                completeStep('step-2');
+
+                // Step 3: Generate video with Revid.ai (60%)
+                await new Promise(resolve => setTimeout(resolve, 500));
+                updateProgress('Creating video with AI voiceover and captions...', 60, 'step-3');
+                
+                const videoJob = await revidService.generateVideo({
+                    images: imageFiles,
+                    script: scriptResult.script,
+                    music: adData.music || 'upbeat',
+                    style: 'slideshow'
+                });
+
+                console.log('Video generation started:', videoJob);
+                completeStep('step-3');
+
+                // Step 4: Wait for video completion (70-95%)
+                updateProgress('Processing video (this may take 1-2 minutes)...', 70, 'step-4');
+                
+                let currentProgress = 70;
+                const videoResult = await revidService.waitForVideo(
+                    videoJob.jobId,
+                    (status) => {
+                        // Update progress as video generates
+                        currentProgress = Math.min(70 + (status.progress * 0.25), 95);
+                        updateProgress(
+                            `Generating video... ${Math.round(status.progress)}%`,
+                            currentProgress,
+                            'step-4'
+                        );
+                    }
+                );
+
+                console.log('Video completed:', videoResult);
+                completeStep('step-4');
+
+                // Step 5: Save to database (100%)
+                await new Promise(resolve => setTimeout(resolve, 500));
+                updateProgress('Finalizing and publishing...', 100, null);
+
+                // Store the generated video URL with ad data
+                adData.videoUrl = videoResult.videoUrl;
+                adData.thumbnailUrl = videoResult.thumbnailUrl;
+                adData.videoDuration = videoResult.duration;
+                adData.generatedScript = scriptResult.script;
+
+                // TODO: Save to database via API
+                // For now, store in localStorage
+                const existingAds = JSON.parse(localStorage.getItem('userAds') || '[]');
+                existingAds.push({
+                    ...adData,
+                    id: Date.now(),
+                    userId: localStorage.getItem('userId'),
+                    createdAt: new Date().toISOString(),
+                    status: 'active'
+                });
+                localStorage.setItem('userAds', JSON.stringify(existingAds));
+
+                // Show success
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                showSuccess();
+
+            } catch (error) {
+                console.error('Publishing error:', error);
+                showError(error.message);
             }
+        });
 
-            // Mark last step complete
-            const lastStep = document.getElementById('step-4');
-            lastStep.innerHTML = '<i data-feather="check-circle" class="h-4 w-4 mr-2 text-green-600"></i><span class="text-green-600">Complete</span>';
+        function updateProgress(label, percent, stepId) {
+            document.getElementById('progress-label').textContent = label;
+            document.getElementById('progress-percent').textContent = Math.round(percent) + '%';
+            document.getElementById('progress-bar').style.width = percent + '%';
+
+            if (stepId) {
+                document.getElementById(stepId).classList.remove('hidden');
+            }
+        }
+
+        function completeStep(stepId) {
+            const step = document.getElementById(stepId);
+            step.innerHTML = '<i data-feather="check-circle" class="h-4 w-4 mr-2 text-green-600"></i><span class="text-green-600 dark:text-green-400">Complete</span>';
             feather.replace();
+        }
 
-            // Show success and redirect
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
+        function showSuccess() {
+            const publishingProgress = document.getElementById('publishing-progress');
             publishingProgress.innerHTML = `
                 <div class="bg-green-50 dark:bg-dark-200 border border-green-200 dark:border-dark-300 rounded-lg p-6 text-center">
                     <i data-feather="check-circle" class="h-16 w-16 text-green-600 dark:text-green-400 mx-auto mb-4"></i>
                     <h3 class="text-2xl font-bold text-green-900 dark:text-green-300 mb-2">Ad Published Successfully!</h3>
-                    <p class="text-green-700 dark:text-green-400 mb-4">Your video ad is now live on the marketplace</p>
+                    <p class="text-green-700 dark:text-green-400 mb-4">Your AI-generated video ad is now live on the marketplace</p>
                     <p class="text-sm text-gray-600 dark:text-dark-400 mb-6">Redirecting to your ad...</p>
                 </div>
             `;
@@ -388,11 +490,28 @@
             sessionStorage.removeItem('uploadFiles');
             sessionStorage.removeItem('adDetails');
 
-            // Redirect to automotive page after 2 seconds
+            // Redirect to category page after 2 seconds
             setTimeout(() => {
                 window.location.href = adData.category === 'automotive' ? 'automotive.html' : 'electronics.html';
             }, 2000);
-        });
+        }
+
+        function showError(errorMessage) {
+            const publishingProgress = document.getElementById('publishing-progress');
+            publishingProgress.innerHTML = `
+                <div class="bg-red-50 dark:bg-dark-200 border border-red-200 dark:border-dark-300 rounded-lg p-6 text-center">
+                    <i data-feather="alert-circle" class="h-16 w-16 text-red-600 dark:text-red-400 mx-auto mb-4"></i>
+                    <h3 class="text-2xl font-bold text-red-900 dark:text-red-300 mb-2">Publishing Failed</h3>
+                    <p class="text-red-700 dark:text-red-400 mb-4">${errorMessage}</p>
+                    <p class="text-sm text-gray-600 dark:text-dark-400 mb-6">This is likely due to missing API credits. The video generation requires an active Revid.ai API key with credits.</p>
+                    <button onclick="location.reload()" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                        Try Again
+                    </button>
+                </div>
+            `;
+            feather.replace();
+            document.getElementById('publish-btn').disabled = false;
+        }
     </script>
 </body>
 </html>
