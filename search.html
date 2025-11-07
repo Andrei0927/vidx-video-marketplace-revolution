@@ -93,7 +93,10 @@
                         <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
                     </button>
-                    <user-dropdown></user-dropdown>
+                    <button id="login-btn" class="hidden px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                        Login
+                    </button>
+                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
                 </div>
             </div>
         </div>
@@ -239,16 +242,11 @@
                 </div>
 
                 <!-- Make Filter -->
-                <div class="border border-gray-200 dark:border-dark-300 rounded-lg">
-                    <div class="filter-toggle flex justify-between items-center p-4" data-toggle="make-section">
-                        <span class="font-medium text-gray-900 dark:text-dark-600">Make</span>
-                        <i data-feather="chevron-down" class="h-5 w-5 text-gray-500 transition-transform"></i>
-                    </div>
-                    <div id="make-section" class="filter-section p-4 pt-0">
-                        <input type="text" id="make-search" placeholder="Search make..." 
-                            class="w-full px-3 py-2 mb-3 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                        <div class="filter-grid grid grid-cols-2 md:grid-cols-4 gap-2" id="make-list"></div>
-                    </div>
+                <div class="border border-gray-200 dark:border-dark-300 rounded-lg p-4">
+                    <label class="block font-medium text-gray-900 dark:text-dark-600 mb-3">Make</label>
+                    <select id="make-select" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Any</option>
+                    </select>
                 </div>
 
                 <!-- Mileage Range -->
@@ -495,27 +493,54 @@
             });
         }
 
-        // Populate car makes
-        const makeList = document.getElementById('make-list');
-        carMakes.forEach(make => {
-            const label = document.createElement('label');
-            label.className = 'flex items-center space-x-2 cursor-pointer';
-            label.innerHTML = `
-                <input type="checkbox" name="make" value="${make}" class="rounded text-indigo-600">
-                <span class="text-sm text-gray-700 dark:text-dark-500">${make}</span>
-            `;
-            makeList.appendChild(label);
+        // Check authentication state
+        function checkAuth() {
+            const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+            const loginBtn = document.getElementById('login-btn');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (sessionToken) {
+                // User is logged in - show user menu
+                loginBtn?.classList.add('hidden');
+                userMenu?.classList.remove('hidden');
+            } else {
+                // User is not logged in - show login button
+                loginBtn?.classList.remove('hidden');
+                userMenu?.classList.add('hidden');
+            }
+        }
+
+        // Login button click handler
+        const loginBtn = document.getElementById('login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                const authModal = document.querySelector('auth-modal');
+                if (authModal && authModal.open) {
+                    authModal.open();
+                }
+            });
+        }
+
+        // Listen for login success
+        window.addEventListener('user-login', () => {
+            checkAuth();
         });
 
-        // Make search functionality
-        const makeSearch = document.getElementById('make-search');
-        makeSearch.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const labels = makeList.querySelectorAll('label');
-            labels.forEach(label => {
-                const text = label.textContent.toLowerCase();
-                label.style.display = text.includes(searchTerm) ? 'flex' : 'none';
-            });
+        // Listen for logout
+        window.addEventListener('user-logout', () => {
+            checkAuth();
+        });
+
+        // Initial auth check
+        checkAuth();
+
+        // Populate car makes dropdown
+        const makeSelect = document.getElementById('make-select');
+        carMakes.forEach(make => {
+            const option = document.createElement('option');
+            option.value = make;
+            option.textContent = make;
+            makeSelect.appendChild(option);
         });
 
         // Filter toggle functionality
@@ -545,7 +570,7 @@
                 yearFrom: document.getElementById('year-from').value,
                 yearTo: document.getElementById('year-to').value,
                 bodyType: Array.from(document.querySelectorAll('input[name="bodyType"]:checked')).map(cb => cb.value),
-                make: Array.from(document.querySelectorAll('input[name="make"]:checked')).map(cb => cb.value),
+                make: document.getElementById('make-select').value,
                 mileageFrom: document.getElementById('mileage-from').value,
                 mileageTo: document.getElementById('mileage-to').value,
                 fuel: Array.from(document.querySelectorAll('input[name="fuel"]:checked')).map(cb => cb.value),
@@ -608,7 +633,9 @@
         // Remove individual filter
         window.removeFilter = function(key, value) {
             // Find and uncheck the checkbox or clear the input
-            if (['type', 'bodyType', 'make', 'fuel', 'color', 'condition'].includes(key)) {
+            if (key === 'make') {
+                document.getElementById('make-select').value = '';
+            } else if (['type', 'bodyType', 'fuel', 'color', 'condition'].includes(key)) {
                 const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
                 if (checkbox) checkbox.checked = false;
             } else if (['transmission', 'steering'].includes(key)) {
@@ -661,6 +688,9 @@
             document.getElementById('power-from').value = '';
             document.getElementById('power-to').value = '';
             
+            // Reset make dropdown
+            document.getElementById('make-select').value = '';
+            
             // Uncheck all checkboxes
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             
@@ -677,6 +707,7 @@
         });
 
         document.getElementById('quick-search').addEventListener('input', updateActiveFilters);
+        document.getElementById('make-select').addEventListener('change', updateActiveFilters);
 
         // Initial update
         updateActiveFilters();
