@@ -4,13 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload New Ad - VidX</title>
+    <script>
+        (function() {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link rel="stylesheet" href="/css/dark-mode.css">
     <style>
         .file-upload {
             border: 2px dashed #cbd5e0;
             transition: all 0.3s ease;
+        }
+        .dark .file-upload {
+            border-color: #3A3B3C;
         }
         .file-upload:hover {
             border-color: #6366f1;
@@ -29,22 +63,27 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="index.html" class="flex-shrink-0 flex items-center">
-                        <i data-feather="video" class="text-indigo-600 h-8 w-8"></i>
-                        <span class="ml-2 text-xl font-bold text-gray-900">VidX</span>
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
                     </a>
-</div>
-                <div class="flex items-center">
-                    <a href="index.html" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-                        Back to Browse
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition flex items-center">
+                        <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
+                        <span>Back to Browse</span>
                     </a>
-                    <button class="ml-4 p-2 rounded-full hover:bg-gray-100">
+                    <button id="theme-toggle" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200 text-gray-700 dark:text-dark-500">
                         <i data-feather="user"></i>
                     </button>
                 </div>
@@ -54,51 +93,51 @@
 
     <!-- Upload Form -->
     <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="bg-white dark:bg-dark-100 shadow dark:shadow-dark-200 rounded-lg overflow-hidden">
             <!-- Progress Stepper -->
-            <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-indigo-600 rounded-full h-8 w-8 flex items-center justify-center">
-                        <span class="text-white font-medium">1</span>
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-dark-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-indigo-600 dark:bg-indigo-500 rounded-full h-8 w-8 flex items-center justify-center">
+                            <span class="text-white font-medium">1</span>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600">Upload Media</h3>
+                            <p class="text-sm text-gray-500 dark:text-dark-400">Add photos or videos of your item</p>
+                        </div>
                     </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-900">Upload Media</h3>
-                        <p class="text-sm text-gray-500">Add photos or videos of your item</p>
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-gray-200 dark:bg-dark-200 rounded-full h-8 w-8 flex items-center justify-center">
+                            <span class="text-gray-600 dark:text-dark-400 font-medium">2</span>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-500 dark:text-dark-400">Add Details</h3>
+                            <p class="text-sm text-gray-500 dark:text-dark-400">Provide item information</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-gray-200 rounded-full h-8 w-8 flex items-center justify-center">
-                        <span class="text-gray-600 font-medium">2</span>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-500">Add Details</h3>
-                        <p class="text-sm text-gray-500">Provide item information</p>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-gray-200 rounded-full h-8 w-8 flex items-center justify-center">
-                        <span class="text-gray-600 font-medium">3</span>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-medium text-gray-500">Publish</h3>
-                        <p class="text-sm text-gray-500">Review and submit</p>
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-gray-200 dark:bg-dark-200 rounded-full h-8 w-8 flex items-center justify-center">
+                            <span class="text-gray-600 dark:text-dark-400 font-medium">3</span>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-500 dark:text-dark-400">Publish</h3>
+                            <p class="text-sm text-gray-500 dark:text-dark-400">Review and submit</p>
+                        </div>
                     </div>
                 </div>
             </div>
-</div>
 
             <!-- Upload Area -->
             <div class="px-6 py-8">
-                <div id="upload-area" class="file-upload rounded-lg p-8 text-center cursor-pointer">
-                <div class="mx-auto h-24 w-24 text-gray-400">
-                    <i data-feather="car" class="h-full w-full"></i>
-                </div>
-<h3 class="mt-4 text-lg font-medium text-gray-900">Drag and drop files here</h3>
-                    <p class="mt-1 text-sm text-gray-500">or click to browse files</p>
+                <div id="upload-area" class="file-upload rounded-lg p-8 text-center cursor-pointer bg-gray-50 dark:bg-dark-50">
+                    <div class="mx-auto h-24 w-24 text-gray-400 dark:text-dark-400">
+                        <i data-feather="upload-cloud" class="h-full w-full"></i>
+                    </div>
+                    <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600">Drag and drop files here</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">or click to browse files (images or videos)</p>
                     <input type="file" id="file-input" class="hidden" multiple accept="image/*,video/*">
                     <div class="mt-6">
-                        <button id="browse-btn" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <button id="browse-btn" class="px-4 py-2 border border-gray-300 dark:border-dark-200 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-dark-500 bg-white dark:bg-dark-100 hover:bg-gray-50 dark:hover:bg-dark-200">
                             Browse Files
                         </button>
                     </div>
@@ -106,33 +145,33 @@
 
                 <!-- Preview Section -->
                 <div id="preview-section" class="mt-8 hidden">
-                    <h3 class="text-lg font-medium text-gray-900">Uploaded Files</h3>
-                    <p class="mt-1 text-sm text-gray-500">Drag to reorder (first will be used as cover)</p>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600">Uploaded Files</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">Drag to reorder (first will be used as cover)</p>
                     <div id="preview-container" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         <!-- Preview items will be added here -->
                     </div>
                 </div>
 
                 <!-- AI Video Options -->
-                <div class="mt-8 border-t border-gray-200 pt-6">
-                    <h3 class="text-lg font-medium text-gray-900">Automotive Video Creation</h3>
-<p class="mt-1 text-sm text-gray-500">Let us create an engaging video from your images</p>
+                <div class="mt-8 border-t border-gray-200 dark:border-dark-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600">AI Video Creation</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">Let AI create an engaging video from your images and description</p>
                     
                     <div class="mt-4 space-y-4">
                         <div class="flex items-start">
                             <div class="flex items-center h-5">
-                                <input id="enable-ai-video" name="enable-ai-video" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" checked>
+                                <input id="enable-ai-video" name="enable-ai-video" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 dark:text-indigo-400 border-gray-300 dark:border-dark-200 rounded" checked>
                             </div>
                             <div class="ml-3 text-sm">
-                                <label for="enable-ai-video" class="font-medium text-gray-700">Enable AI Video Creation</label>
-                                <p class="text-gray-500">We'll automatically create a video slideshow with transitions and effects</p>
+                                <label for="enable-ai-video" class="font-medium text-gray-700 dark:text-dark-500">Enable AI Video Creation</label>
+                                <p class="text-gray-500 dark:text-dark-400">Automatically create a professional video with transitions and effects</p>
                             </div>
                         </div>
 
                         <div id="ai-options" class="ml-7 space-y-4">
                             <div>
-                                <label for="ai-style" class="block text-sm font-medium text-gray-700">Video Style</label>
-                                <select id="ai-style" name="ai-style" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <label for="ai-style" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Video Style</label>
+                                <select id="ai-style" name="ai-style" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                                     <option>Modern Slideshow</option>
                                     <option>Dynamic Zoom</option>
                                     <option>Cinematic</option>
@@ -141,8 +180,8 @@
                             </div>
 
                             <div>
-                                <label for="ai-music" class="block text-sm font-medium text-gray-700">Background Music</label>
-                                <select id="ai-music" name="ai-music" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <label for="ai-music" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Background Music</label>
+                                <select id="ai-music" name="ai-music" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                                     <option>Upbeat</option>
                                     <option>Calm</option>
                                     <option>Corporate</option>
@@ -152,11 +191,25 @@
 
                             <div class="flex items-start">
                                 <div class="flex items-center h-5">
-                                    <input id="enable-voiceover" name="enable-voiceover" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" checked>
+                                    <input id="enable-voiceover" name="enable-voiceover" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 dark:text-indigo-400 border-gray-300 dark:border-dark-200 rounded" checked>
                                 </div>
                                 <div class="ml-3 text-sm">
-                                    <label for="enable-voiceover" class="font-medium text-gray-700">Add AI Voiceover</label>
-                                    <p class="text-gray-500">We'll generate a voiceover from your item description</p>
+                                    <label for="enable-voiceover" class="font-medium text-gray-700 dark:text-dark-500">Add AI Voiceover & Captions</label>
+                                    <p class="text-gray-500 dark:text-dark-400">Generate professional voiceover and captions from your description</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-indigo-50 dark:bg-dark-200 border border-indigo-200 dark:border-dark-300 rounded-lg p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i data-feather="info" class="h-5 w-5 text-indigo-600 dark:text-indigo-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-indigo-800 dark:text-indigo-300">Powered by Revid.ai</h3>
+                                        <div class="mt-2 text-sm text-indigo-700 dark:text-indigo-400">
+                                            <p>Our AI will analyze your images and description to create a professional promotional video with voiceover and captions.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -165,19 +218,27 @@
             </div>
 
             <!-- Navigation -->
-            <div class="px-6 py-4 bg-gray-50 flex justify-between border-t border-gray-200">
-                <button class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            <div class="px-6 py-4 bg-gray-50 dark:bg-dark-50 flex justify-between border-t border-gray-200 dark:border-dark-200">
+                <button class="px-4 py-2 border border-gray-300 dark:border-dark-200 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-dark-500 bg-white dark:bg-dark-100 hover:bg-gray-50 dark:hover:bg-dark-200">
                     Cancel
                 </button>
-                <button id="next-btn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button id="next-btn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     Next: Add Details
                 </button>
-</div>
+            </div>
         </div>
     </div>
 
     <script>
         feather.replace();
+
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            feather.replace();
+        });
 
         const uploadArea = document.getElementById('upload-area');
         const fileInput = document.getElementById('file-input');
@@ -185,6 +246,20 @@
         const previewSection = document.getElementById('preview-section');
         const previewContainer = document.getElementById('preview-container');
         const nextBtn = document.getElementById('next-btn');
+        const enableAIVideo = document.getElementById('enable-ai-video');
+        const aiOptions = document.getElementById('ai-options');
+
+        // Store uploaded files
+        let uploadedFiles = [];
+
+        // Toggle AI options
+        enableAIVideo.addEventListener('change', () => {
+            if (enableAIVideo.checked) {
+                aiOptions.classList.remove('hidden');
+            } else {
+                aiOptions.classList.add('hidden');
+            }
+        });
 
         // Handle drag and drop
         uploadArea.addEventListener('dragover', (e) => {
@@ -202,8 +277,14 @@
             handleFiles(e.dataTransfer.files);
         });
 
+        // Handle click to upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
         // Handle file selection
-        browseBtn.addEventListener('click', () => {
+        browseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             fileInput.click();
         });
 
@@ -215,35 +296,62 @@
         function handleFiles(files) {
             if (files.length === 0) return;
 
-            // Clear previous previews
+            // Add new files to existing ones
+            uploadedFiles = [...uploadedFiles, ...Array.from(files)];
+
+            // Update previews
+            updatePreviews();
+            
+            previewSection.classList.remove('hidden');
+            nextBtn.disabled = false;
+        }
+
+        function updatePreviews() {
             previewContainer.innerHTML = '';
 
-            // Process each file
-            Array.from(files).forEach((file, index) => {
+            uploadedFiles.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const previewItem = document.createElement('div');
-                    previewItem.className = 'preview-item relative aspect-square rounded-lg overflow-hidden';
+                    previewItem.className = 'preview-item relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-dark-200';
                     previewItem.setAttribute('data-index', index);
                     previewItem.draggable = true;
 
                     if (file.type.startsWith('image/')) {
                         previewItem.innerHTML = `
                             <img src="${e.target.result}" class="w-full h-full object-cover" alt="Preview">
-                            <button class="preview-remove absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:bg-gray-100">
+                            <button class="preview-remove absolute top-2 right-2 bg-white dark:bg-dark-100 p-1 rounded-full shadow hover:bg-gray-100 dark:hover:bg-dark-200" data-index="${index}">
                                 <i data-feather="x" class="h-4 w-4 text-red-600"></i>
                             </button>
+                            ${index === 0 ? '<div class="absolute bottom-2 left-2 bg-indigo-600 text-white px-2 py-1 rounded text-xs font-medium">Cover</div>' : ''}
                         `;
                     } else if (file.type.startsWith('video/')) {
                         previewItem.innerHTML = `
                             <video class="w-full h-full object-cover" src="${e.target.result}" muted></video>
-                            <button class="preview-remove absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:bg-gray-100">
+                            <button class="preview-remove absolute top-2 right-2 bg-white dark:bg-dark-100 p-1 rounded-full shadow hover:bg-gray-100 dark:hover:bg-dark-200" data-index="${index}">
                                 <i data-feather="x" class="h-4 w-4 text-red-600"></i>
                             </button>
                             <div class="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white p-1 rounded">
                                 <i data-feather="video" class="h-4 w-4"></i>
                             </div>
+                            ${index === 0 ? '<div class="absolute bottom-2 right-2 bg-indigo-600 text-white px-2 py-1 rounded text-xs font-medium">Cover</div>' : ''}
                         `;
+                    }
+
+                    // Add remove handler
+                    const removeBtn = previewItem.querySelector('.preview-remove');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const idx = parseInt(e.currentTarget.getAttribute('data-index'));
+                            uploadedFiles.splice(idx, 1);
+                            updatePreviews();
+                            
+                            if (uploadedFiles.length === 0) {
+                                previewSection.classList.add('hidden');
+                                nextBtn.disabled = true;
+                            }
+                        });
                     }
 
                     previewContainer.appendChild(previewItem);
@@ -251,9 +359,6 @@
                 };
                 reader.readAsDataURL(file);
             });
-
-            previewSection.classList.remove('hidden');
-            nextBtn.disabled = false;
         }
 
         // Enable drag and drop reordering
@@ -262,6 +367,7 @@
         previewContainer.addEventListener('dragstart', (e) => {
             if (e.target.classList.contains('preview-item')) {
                 draggedItem = e.target;
+                const draggedIndex = parseInt(draggedItem.getAttribute('data-index'));
                 setTimeout(() => {
                     e.target.style.opacity = '0.4';
                 }, 0);
@@ -278,22 +384,40 @@
             e.preventDefault();
         });
 
-        previewContainer.addEventListener('dragenter', (e) => {
-            e.preventDefault();
-        });
-
         previewContainer.addEventListener('drop', (e) => {
             e.preventDefault();
-            if (e.target.classList.contains('preview-item')) {
-                const targetRect = e.target.getBoundingClientRect();
-                const targetCenterY = targetRect.top + targetRect.height / 2;
+            if (e.target.closest('.preview-item')) {
+                const targetItem = e.target.closest('.preview-item');
+                const draggedIndex = parseInt(draggedItem.getAttribute('data-index'));
+                const targetIndex = parseInt(targetItem.getAttribute('data-index'));
                 
-                if (e.clientY < targetCenterY) {
-                    previewContainer.insertBefore(draggedItem, e.target);
-                } else {
-                    previewContainer.insertBefore(draggedItem, e.target.nextSibling);
-                }
+                // Reorder files array
+                const draggedFile = uploadedFiles[draggedIndex];
+                uploadedFiles.splice(draggedIndex, 1);
+                uploadedFiles.splice(targetIndex, 0, draggedFile);
+                
+                // Update previews
+                updatePreviews();
             }
+        });
+
+        // Next button handler (will be implemented in next step)
+        nextBtn.addEventListener('click', () => {
+            // Store upload data in sessionStorage for next step
+            const uploadData = {
+                files: uploadedFiles.map(f => f.name),
+                aiEnabled: enableAIVideo.checked,
+                style: document.getElementById('ai-style').value,
+                music: document.getElementById('ai-music').value,
+                voiceover: document.getElementById('enable-voiceover').checked
+            };
+            
+            sessionStorage.setItem('uploadData', JSON.stringify(uploadData));
+            
+            // TODO: Navigate to details page
+            alert('Files uploaded! Next step: Add item details.\n\nUpload data has been saved to sessionStorage.');
+            console.log('Upload data:', uploadData);
+            console.log('Files:', uploadedFiles);
         });
     </script>
 </body>
