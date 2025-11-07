@@ -61,6 +61,13 @@
             opacity: 0;
             transition: opacity 0.2s ease;
         }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
@@ -413,6 +420,14 @@
 
         // Next button handler - navigate to details page
         nextBtn.addEventListener('click', () => {
+            console.log('Next button clicked, files:', uploadedFiles.length);
+            
+            // Disable button and show loading state
+            nextBtn.disabled = true;
+            const originalText = nextBtn.innerHTML;
+            nextBtn.innerHTML = '<i data-feather="loader" class="h-4 w-4 inline animate-spin mr-2"></i>Processing...';
+            feather.replace();
+            
             // Store upload data in sessionStorage for next step
             const uploadData = {
                 fileCount: uploadedFiles.length,
@@ -423,29 +438,51 @@
             };
             
             sessionStorage.setItem('uploadData', JSON.stringify(uploadData));
+            console.log('Upload data saved to sessionStorage');
             
             // Store actual file data as base64 (for demo purposes)
             // In production, you'd upload to server here
             const filePromises = uploadedFiles.map(file => {
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        resolve({
-                            name: file.name,
-                            type: file.type,
-                            size: file.size,
-                            data: e.target.result
-                        });
-                    };
-                    reader.readAsDataURL(file);
+                return new Promise((resolve, reject) => {
+                    try {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            resolve({
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                data: e.target.result
+                            });
+                        };
+                        reader.onerror = (e) => {
+                            console.error('FileReader error:', e);
+                            reject(e);
+                        };
+                        reader.readAsDataURL(file);
+                    } catch (error) {
+                        console.error('Error reading file:', error);
+                        reject(error);
+                    }
                 });
             });
 
-            Promise.all(filePromises).then(filesData => {
-                sessionStorage.setItem('uploadFiles', JSON.stringify(filesData));
-                // Navigate to upload details page
-                window.location.href = 'upload-details.html';
-            });
+            Promise.all(filePromises)
+                .then(filesData => {
+                    console.log('Files processed, navigating to details page');
+                    sessionStorage.setItem('uploadFiles', JSON.stringify(filesData));
+                    // Navigate to upload details page
+                    window.location.href = 'upload-details.html';
+                })
+                .catch(error => {
+                    console.error('Error processing files:', error);
+                    // Restore button state
+                    nextBtn.disabled = false;
+                    nextBtn.innerHTML = originalText;
+                    feather.replace();
+                    // Fallback: navigate without file data if there's an error
+                    alert('Error processing files, but continuing to details page');
+                    window.location.href = 'upload-details.html';
+                });
         });
     </script>
 </body>
