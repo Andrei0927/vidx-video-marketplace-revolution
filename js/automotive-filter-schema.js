@@ -196,6 +196,7 @@ const automotiveFilterSchema = {
     mileage: {
         type: 'range',
         label: 'Mileage (km)',
+        width: 'half',
         alwaysVisible: true,
         range: {
             min: 0,
@@ -211,8 +212,9 @@ const automotiveFilterSchema = {
 
     // Transmission (Cutie de viteze)
     transmission: {
-        type: 'radio',
+        type: 'dropdown',
         label: 'Transmission',
+        width: 'half',
         alwaysVisible: true,
         options: [
             { value: '', label: 'Any' },
