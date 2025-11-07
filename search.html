@@ -93,6 +93,9 @@
                     <button id="login-btn" class="hidden px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
                         Login
                     </button>
+                    <button id="user-avatar-btn" class="hidden p-1 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <img id="user-avatar" src="" alt="User" class="h-8 w-8 rounded-full">
+                    </button>
                     <user-dropdown id="user-menu" class="hidden"></user-dropdown>
                 </div>
             </div>
@@ -494,15 +497,25 @@
         function checkAuth() {
             const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
             const loginBtn = document.getElementById('login-btn');
+            const userAvatarBtn = document.getElementById('user-avatar-btn');
+            const userAvatar = document.getElementById('user-avatar');
             const userMenu = document.getElementById('user-menu');
             
             if (sessionToken) {
-                // User is logged in - show user menu
+                // User is logged in - show user avatar button
                 if (loginBtn) loginBtn.classList.add('hidden');
+                if (userAvatarBtn) {
+                    userAvatarBtn.classList.remove('hidden');
+                    // Set avatar image from localStorage or use default
+                    const avatarUrl = localStorage.getItem('userAvatar') || 
+                                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${localStorage.getItem('userEmail') || 'user'}`;
+                    if (userAvatar) userAvatar.src = avatarUrl;
+                }
                 if (userMenu) userMenu.classList.remove('hidden');
             } else {
                 // User is not logged in - show login button
                 if (loginBtn) loginBtn.classList.remove('hidden');
+                if (userAvatarBtn) userAvatarBtn.classList.add('hidden');
                 if (userMenu) userMenu.classList.add('hidden');
             }
         }
@@ -535,6 +548,16 @@
                         authModal.open();
                     }
                 }
+            });
+        }
+
+        // User avatar button click handler - toggles dropdown
+        const userAvatarBtn = document.getElementById('user-avatar-btn');
+        const userMenu = document.getElementById('user-menu');
+        if (userAvatarBtn && userMenu) {
+            userAvatarBtn.addEventListener('click', () => {
+                // Toggle the hidden class to show/hide dropdown
+                userMenu.classList.toggle('hidden');
             });
         }
 
