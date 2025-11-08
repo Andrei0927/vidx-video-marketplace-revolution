@@ -524,7 +524,7 @@ class FilterRenderer {
     renderActionButtons() {
         const buttonContainer = document.createElement('div');
         buttonContainer.id = 'filter-action-buttons';
-        buttonContainer.className = 'flex space-x-4 mt-6 md:mt-6 md:order-last';
+        buttonContainer.className = 'filter-full flex space-x-4 mt-6 md:mt-6 md:order-last';
 
         const applyBtn = document.createElement('button');
         applyBtn.id = 'apply-filters';
