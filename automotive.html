@@ -1026,10 +1026,16 @@
                 const navBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
                 navBar.style.display = 'none'; // Hide default nav on iOS Safari
                 
-                // Remove bottom padding from video overlays since nav is hidden
-                document.querySelectorAll('.video-overlay').forEach(overlay => {
-                    overlay.style.paddingBottom = '1.5rem';
-                });
+                // Add CSS to remove bottom padding from video overlays since nav is hidden
+                const style = document.createElement('style');
+                style.textContent = `
+                    @media (max-width: 1023px) {
+                        .video-overlay {
+                            padding-bottom: 1.5rem !important;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
                 
                 // Create floating menu container
                 const menuContainer = document.createElement('div');
