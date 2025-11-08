@@ -51,6 +51,7 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
+    <script src="js/video-card-engagement.js"></script>
     <style>
         html, body {
             min-height: 100%;
@@ -505,11 +506,10 @@
                     <div class="flex space-x-3">
                         <button class="flex items-center text-white group" data-like-btn data-ad-id="vw-transporter">
                             <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
-                            <span class="ml-1 text-sm" data-like-count>42</span>
                         </button>
-                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="vw-transporter">
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="vw-transporter" data-favorite-count="15">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">15</span>
+                            <span class="ml-1 text-sm" data-count-display>15</span>
                         </button>
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
@@ -554,11 +554,10 @@
                     <div class="flex space-x-3">
                         <button class="flex items-center text-white group" data-like-btn data-ad-id="audi-a5">
                             <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
-                            <span class="ml-1 text-sm" data-like-count>38</span>
                         </button>
-                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="audi-a5">
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="audi-a5" data-favorite-count="0">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">22</span>
+                            <span class="ml-1 text-sm" data-count-display>0</span>
                         </button>
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
@@ -1160,155 +1159,8 @@
             });
         }
         
-        // Like button handlers
-        document.querySelectorAll('[data-like-btn]').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                const adId = btn.dataset.adId;
-                const countSpan = btn.querySelector('[data-like-count]');
-                const icon = btn.querySelector('i');
-                
-                // Check if already liked
-                const likedAds = JSON.parse(localStorage.getItem('likedAds') || '[]');
-                const isLiked = likedAds.includes(adId);
-                
-                if (isLiked) {
-                    // Unlike
-                    const index = likedAds.indexOf(adId);
-                    likedAds.splice(index, 1);
-                    icon.classList.remove('fill-indigo-400');
-                    if (countSpan) {
-                        const currentCount = parseInt(countSpan.textContent) || 0;
-                        countSpan.textContent = Math.max(0, currentCount - 1);
-                    }
-                } else {
-                    // Like
-                    likedAds.push(adId);
-                    icon.classList.add('fill-indigo-400');
-                    if (countSpan) {
-                        const currentCount = parseInt(countSpan.textContent) || 0;
-                        countSpan.textContent = currentCount + 1;
-                    }
-                }
-                
-                localStorage.setItem('likedAds', JSON.stringify(likedAds));
-                
-                // TODO: Send to backend API when available
-                console.log('Like toggled for ad:', adId, 'Liked:', !isLiked);
-            });
-            
-            // Initialize like state on page load
-            const adId = btn.dataset.adId;
-            const likedAds = JSON.parse(localStorage.getItem('likedAds') || '[]');
-            if (likedAds.includes(adId)) {
-                btn.querySelector('i').classList.add('fill-indigo-400');
-            }
-        });
-
-        // Favorite button handlers
-        // Helper functions for user-specific favorites
-        function getUserFavorites() {
-            const userEmail = localStorage.getItem('userEmail');
-            if (!userEmail) return [];
-            
-            const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
-            return allFavorites[userEmail] || [];
-        }
-        
-        function saveUserFavorites(favorites) {
-            const userEmail = localStorage.getItem('userEmail');
-            if (!userEmail) return;
-            
-            const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
-            allFavorites[userEmail] = favorites;
-            localStorage.setItem('userFavorites', JSON.stringify(allFavorites));
-        }
-        
-        document.querySelectorAll('[data-favorite-btn]').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                const adId = btn.dataset.adId;
-                const icon = btn.querySelector('i');
-                
-                // Check if user is logged in
-                const isLoggedIn = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
-                const userEmail = localStorage.getItem('userEmail');
-                
-                if (!isLoggedIn || !userEmail) {
-                    // Redirect to registration
-                    window.location.href = 'index.html#register';
-                    return;
-                }
-                
-                // Get user-specific favorites
-                const favoritedAds = getUserFavorites();
-                const isFavorited = favoritedAds.includes(adId);
-                
-                if (isFavorited) {
-                    // Remove from favorites
-                    const index = favoritedAds.indexOf(adId);
-                    favoritedAds.splice(index, 1);
-                    icon.classList.remove('fill-pink-500');
-                } else {
-                    // Add to favorites
-                    favoritedAds.push(adId);
-                    icon.classList.add('fill-pink-500');
-                }
-                
-                saveUserFavorites(favoritedAds);
-                
-                // TODO: Send to backend API when available
-                console.log('Favorite toggled for ad:', adId, 'Favorited:', !isFavorited, 'User:', userEmail);
-            });
-            
-            // Initialize favorite state on page load
-            const adId = btn.dataset.adId;
-            const favoritedAds = getUserFavorites();
-            if (favoritedAds.includes(adId)) {
-                btn.querySelector('i').classList.add('fill-pink-500');
-            }
-        });
-
-        // Share button handlers
-        document.querySelectorAll('[data-share-btn]').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                const adId = btn.dataset.adId;
-                const adTitle = btn.dataset.adTitle || 'Check out this ad';
-                const adPrice = btn.dataset.adPrice || '';
-                
-                const shareData = {
-                    title: `${adTitle} - ${adPrice}`,
-                    text: `${adTitle} - ${adPrice} on VidX`,
-                    url: `${window.location.origin}/details.html?ad=${adId}`
-                };
-                
-                try {
-                    if (navigator.share) {
-                        // Use native share on supported devices
-                        await navigator.share(shareData);
-                        console.log('Shared successfully');
-                    } else {
-                        // Fallback: Copy to clipboard
-                        await navigator.clipboard.writeText(shareData.url);
-                        
-                        // Show feedback
-                        const originalIcon = btn.innerHTML;
-                        btn.innerHTML = '<i data-feather="check" class="h-5 w-5 text-green-500"></i>';
-                        feather.replace();
-                        
-                        setTimeout(() => {
-                            btn.innerHTML = originalIcon;
-                            feather.replace();
-                        }, 2000);
-                        
-                        console.log('Link copied to clipboard');
-                    }
-                } catch (err) {
-                    console.error('Error sharing:', err);
-                }
-            });
-        });
+        // Engagement features (Like, Favorite, Share) are handled by js/video-card-engagement.js
+        // No inline handlers needed - the global component uses event delegation
 
         applyFeatherIcons();
         window.addEventListener('load', registerServiceWorker);

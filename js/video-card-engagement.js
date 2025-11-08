@@ -1,0 +1,324 @@
+/**
+ * Video Card Engagement Component
+ * Handles Like, Favorite, and Share functionality for all video cards across the platform
+ * Works with both static cards and dynamically loaded cards (from Revid API)
+ */
+
+class VideoCardEngagement {
+    constructor() {
+        this.initializeStorage();
+        this.attachEventListeners();
+        this.initializeButtonStates();
+    }
+
+    // ============= STORAGE HELPERS =============
+    
+    initializeStorage() {
+        // Ensure storage objects exist
+        if (!localStorage.getItem('userLikes')) {
+            localStorage.setItem('userLikes', '{}');
+        }
+        if (!localStorage.getItem('userFavorites')) {
+            localStorage.setItem('userFavorites', '{}');
+        }
+        if (!localStorage.getItem('globalFavoriteCounts')) {
+            localStorage.setItem('globalFavoriteCounts', '{}');
+        }
+    }
+
+    getUserEmail() {
+        return localStorage.getItem('userEmail');
+    }
+
+    isLoggedIn() {
+        return !!(localStorage.getItem('authToken') || localStorage.getItem('sessionToken'));
+    }
+
+    getUserLikes() {
+        const userEmail = this.getUserEmail();
+        if (!userEmail) return [];
+        
+        const allLikes = JSON.parse(localStorage.getItem('userLikes') || '{}');
+        return allLikes[userEmail] || [];
+    }
+
+    saveUserLikes(likes) {
+        const userEmail = this.getUserEmail();
+        if (!userEmail) return;
+        
+        const allLikes = JSON.parse(localStorage.getItem('userLikes') || '{}');
+        allLikes[userEmail] = likes;
+        localStorage.setItem('userLikes', JSON.stringify(allLikes));
+    }
+
+    getUserFavorites() {
+        const userEmail = this.getUserEmail();
+        if (!userEmail) return [];
+        
+        const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+        return allFavorites[userEmail] || [];
+    }
+
+    saveUserFavorites(favorites) {
+        const userEmail = this.getUserEmail();
+        if (!userEmail) return;
+        
+        const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+        allFavorites[userEmail] = favorites;
+        localStorage.setItem('userFavorites', JSON.stringify(allFavorites));
+    }
+
+    getGlobalFavoriteCounts() {
+        return JSON.parse(localStorage.getItem('globalFavoriteCounts') || '{}');
+    }
+
+    saveGlobalFavoriteCounts(counts) {
+        localStorage.setItem('globalFavoriteCounts', JSON.stringify(counts));
+    }
+
+    // ============= EVENT LISTENERS =============
+
+    attachEventListeners() {
+        // Use event delegation for dynamically loaded content
+        document.addEventListener('click', (e) => {
+            // Like button handler
+            const likeBtn = e.target.closest('[data-like-btn]');
+            if (likeBtn) {
+                e.stopPropagation();
+                this.handleLikeClick(likeBtn);
+                return;
+            }
+
+            // Favorite button handler
+            const favoriteBtn = e.target.closest('[data-favorite-btn]');
+            if (favoriteBtn) {
+                e.stopPropagation();
+                this.handleFavoriteClick(favoriteBtn);
+                return;
+            }
+
+            // Share button handler
+            const shareBtn = e.target.closest('[data-share-btn]');
+            if (shareBtn) {
+                e.stopPropagation();
+                this.handleShareClick(shareBtn);
+                return;
+            }
+        });
+    }
+
+    // ============= LIKE HANDLING =============
+
+    handleLikeClick(btn) {
+        const adId = btn.dataset.adId;
+        const icon = btn.querySelector('i');
+
+        // Check if user is logged in
+        if (!this.isLoggedIn() || !this.getUserEmail()) {
+            window.location.href = 'index.html#register';
+            return;
+        }
+
+        const likedAds = this.getUserLikes();
+        const isLiked = likedAds.includes(adId);
+
+        if (isLiked) {
+            // Unlike
+            const index = likedAds.indexOf(adId);
+            likedAds.splice(index, 1);
+            icon.classList.remove('fill-indigo-400');
+        } else {
+            // Like
+            likedAds.push(adId);
+            icon.classList.add('fill-indigo-400');
+        }
+
+        this.saveUserLikes(likedAds);
+
+        // TODO: Send to backend API when available
+        console.log('Like toggled:', adId, 'Liked:', !isLiked, 'User:', this.getUserEmail());
+    }
+
+    // ============= FAVORITE HANDLING =============
+
+    handleFavoriteClick(btn) {
+        const adId = btn.dataset.adId;
+        const icon = btn.querySelector('i');
+        const countDisplay = btn.querySelector('[data-count-display]');
+
+        // Check if user is logged in
+        if (!this.isLoggedIn() || !this.getUserEmail()) {
+            window.location.href = 'index.html#register';
+            return;
+        }
+
+        const favoritedAds = this.getUserFavorites();
+        const isFavorited = favoritedAds.includes(adId);
+
+        // Get global counts
+        const globalCounts = this.getGlobalFavoriteCounts();
+        const currentCount = globalCounts[adId] || parseInt(btn.dataset.favoriteCount) || 0;
+
+        if (isFavorited) {
+            // Remove from favorites
+            const index = favoritedAds.indexOf(adId);
+            favoritedAds.splice(index, 1);
+            icon.classList.remove('fill-pink-500');
+
+            // Decrement global count
+            globalCounts[adId] = Math.max(0, currentCount - 1);
+        } else {
+            // Add to favorites
+            favoritedAds.push(adId);
+            icon.classList.add('fill-pink-500');
+
+            // Increment global count
+            globalCounts[adId] = currentCount + 1;
+        }
+
+        // Update display
+        if (countDisplay) {
+            countDisplay.textContent = globalCounts[adId];
+        }
+
+        this.saveUserFavorites(favoritedAds);
+        this.saveGlobalFavoriteCounts(globalCounts);
+
+        // TODO: Send to backend API when available
+        console.log('Favorite toggled:', adId, 'Favorited:', !isFavorited, 'User:', this.getUserEmail(), 'Global count:', globalCounts[adId]);
+    }
+
+    // ============= SHARE HANDLING =============
+
+    async handleShareClick(btn) {
+        const adId = btn.dataset.adId;
+        const adTitle = btn.dataset.adTitle || 'Check out this ad';
+        const adPrice = btn.dataset.adPrice || '';
+
+        const shareData = {
+            title: `${adTitle} - ${adPrice}`,
+            text: `${adTitle} - ${adPrice} on VidX`,
+            url: `${window.location.origin}/details.html?ad=${adId}`
+        };
+
+        try {
+            if (navigator.share) {
+                // Use native share on supported devices
+                await navigator.share(shareData);
+                console.log('Shared successfully');
+            } else {
+                // Fallback: Copy to clipboard
+                await navigator.clipboard.writeText(shareData.url);
+
+                // Show feedback
+                const originalIcon = btn.innerHTML;
+                btn.innerHTML = '<i data-feather="check" class="h-5 w-5 text-green-500"></i>';
+                if (window.feather) {
+                    feather.replace();
+                }
+
+                setTimeout(() => {
+                    btn.innerHTML = originalIcon;
+                    if (window.feather) {
+                        feather.replace();
+                    }
+                }, 2000);
+
+                console.log('Link copied to clipboard');
+            }
+        } catch (err) {
+            console.error('Error sharing:', err);
+        }
+    }
+
+    // ============= INITIALIZATION =============
+
+    initializeButtonStates() {
+        // Initialize all like buttons
+        this.initializeLikeButtons();
+        
+        // Initialize all favorite buttons
+        this.initializeFavoriteButtons();
+    }
+
+    initializeLikeButtons() {
+        const likedAds = this.getUserLikes();
+        
+        document.querySelectorAll('[data-like-btn]').forEach(btn => {
+            const adId = btn.dataset.adId;
+            const icon = btn.querySelector('i');
+            
+            if (likedAds.includes(adId) && icon) {
+                icon.classList.add('fill-indigo-400');
+            }
+        });
+    }
+
+    initializeFavoriteButtons() {
+        const favoritedAds = this.getUserFavorites();
+        const globalCounts = this.getGlobalFavoriteCounts();
+        
+        document.querySelectorAll('[data-favorite-btn]').forEach(btn => {
+            const adId = btn.dataset.adId;
+            const icon = btn.querySelector('i');
+            const countDisplay = btn.querySelector('[data-count-display]');
+            
+            // Set user-specific heart state
+            if (favoritedAds.includes(adId) && icon) {
+                icon.classList.add('fill-pink-500');
+            }
+            
+            // Set global count
+            if (globalCounts[adId] !== undefined && countDisplay) {
+                countDisplay.textContent = globalCounts[adId];
+            }
+        });
+    }
+
+    // ============= PUBLIC API FOR DYNAMIC CONTENT =============
+
+    /**
+     * Call this after dynamically loading new video cards (e.g., from Revid API)
+     * to reinitialize button states for the new content
+     */
+    refreshButtonStates() {
+        this.initializeButtonStates();
+    }
+
+    /**
+     * Get favorite status for a specific ad (useful for rendering)
+     */
+    isFavorited(adId) {
+        return this.getUserFavorites().includes(adId);
+    }
+
+    /**
+     * Get like status for a specific ad (useful for rendering)
+     */
+    isLiked(adId) {
+        return this.getUserLikes().includes(adId);
+    }
+
+    /**
+     * Get global favorite count for a specific ad
+     */
+    getFavoriteCount(adId) {
+        const globalCounts = this.getGlobalFavoriteCounts();
+        return globalCounts[adId] || 0;
+    }
+}
+
+// Initialize globally when DOM is ready
+let videoCardEngagement;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        videoCardEngagement = new VideoCardEngagement();
+    });
+} else {
+    videoCardEngagement = new VideoCardEngagement();
+}
+
+// Export for use in other scripts
+window.VideoCardEngagement = VideoCardEngagement;
+window.videoCardEngagement = videoCardEngagement;
