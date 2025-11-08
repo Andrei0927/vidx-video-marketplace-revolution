@@ -56,6 +56,15 @@
         * {
             box-sizing: border-box;
         }
+        
+        /* Fix for pull-down white background in dark mode */
+        html {
+            background-color: #f9fafb; /* bg-gray-50 */
+        }
+        html.dark {
+            background-color: #18191A; /* dark-50 */
+        }
+        
         body {
             width: 100%;
             overflow-x: hidden;

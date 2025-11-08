@@ -40,6 +40,14 @@
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script type="module" src="components/auth-modal.js"></script>
     <style>
+        /* Fix for pull-down white background in dark mode */
+        html {
+            background-color: #f9fafb; /* bg-gray-50 */
+        }
+        html.dark {
+            background-color: #18191A; /* dark-50 */
+        }
+        
         .filter-section {
             display: none;
         }
