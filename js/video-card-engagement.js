@@ -111,7 +111,13 @@ class VideoCardEngagement {
 
     handleLikeClick(btn) {
         const adId = btn.dataset.adId;
-        const icon = btn.querySelector('i');
+        // Query for both <i> and <svg> (after feather.replace())
+        const icon = btn.querySelector('i, svg');
+
+        if (!icon) {
+            console.error('Like button icon not found for ad:', adId);
+            return;
+        }
 
         // Check if user is logged in
         if (!this.isLoggedIn() || !this.getUserEmail()) {
@@ -143,8 +149,14 @@ class VideoCardEngagement {
 
     handleFavoriteClick(btn) {
         const adId = btn.dataset.adId;
-        const icon = btn.querySelector('i');
+        // Query for both <i> and <svg> (after feather.replace())
+        const icon = btn.querySelector('i, svg');
         const countDisplay = btn.querySelector('[data-count-display]');
+
+        if (!icon) {
+            console.error('Favorite button icon not found for ad:', adId);
+            return;
+        }
 
         // Check if user is logged in
         if (!this.isLoggedIn() || !this.getUserEmail()) {
@@ -246,9 +258,15 @@ class VideoCardEngagement {
         
         document.querySelectorAll('[data-like-btn]').forEach(btn => {
             const adId = btn.dataset.adId;
-            const icon = btn.querySelector('i');
+            // Query for both <i> and <svg> (after feather.replace())
+            const icon = btn.querySelector('i, svg');
             
-            if (likedAds.includes(adId) && icon) {
+            if (!icon) {
+                console.warn('Like button missing icon for ad:', adId);
+                return;
+            }
+            
+            if (likedAds.includes(adId)) {
                 icon.classList.add('fill-indigo-400');
             }
         });
@@ -260,11 +278,17 @@ class VideoCardEngagement {
         
         document.querySelectorAll('[data-favorite-btn]').forEach(btn => {
             const adId = btn.dataset.adId;
-            const icon = btn.querySelector('i');
+            // Query for both <i> and <svg> (after feather.replace())
+            const icon = btn.querySelector('i, svg');
             const countDisplay = btn.querySelector('[data-count-display]');
             
+            if (!icon) {
+                console.warn('Favorite button missing icon for ad:', adId);
+                return;
+            }
+            
             // Set user-specific heart state
-            if (favoritedAds.includes(adId) && icon) {
+            if (favoritedAds.includes(adId)) {
                 icon.classList.add('fill-pink-500');
             }
             
@@ -311,12 +335,23 @@ class VideoCardEngagement {
 // Initialize globally when DOM is ready
 let videoCardEngagement;
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+// Wait for both DOM and feather icons to be ready
+function initializeEngagement() {
+    // Ensure feather icons are rendered first
+    if (window.feather) {
+        feather.replace();
+    }
+    
+    // Small delay to ensure icons are fully rendered
+    setTimeout(() => {
         videoCardEngagement = new VideoCardEngagement();
-    });
+    }, 100);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeEngagement);
 } else {
-    videoCardEngagement = new VideoCardEngagement();
+    initializeEngagement();
 }
 
 // Export for use in other scripts
