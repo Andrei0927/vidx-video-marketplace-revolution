@@ -426,10 +426,10 @@ class AuthModal extends HTMLElement {
       
       // Store session and user info
       localStorage.setItem('sessionToken', session);
-      localStorage.setItem('userId', user.id);
-      localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userName', user.name);
-      localStorage.setItem('userAvatar', profile.avatar);
+      localStorage.setItem('userId', user?.id || '');
+      localStorage.setItem('userEmail', user?.email || '');
+      localStorage.setItem('userName', user?.name || '');
+      localStorage.setItem('userAvatar', profile?.avatar || '');
       
       console.log('Stored in localStorage:', {
         sessionToken: localStorage.getItem('sessionToken'),
@@ -524,10 +524,10 @@ class AuthModal extends HTMLElement {
       
       // Store session and user info
       localStorage.setItem('sessionToken', token);
-      localStorage.setItem('userId', user.id);
-      localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userName', user.name);
-      localStorage.setItem('userAvatar', profile.avatar);
+      localStorage.setItem('userId', user?.id || '');
+      localStorage.setItem('userEmail', user?.email || '');
+      localStorage.setItem('userName', user?.name || '');
+      localStorage.setItem('userAvatar', profile?.avatar || '');
       
       console.log('Stored in localStorage:', {
         sessionToken: localStorage.getItem('sessionToken'),

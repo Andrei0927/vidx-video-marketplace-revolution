@@ -224,13 +224,18 @@
                 
                 return `
                     <div class="favorite-card bg-white dark:bg-dark-100 rounded-lg shadow-md overflow-hidden">
-                        <div class="relative aspect-video bg-gray-200 dark:bg-dark-200">
-                            <video class="w-full h-full object-cover" preload="metadata" muted playsinline>
+                        <div class="relative aspect-video bg-gray-200 dark:bg-dark-200" data-video-container>
+                            <video class="w-full h-full object-cover" preload="metadata" muted playsinline loop>
                                 <source src="${ad.image}" type="video/mp4" />
                             </video>
                             <span class="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded">
                                 ${ad.category}
                             </span>
+                            <!-- Volume toggle button -->
+                            <button class="absolute bottom-2 right-2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center hover:bg-opacity-70 transition" data-volume-toggle>
+                                <i data-feather="volume-x" class="h-4 w-4 text-white volume-off"></i>
+                                <i data-feather="volume-2" class="h-4 w-4 text-white volume-on" style="display: none;"></i>
+                            </button>
                         </div>
                         <div class="p-4">
                             <div class="flex items-center mb-2">
@@ -264,6 +269,51 @@
             
             // Re-apply feather icons
             feather.replace();
+            
+            // Add hover-to-play functionality for video previews
+            const videoContainers = document.querySelectorAll('[data-video-container]');
+            videoContainers.forEach(container => {
+                const video = container.querySelector('video');
+                const volumeToggle = container.querySelector('[data-volume-toggle]');
+                if (!video) return;
+                
+                // Load the video to show first frame
+                video.load();
+                
+                // Play on hover
+                container.addEventListener('mouseenter', () => {
+                    video.play().catch(err => {
+                        console.log('Autoplay prevented:', err);
+                    });
+                });
+                
+                // Pause and reset on mouse leave
+                container.addEventListener('mouseleave', () => {
+                    video.pause();
+                    video.currentTime = 0;
+                });
+                
+                // Volume toggle
+                if (volumeToggle) {
+                    volumeToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        
+                        video.muted = !video.muted;
+                        
+                        const volumeOff = volumeToggle.querySelector('.volume-off');
+                        const volumeOn = volumeToggle.querySelector('.volume-on');
+                        
+                        if (video.muted) {
+                            volumeOff.style.display = 'block';
+                            volumeOn.style.display = 'none';
+                        } else {
+                            volumeOff.style.display = 'none';
+                            volumeOn.style.display = 'block';
+                        }
+                    });
+                }
+            });
         }
 
         // Make removeFavorite available globally
