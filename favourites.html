@@ -171,10 +171,15 @@
         // Get user-specific favorited ads
         function getUserFavorites() {
             const userEmail = localStorage.getItem('userEmail');
+            console.log('[FAVOURITES] getUserFavorites - userEmail:', userEmail);
+            
             if (!userEmail) return [];
             
             // Get all favorites from localStorage (keyed by user email)
             const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+            console.log('[FAVOURITES] All favorites from localStorage:', allFavorites);
+            console.log('[FAVOURITES] Favorites for current user:', allFavorites[userEmail]);
+            
             return allFavorites[userEmail] || [];
         }
 
@@ -207,16 +212,23 @@
             
             const favorites = getUserFavorites();
             
+            console.log('[FAVOURITES] renderFavorites called');
+            console.log('[FAVOURITES] Favorites to render:', favorites);
+            console.log('[FAVOURITES] Number of favorites:', favorites.length);
+            
             if (favorites.length === 0) {
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 countSpan.textContent = '0 items';
                 feather.replace();
+                console.log('[FAVOURITES] Showing empty state');
                 return;
             }
             
             emptyState.classList.add('hidden');
             countSpan.textContent = `${favorites.length} ${favorites.length === 1 ? 'item' : 'items'}`;
+            
+            console.log('[FAVOURITES] Rendering', favorites.length, 'favorite(s)');
             
             container.innerHTML = favorites.map(adId => {
                 const ad = adDatabase[adId];

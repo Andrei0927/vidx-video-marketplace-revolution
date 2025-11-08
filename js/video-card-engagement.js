@@ -153,19 +153,32 @@ class VideoCardEngagement {
         const icon = btn.querySelector('i, svg');
         const countDisplay = btn.querySelector('[data-count-display]');
 
+        console.log('[FAVORITE] Button clicked for ad:', adId);
+        console.log('[FAVORITE] Icon found:', !!icon);
+
         if (!icon) {
             console.error('Favorite button icon not found for ad:', adId);
             return;
         }
 
         // Check if user is logged in
-        if (!this.isLoggedIn() || !this.getUserEmail()) {
+        const isLoggedIn = this.isLoggedIn();
+        const userEmail = this.getUserEmail();
+        
+        console.log('[FAVORITE] isLoggedIn:', isLoggedIn);
+        console.log('[FAVORITE] userEmail:', userEmail);
+        
+        if (!isLoggedIn || !userEmail) {
+            console.log('[FAVORITE] Not logged in, redirecting to register');
             window.location.href = 'index.html#register';
             return;
         }
 
         const favoritedAds = this.getUserFavorites();
         const isFavorited = favoritedAds.includes(adId);
+
+        console.log('[FAVORITE] Current favorites for user:', favoritedAds);
+        console.log('[FAVORITE] Is currently favorited:', isFavorited);
 
         // Get global counts
         const globalCounts = this.getGlobalFavoriteCounts();
@@ -179,6 +192,7 @@ class VideoCardEngagement {
 
             // Decrement global count
             globalCounts[adId] = Math.max(0, currentCount - 1);
+            console.log('[FAVORITE] Removed from favorites');
         } else {
             // Add to favorites
             favoritedAds.push(adId);
@@ -186,6 +200,7 @@ class VideoCardEngagement {
 
             // Increment global count
             globalCounts[adId] = currentCount + 1;
+            console.log('[FAVORITE] Added to favorites');
         }
 
         // Update display
@@ -195,6 +210,9 @@ class VideoCardEngagement {
 
         this.saveUserFavorites(favoritedAds);
         this.saveGlobalFavoriteCounts(globalCounts);
+
+        console.log('[FAVORITE] Saved favorites:', favoritedAds);
+        console.log('[FAVORITE] localStorage userFavorites:', localStorage.getItem('userFavorites'));
 
         // TODO: Send to backend API when available
         console.log('Favorite toggled:', adId, 'Favorited:', !isFavorited, 'User:', this.getUserEmail(), 'Global count:', globalCounts[adId]);
