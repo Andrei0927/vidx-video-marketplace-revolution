@@ -1302,9 +1302,9 @@
                 // Create toggle button that matches nav bar height and style
                 const toggleBtn = document.createElement('button');
                 toggleBtn.id = 'nav-toggle';
-                toggleBtn.className = 'fixed z-50 bg-white dark:bg-dark-100 flex items-center justify-center transition-all duration-300';
-                toggleBtn.style.cssText = 'right: 0; bottom: 0; width: 40px; height: calc(64px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); border: none;'; // Match nav bar height, no border
-                toggleBtn.innerHTML = '<i data-feather="chevron-left" class="h-5 w-5 text-gray-700 dark:text-dark-600"></i>';
+                toggleBtn.className = 'fixed z-50 bg-white dark:bg-dark-100 transition-all duration-300';
+                toggleBtn.style.cssText = 'right: 0; bottom: 0; width: 40px; height: calc(64px + env(safe-area-inset-bottom)); border: none; display: flex; align-items: center; justify-content: center; padding-bottom: env(safe-area-inset-bottom);'; // Match nav bar height, no border
+                toggleBtn.innerHTML = '<i data-feather="chevron-left" class="h-5 w-5 text-gray-700 dark:text-dark-600" style="margin-bottom: env(safe-area-inset-bottom);"></i>';
                 
                 let navExpanded = false;
                 
