@@ -1033,14 +1033,15 @@
                         .video-overlay {
                             padding-bottom: 1.5rem !important;
                         }
-                        /* Ensure snap scrolling works on iOS Safari */
+                        /* Ensure snap scrolling works on iOS Safari with momentum */
                         .video-grid {
-                            scroll-snap-type: y mandatory !important;
+                            scroll-snap-type: y proximity !important;
                             -webkit-overflow-scrolling: touch !important;
+                            overflow-y: scroll !important;
                         }
                         .video-card {
                             scroll-snap-align: start !important;
-                            scroll-snap-stop: always !important;
+                            scroll-snap-stop: normal !important;
                             height: 100vh !important;
                             height: 100dvh !important;
                             min-height: 100vh !important;
