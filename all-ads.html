@@ -39,7 +39,6 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
-    <script src="components/user-dropdown.js"></script>
     <script src="js/video-card-engagement.js"></script>
     <style>
         body {
@@ -253,7 +252,15 @@
 
     <!-- Video Grid (Full-screen format) -->
     <div class="video-grid" id="video-grid">
+        <!-- Loading indicator -->
+        <div id="loading-ads" class="flex items-center justify-center min-h-screen">
+            <div class="text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p class="text-gray-600 dark:text-dark-400">Loading ads from all categories...</p>
+            </div>
+        </div>
         <!-- Videos will be loaded dynamically from all category pages -->
+    </div>
 
     <script type="module">
         import './components/user-dropdown.js';
@@ -333,7 +340,9 @@
         // Fetch and aggregate video cards from all category pages
         const loadAllAds = async () => {
             const videoGrid = document.getElementById('video-grid');
+            const loadingIndicator = document.getElementById('loading-ads');
             const allVideoCards = [];
+            let cardCounter = 0;
 
             for (const categoryPage of CATEGORY_PAGES) {
                 try {
@@ -348,11 +357,28 @@
                     const videoCards = doc.querySelectorAll('[data-video-card]');
                     videoCards.forEach(card => {
                         // Clone the video card element
-                        allVideoCards.push(card.cloneNode(true));
+                        const clonedCard = card.cloneNode(true);
+                        
+                        // Add unique ID to avoid conflicts
+                        clonedCard.id = `video-card-${cardCounter++}`;
+                        
+                        // Add unique IDs to nested elements
+                        const video = clonedCard.querySelector('video');
+                        if (video) video.id = `video-${cardCounter}`;
+                        
+                        const volumeIndicator = clonedCard.querySelector('.volume-indicator');
+                        if (volumeIndicator) volumeIndicator.id = `volume-${cardCounter}`;
+                        
+                        allVideoCards.push(clonedCard);
                     });
                 } catch (error) {
                     console.warn(`Failed to load ads from ${categoryPage}:`, error);
                 }
+            }
+
+            // Remove loading indicator
+            if (loadingIndicator) {
+                loadingIndicator.remove();
             }
 
             // Shuffle the ads to mix categories
@@ -407,36 +433,36 @@
                 const showFirstFrame = () => {
                     if (!video.src && !video.currentSrc) return;
 
-                    if (isMobile && index === 0) {
-                        // First video on mobile: try unmuted autoplay
+                    // Desktop: First video autoplays with sound, others show first frame paused
+                    // Mobile: First video autoplays with sound (fallback to muted)
+                    if (index === 0) {
+                        // First video: try to autoplay with sound
                         video.muted = false;
                         video.play().then(() => {
                             currentlyPlayingVideo = video;
                             updateVolumeIcon(false);
                             flashVolumeIndicator();
                         }).catch(() => {
-                            // Fallback to muted
+                            // Fallback: autoplay muted
                             video.muted = true;
                             video.play().then(() => {
+                                currentlyPlayingVideo = video;
                                 updateVolumeIcon(true);
                                 flashVolumeIndicator();
                             }).catch(() => {
+                                // Last resort: show first frame
                                 video.currentTime = 0.1;
                             });
                         });
                     } else {
-                        // All other videos: muted, show first frame
+                        // Other videos: muted, show first frame, then pause
                         video.muted = true;
                         const attempt = video.play();
                         if (attempt) {
                             attempt.then(() => {
                                 setTimeout(() => {
-                                    if (!isMobile || index !== 0) {
-                                        video.pause();
-                                        video.currentTime = 0;
-                                    } else {
-                                        currentlyPlayingVideo = video;
-                                    }
+                                    video.pause();
+                                    video.currentTime = 0;
                                 }, 100);
                             }).catch(() => {
                                 video.currentTime = 0.1;
@@ -451,7 +477,9 @@
                     video.addEventListener('loadeddata', showFirstFrame, { once: true });
                 }
 
-                let userMutedPreference = !isMobile;
+                // Desktop starts muted (except first video which tries unmuted)
+                // Mobile starts unmuted (with fallback to muted)
+                let userMutedPreference = index === 0 ? false : true;
 
                 const applyMuteState = (muted) => {
                     video.muted = muted;
