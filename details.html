@@ -38,6 +38,8 @@
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
+    <script src="components/auth-modal.js"></script>
+    <script src="js/video-card-engagement.js"></script>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
     <!-- Navigation -->
@@ -75,7 +77,7 @@
                 <i data-feather="sliders" class="h-5 w-5 mb-1"></i>
                 <span class="text-xs">Filters</span>
             </a>
-            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+            <a href="#" id="mobile-favorites-link" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
                 <i data-feather="heart" class="h-5 w-5 mb-1"></i>
                 <span class="text-xs">Favourites</span>
             </a>
@@ -179,11 +181,11 @@
                         <i data-feather="message-circle" class="h-5 w-5 mr-2"></i>
                         Contact Seller
                     </button>
-                    <button class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition">
-                        <i data-feather="heart" class="h-5 w-5 text-gray-700 dark:text-dark-500"></i>
+                    <button id="favorite-btn" data-favorite-btn data-ad-id="" data-favorite-count="0" class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition group">
+                        <i data-feather="heart" class="h-5 w-5 text-gray-700 dark:text-dark-500 group-hover:text-pink-500"></i>
                     </button>
-                    <button class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition">
-                        <i data-feather="share-2" class="h-5 w-5 text-gray-700 dark:text-dark-500"></i>
+                    <button id="share-btn" data-share-btn data-ad-id="" data-ad-title="" data-ad-price="" class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition group">
+                        <i data-feather="share-2" class="h-5 w-5 text-gray-700 dark:text-dark-500 group-hover:text-green-500"></i>
                     </button>
                 </div>
             </div>
@@ -202,6 +204,21 @@
             localStorage.theme = isDark ? 'dark' : 'light';
             feather.replace();
         });
+
+        // Mobile Favourites link handler
+        const mobileFavoritesLink = document.getElementById('mobile-favorites-link');
+        if (mobileFavoritesLink) {
+            mobileFavoritesLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isLoggedIn = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
+                
+                if (isLoggedIn) {
+                    window.location.href = 'favourites.html';
+                } else {
+                    window.location.href = 'index.html#register';
+                }
+            });
+        }
 
         // Ad data
         const adData = {
@@ -338,6 +355,21 @@ Immaculate inside and out.`,
             
             // Update page title
             document.title = `${ad.title} - VidX`;
+            
+            // Update engagement buttons
+            const favoriteBtn = document.getElementById('favorite-btn');
+            const shareBtn = document.getElementById('share-btn');
+            
+            if (favoriteBtn) {
+                favoriteBtn.dataset.adId = adId;
+                favoriteBtn.dataset.favoriteCount = '0';
+            }
+            
+            if (shareBtn) {
+                shareBtn.dataset.adId = adId;
+                shareBtn.dataset.adTitle = ad.title;
+                shareBtn.dataset.adPrice = ad.price;
+            }
             
             // Reinitialize feather icons
             feather.replace();
