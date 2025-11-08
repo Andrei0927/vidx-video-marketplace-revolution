@@ -1130,8 +1130,8 @@
                 const isLoggedIn = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
                 
                 if (isLoggedIn) {
-                    // User is logged in, go to favourites page (to be created)
-                    window.location.href = 'favorites.html';
+                    // User is logged in, go to favourites page
+                    window.location.href = 'favourites.html';
                 } else {
                     // User not logged in, redirect to registration
                     window.location.href = 'index.html#register';
