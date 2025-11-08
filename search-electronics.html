@@ -308,49 +308,6 @@
         </div>
 
         <!-- Filters Card -->
-    </style>
-</head>
-<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="index.html" class="flex items-center">
-                        <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">VidX</span>
-                    </a>
-                    <div class="hidden md:ml-10 md:flex md:space-x-8">
-                        <a href="automotive.html" class="text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition">Automotive</a>
-                        <a href="electronics.html" class="text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400 px-3 py-2 text-sm font-medium">Electronics</a>
-                        <a href="fashion.html" class="text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium transition">Fashion</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-200 transition">
-                        <i data-feather="sun" class="h-5 w-5 text-gray-600 dark:text-dark-500"></i>
-                    </button>
-                    <button id="upload-btn" class="hidden md:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                        <i data-feather="upload" class="h-4 w-4 mr-2"></i>
-                        Upload
-                    </button>
-                    <button id="auth-btn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                        <i data-feather="user" class="h-5 w-5"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-2">Search Electronics & Technology</h1>
-            <p class="text-gray-600 dark:text-dark-400">Find the perfect device with advanced filters</p>
-        </div>
-
-        <!-- Filters Section -->
-        <!-- Filters Card -->
         <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md p-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-6 flex items-center">
                 <i data-feather="filter" class="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400"></i>
@@ -382,45 +339,92 @@
     <!-- Auth Check -->
     <script>
         async function checkAuth() {
+            const token = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
+            const loginBtn = document.getElementById('login-btn');
+            const userMenuContainer = document.getElementById('user-menu-container');
+            
+            if (!token) {
+                if (loginBtn) loginBtn.classList.remove('hidden');
+                if (userMenuContainer) userMenuContainer.classList.add('hidden');
+                return;
+            }
+            
+            if (loginBtn) loginBtn.classList.add('hidden');
+            if (userMenuContainer) userMenuContainer.classList.remove('hidden');
+            
+            // Set user info from localStorage
+            const userName = localStorage.getItem('userName') || localStorage.getItem('userEmail');
+            const userAvatar = localStorage.getItem('userAvatar') || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=6366f1&color=fff`;
+            
+            const userNameEl = document.getElementById('user-name');
+            const userAvatarEl = document.getElementById('user-avatar');
+            
+            if (userNameEl) userNameEl.textContent = userName;
+            if (userAvatarEl) userAvatarEl.src = userAvatar;
+        }
+        
+        checkAuth();
+        
+        // Login button handler
+        const loginBtn = document.getElementById('login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                const authModal = document.querySelector('auth-modal');
+                if (authModal) authModal.open();
+            });
+        }
+        
+        // User avatar dropdown
+        const userAvatarBtn = document.getElementById('user-avatar-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        if (userAvatarBtn && userDropdown) {
+            userAvatarBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                if (userDropdown && !userDropdown.classList.contains('hidden')) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+            
+            // Logout handler
+            const logoutBtn = document.getElementById('logout-btn');
+            logoutBtn.addEventListener('click', async () => {
+                // Close dropdown
+                if (userDropdown) userDropdown.classList.add('hidden');
+                
+                // Clear localStorage
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('sessionToken');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userAvatar');
+                localStorage.removeItem('userUsername');
+                
+                // Redirect to home
+                window.location.href = 'index.html';
+            });
+        }
 
-        <!-- Results Section -->
-        <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600">Results</h2>
-                <div class="flex items-center space-x-4">
-                    <span id="result-count" class="text-sm text-gray-600 dark:text-dark-400">0 items found</span>
-                    <select id="sort-select" class="px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm">
-                        <option value="newest">Newest First</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="popular">Most Popular</option>
-                    </select>
-                </div>
-            </div>
+        // Listen for login success
+        window.addEventListener('user-login', () => {
+            checkAuth();
+        });
 
-            <!-- Results Grid -->
-            <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Results will be populated here -->
-                <div class="col-span-full text-center py-12">
-                    <i data-feather="search" class="h-16 w-16 text-gray-300 dark:text-dark-300 mx-auto mb-4"></i>
-                    <p class="text-gray-500 dark:text-dark-400 text-lg">Select your filters and click "Apply Filters" to see results</p>
-                </div>
-            </div>
-        </div>
-    </main>
+        // Listen for logout
+        window.addEventListener('user-logout', () => {
+            checkAuth();
+        });
 
-    <!-- Footer -->
-    <footer class="bg-white dark:bg-dark-100 mt-12 border-t border-gray-200 dark:border-dark-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="text-center text-gray-600 dark:text-dark-400 text-sm">
-                <p>&copy; 2025 VidX. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        // Replace feather icons after DOM updates
+        setTimeout(() => feather.replace(), 100);
+    </script>
 
-    <!-- Scripts -->
-    <script src="js/dark-mode.js"></script>
-    
     <!-- Filter Renderer Scripts -->
     <script src="js/electronics-filter-schema.js"></script>
     <script src="js/filter-renderer.js"></script>
