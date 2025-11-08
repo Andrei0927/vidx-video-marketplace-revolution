@@ -1017,32 +1017,78 @@
             initVideos();
             window.setTimeout(applyFeatherIcons, 100);
 
-            // iOS Safari: Make navigation collapsible with floating button
+            // iOS Safari: Create vertical floating menu that expands upward
             const isIOSSafari = /iPhone|iPad|iPod/.test(navigator.userAgent) && 
                                /Safari/.test(navigator.userAgent) && 
                                !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
             
             if (isIOSSafari) {
                 const navBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
-                const floatingBtn = document.createElement('button');
-                floatingBtn.id = 'floating-nav-toggle';
-                floatingBtn.className = 'fixed bottom-6 right-6 z-50 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-all duration-200 flex items-center justify-center rounded-full';
-                floatingBtn.style.cssText = 'height: 56px; width: 56px;';
-                floatingBtn.innerHTML = '<i data-feather="menu" class="h-6 w-6"></i>';
+                navBar.style.display = 'none'; // Hide default nav on iOS Safari
                 
-                // Initially hide nav bar on iOS Safari
-                navBar.style.transform = 'translateY(100%)';
-                navBar.style.transition = 'transform 0.3s ease';
+                // Create floating menu container
+                const menuContainer = document.createElement('div');
+                menuContainer.id = 'ios-floating-menu';
+                menuContainer.className = 'fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3';
+                menuContainer.style.cssText = 'transition: all 0.3s ease;';
                 
-                let navVisible = false;
-                floatingBtn.addEventListener('click', () => {
-                    navVisible = !navVisible;
-                    navBar.style.transform = navVisible ? 'translateY(0)' : 'translateY(100%)';
-                    floatingBtn.querySelector('i').setAttribute('data-feather', navVisible ? 'x' : 'menu');
+                // Create nav items that will expand upward
+                const navItems = [
+                    { icon: 'home', label: 'Home', href: 'index.html' },
+                    { icon: 'sliders', label: 'Filters', href: 'search.html' },
+                    { icon: 'heart', label: 'Favourites', href: 'index.html' },
+                    { icon: 'upload', label: 'Upload', href: 'upload.html' },
+                    { icon: 'message-circle', label: 'Messages', href: 'index.html' }
+                ];
+                
+                // Create expandable menu items (initially hidden)
+                const menuItemsContainer = document.createElement('div');
+                menuItemsContainer.className = 'flex flex-col gap-3 transition-all duration-300';
+                menuItemsContainer.style.cssText = 'opacity: 0; transform: translateY(20px); pointer-events: none;';
+                
+                navItems.forEach(item => {
+                    const link = document.createElement('a');
+                    link.href = item.href;
+                    link.className = 'flex items-center gap-3 bg-white dark:bg-dark-100 text-gray-700 dark:text-dark-600 px-4 py-3 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition-all';
+                    link.style.cssText = 'min-width: 140px;';
+                    link.innerHTML = `
+                        <i data-feather="${item.icon}" class="h-5 w-5"></i>
+                        <span class="font-medium text-sm">${item.label}</span>
+                    `;
+                    menuItemsContainer.appendChild(link);
+                });
+                
+                // Create toggle button
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-all duration-200 flex items-center justify-center rounded-full';
+                toggleBtn.style.cssText = 'height: 56px; width: 56px;';
+                toggleBtn.innerHTML = '<i data-feather="menu" class="h-6 w-6"></i>';
+                
+                // Assemble menu
+                menuContainer.appendChild(menuItemsContainer);
+                menuContainer.appendChild(toggleBtn);
+                document.body.appendChild(menuContainer);
+                
+                // Toggle functionality
+                let menuExpanded = false;
+                toggleBtn.addEventListener('click', () => {
+                    menuExpanded = !menuExpanded;
+                    
+                    if (menuExpanded) {
+                        menuItemsContainer.style.opacity = '1';
+                        menuItemsContainer.style.transform = 'translateY(0)';
+                        menuItemsContainer.style.pointerEvents = 'auto';
+                        toggleBtn.querySelector('i').setAttribute('data-feather', 'x');
+                    } else {
+                        menuItemsContainer.style.opacity = '0';
+                        menuItemsContainer.style.transform = 'translateY(20px)';
+                        menuItemsContainer.style.pointerEvents = 'none';
+                        toggleBtn.querySelector('i').setAttribute('data-feather', 'menu');
+                    }
+                    
                     feather.replace();
                 });
                 
-                document.body.appendChild(floatingBtn);
                 feather.replace();
             }
         });
