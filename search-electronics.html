@@ -242,55 +242,6 @@
                 margin-bottom: 0;
             }
         }
-        
-        /* Category Quick Links */
-        .category-quick-links {
-            display: flex;
-            gap: 0.75rem;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            padding-bottom: 0.5rem;
-        }
-        
-        .category-quick-links::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .category-link {
-            flex-shrink: 0;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            color: #374151;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        
-        .category-link:hover {
-            background: #f9fafb;
-            border-color: #6366f1;
-            color: #6366f1;
-        }
-        
-        .dark .category-link {
-            background: #242526;
-            border-color: #4E4F50;
-            color: #B0B3B8;
-        }
-        
-        .dark .category-link:hover {
-            background: #3A3B3C;
-            border-color: #6366f1;
-            color: #818cf8;
-        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
@@ -298,11 +249,26 @@
     <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center">
+                <div class="flex items-center space-x-8">
                     <a href="index.html" class="flex-shrink-0 flex items-center">
                         <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
                         <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
                     </a>
+                    <!-- Category Quick Links in Header -->
+                    <div class="hidden md:flex items-center space-x-2">
+                        <a href="search.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
+                            Automotive
+                        </a>
+                        <a href="search-electronics.html" class="px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200 rounded-md">
+                            Electronics
+                        </a>
+                        <a href="search-fashion.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
+                            Fashion
+                        </a>
+                        <a href="search-home.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
+                            Home & Garden
+                        </a>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-4">
                     <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
@@ -339,22 +305,6 @@
                 Electronics & Technology Search
             </h1>
             <p class="text-gray-600 dark:text-dark-500">Find the perfect device with advanced filters</p>
-            
-            <!-- Category Quick Links -->
-            <div class="category-quick-links mt-4">
-                <a href="search.html" class="category-link">
-                    <span>🚗</span>
-                    <span>Automotive</span>
-                </a>
-                <a href="search-fashion.html" class="category-link">
-                    <span>👕</span>
-                    <span>Fashion</span>
-                </a>
-                <a href="search-home.html" class="category-link">
-                    <span>🏡</span>
-                    <span>Home & Garden</span>
-                </a>
-            </div>
         </div>
 
         <!-- Filters Card -->
