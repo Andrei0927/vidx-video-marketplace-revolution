@@ -393,8 +393,17 @@
                 // Load the video to show first frame
                 video.load();
                 
+                // Ensure first frame is visible after metadata loads
+                video.addEventListener('loadedmetadata', () => {
+                    // Seek to first frame to ensure it's visible
+                    if (video.duration > 0) {
+                        video.currentTime = 0.1;
+                    }
+                });
+                
                 // Play on hover
                 container.addEventListener('mouseenter', () => {
+                    video.currentTime = 0; // Reset to beginning
                     video.play().catch(err => {
                         console.log('Autoplay prevented:', err);
                     });
