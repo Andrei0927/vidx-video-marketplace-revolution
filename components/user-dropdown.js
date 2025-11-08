@@ -104,6 +104,7 @@ class UserDropdown extends HTMLElement {
       <div class="dropdown-content" role="menu">
         <a href="profile.html" class="dropdown-item" role="menuitem">My Profile</a>
         <a href="my-ads.html" class="dropdown-item" role="menuitem">My ads</a>
+        <a href="liked.html" class="dropdown-item" role="menuitem">Liked Videos</a>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item" id="logout-btn" type="button" role="menuitem">Log out</button>
       </div>
