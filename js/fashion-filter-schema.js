@@ -80,13 +80,17 @@ const fashionFilterSchema = {
         type: 'range',
         label: 'Price Range',
         alwaysVisible: true,
-        min: 0,
-        max: 5000,
-        step: 10,
-        unit: '€',
         width: 'half',
-        defaultMin: 0,
-        defaultMax: 5000
+        range: {
+            min: 0,
+            max: 5000,
+            step: 10,
+            unit: '€'
+        },
+        inputs: {
+            from: { placeholder: 'Min €', id: 'price-from' },
+            to: { placeholder: 'Max €', id: 'price-to' }
+        }
     },
 
     condition: {

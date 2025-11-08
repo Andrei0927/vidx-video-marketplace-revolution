@@ -1016,6 +1016,14 @@
             updateNavAuthUI();
             initVideos();
             window.setTimeout(applyFeatherIcons, 100);
+
+            // Auto-hide Safari address bar on iOS
+            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                window.scrollTo(0, 1);
+                window.addEventListener('pageshow', () => {
+                    setTimeout(() => window.scrollTo(0, 1), 100);
+                });
+            }
         });
 
         applyFeatherIcons();

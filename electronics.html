@@ -431,5 +431,16 @@
 	</div>
 
 	<script type="module" src="./js/electronics-page.js"></script>
+	<script>
+		// Auto-hide Safari address bar on iOS
+		if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+			window.addEventListener('load', () => {
+				setTimeout(() => window.scrollTo(0, 1), 100);
+			});
+			window.addEventListener('pageshow', () => {
+				setTimeout(() => window.scrollTo(0, 1), 100);
+			});
+		}
+	</script>
 </body>
 </html>
