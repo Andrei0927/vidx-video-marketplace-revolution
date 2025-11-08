@@ -1017,14 +1017,33 @@
             initVideos();
             window.setTimeout(applyFeatherIcons, 100);
 
-            // Auto-hide Safari address bar on iOS
-            // Trigger a small scroll to hide the address bar
-            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-                window.scrollTo(0, 1);
-                // Also hide on page show (back button)
-                window.addEventListener('pageshow', () => {
-                    setTimeout(() => window.scrollTo(0, 1), 100);
+            // iOS Safari: Make navigation collapsible with floating button
+            const isIOSSafari = /iPhone|iPad|iPod/.test(navigator.userAgent) && 
+                               /Safari/.test(navigator.userAgent) && 
+                               !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+            
+            if (isIOSSafari) {
+                const navBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
+                const floatingBtn = document.createElement('button');
+                floatingBtn.id = 'floating-nav-toggle';
+                floatingBtn.className = 'fixed bottom-6 right-6 z-50 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-all duration-200 flex items-center justify-center rounded-full';
+                floatingBtn.style.cssText = 'height: 56px; width: 56px;';
+                floatingBtn.innerHTML = '<i data-feather="menu" class="h-6 w-6"></i>';
+                
+                // Initially hide nav bar on iOS Safari
+                navBar.style.transform = 'translateY(100%)';
+                navBar.style.transition = 'transform 0.3s ease';
+                
+                let navVisible = false;
+                floatingBtn.addEventListener('click', () => {
+                    navVisible = !navVisible;
+                    navBar.style.transform = navVisible ? 'translateY(0)' : 'translateY(100%)';
+                    floatingBtn.querySelector('i').setAttribute('data-feather', navVisible ? 'x' : 'menu');
+                    feather.replace();
                 });
+                
+                document.body.appendChild(floatingBtn);
+                feather.replace();
             }
         });
 
