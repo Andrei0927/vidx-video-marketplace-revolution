@@ -234,6 +234,7 @@
                     </a>
                     <!-- Category Quick Links in Header -->
                     <div class="hidden md:flex items-center space-x-2">
+                        <!-- Always visible categories on md+ screens -->
                         <a href="search.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
                             Automotive
                         </a>
@@ -243,21 +244,48 @@
                         <a href="search-fashion.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
                             Fashion
                         </a>
-                        <a href="search-home.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
+                        
+                        <!-- Hidden on md-lg, visible on xl+ -->
+                        <a href="search-home.html" class="hidden xl:inline-block px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
                             Home & Garden
                         </a>
-                        <a href="search-sports.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
+                        <a href="search-sports.html" class="hidden xl:inline-block px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
                             Sports
                         </a>
-                        <a href="search-real-estate.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
+                        <a href="search-real-estate.html" class="hidden xl:inline-block px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
                             Real Estate
                         </a>
-                        <a href="search-jobs.html" class="px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200 rounded-md">
+                        <a href="search-jobs.html" class="hidden xl:inline-block px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200 rounded-md">
                             Jobs
                         </a>
-                        <a href="search-services.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
+                        <a href="search-services.html" class="hidden xl:inline-block px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
                             Services
                         </a>
+
+                        <!-- More dropdown (visible on md-lg, hidden on xl+) -->
+                        <div class="relative xl:hidden">
+                            <button id="more-categories-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition flex items-center space-x-1">
+                                <span>More</span>
+                                <i data-feather="chevron-down" class="h-4 w-4"></i>
+                            </button>
+                            <div id="more-categories-dropdown" class="hidden absolute top-full right-0 mt-1 w-48 bg-white dark:bg-dark-100 rounded-lg shadow-lg border border-gray-200 dark:border-dark-300 py-1 z-50">
+                                <a href="search-home.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                    Home & Garden
+                                </a>
+                                <a href="search-sports.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                    Sports
+                                </a>
+                                <a href="search-real-estate.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                    Real Estate
+                                </a>
+                                <a href="search-jobs.html" class="block px-4 py-2 text-sm text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200 font-medium">
+                                    Jobs
+                                </a>
+                                <a href="search-services.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                    Services
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -493,6 +521,26 @@
 
         // Initialize feather icons
         feather.replace();
+
+        // More categories dropdown toggle
+        const moreCategoriesBtn = document.getElementById('more-categories-btn');
+        const moreCategoriesDropdown = document.getElementById('more-categories-dropdown');
+        
+        if (moreCategoriesBtn && moreCategoriesDropdown) {
+            moreCategoriesBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                moreCategoriesDropdown.classList.toggle('hidden');
+                // Refresh feather icons after dropdown opens
+                setTimeout(() => feather.replace(), 10);
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!moreCategoriesBtn.contains(e.target) && !moreCategoriesDropdown.contains(e.target)) {
+                    moreCategoriesDropdown.classList.add('hidden');
+                }
+            });
+        }
     </script>
 </body>
 </html>
