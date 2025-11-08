@@ -258,6 +258,10 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <a href="#" id="desktop-favorites-link" class="hidden lg:flex items-center text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                        <i data-feather="heart" class="h-5 w-5 mr-1"></i>
+                        <span class="text-sm font-medium">Favourites</span>
+                    </a>
                     <a href="upload.html" class="bg-indigo-600 dark:bg-indigo-500 text-white h-7 sm:h-8 px-3 sm:px-4 rounded-full flex items-center hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm sm:text-base whitespace-nowrap">
                         <i data-feather="plus" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2"></i>
                         <span>New Ad</span>
@@ -1122,6 +1126,23 @@
         // Engagement Features: Like, Favorite, Share
         // ============================================
         
+        // Desktop Favourites link handler
+        const desktopFavoritesLink = document.getElementById('desktop-favorites-link');
+        if (desktopFavoritesLink) {
+            desktopFavoritesLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isLoggedIn = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
+                
+                if (isLoggedIn) {
+                    // User is logged in, go to favourites page
+                    window.location.href = 'favourites.html';
+                } else {
+                    // User not logged in, show registration modal
+                    window.location.href = 'index.html#register';
+                }
+            });
+        }
+        
         // Mobile Favourites link handler
         const favoritesLink = document.getElementById('favorites-link');
         if (favoritesLink) {
@@ -1185,6 +1206,24 @@
         });
 
         // Favorite button handlers
+        // Helper functions for user-specific favorites
+        function getUserFavorites() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) return [];
+            
+            const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+            return allFavorites[userEmail] || [];
+        }
+        
+        function saveUserFavorites(favorites) {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) return;
+            
+            const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+            allFavorites[userEmail] = favorites;
+            localStorage.setItem('userFavorites', JSON.stringify(allFavorites));
+        }
+        
         document.querySelectorAll('[data-favorite-btn]').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -1193,15 +1232,16 @@
                 
                 // Check if user is logged in
                 const isLoggedIn = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
+                const userEmail = localStorage.getItem('userEmail');
                 
-                if (!isLoggedIn) {
+                if (!isLoggedIn || !userEmail) {
                     // Redirect to registration
                     window.location.href = 'index.html#register';
                     return;
                 }
                 
-                // Check if already favorited
-                const favoritedAds = JSON.parse(localStorage.getItem('favoritedAds') || '[]');
+                // Get user-specific favorites
+                const favoritedAds = getUserFavorites();
                 const isFavorited = favoritedAds.includes(adId);
                 
                 if (isFavorited) {
@@ -1215,15 +1255,15 @@
                     icon.classList.add('fill-pink-500');
                 }
                 
-                localStorage.setItem('favoritedAds', JSON.stringify(favoritedAds));
+                saveUserFavorites(favoritedAds);
                 
                 // TODO: Send to backend API when available
-                console.log('Favorite toggled for ad:', adId, 'Favorited:', !isFavorited);
+                console.log('Favorite toggled for ad:', adId, 'Favorited:', !isFavorited, 'User:', userEmail);
             });
             
             // Initialize favorite state on page load
             const adId = btn.dataset.adId;
-            const favoritedAds = JSON.parse(localStorage.getItem('favoritedAds') || '[]');
+            const favoritedAds = getUserFavorites();
             if (favoritedAds.includes(adId)) {
                 btn.querySelector('i').classList.add('fill-pink-500');
             }

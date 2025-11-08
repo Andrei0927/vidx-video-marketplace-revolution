@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Favourites - VidX</title>
+  <script>
+    // Apply dark mode before page renders
+    if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#18191A',
+                            100: '#242526',
+                            200: '#3A3B3C',
+                            300: '#4E4F50',
+                            400: '#6B6C6D',
+                            500: '#B0B3B8',
+                            600: '#E4E6EB',
+                            700: '#F5F6F7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+  <link rel="stylesheet" href="/css/dark-mode.css">
+  <style> 
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .favorite-card {
+      transition: all 0.2s ease;
+    }
+    .favorite-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-dark-50">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 flex items-center">
+                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
+                        <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
+                    </button>
+                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200 flex items-center">
+                        <img id="nav-avatar" src="" alt="" class="hidden h-6 w-6 rounded-full object-cover">
+                        <span id="nav-username" class="hidden ml-2 text-sm font-medium"></span>
+                        <i data-feather="user" class="h-5 w-5"></i>
+                    </button>
+                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="max-w-5xl mx-auto py-8 px-4">
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-600">My Favourites</h1>
+            <span id="favorites-count" class="text-sm text-gray-500 dark:text-dark-400">Loading...</span>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="hidden text-center py-12">
+            <i data-feather="heart" class="h-16 w-16 mx-auto text-gray-300 dark:text-dark-400 mb-4"></i>
+            <h2 class="text-xl font-semibold text-gray-700 dark:text-dark-500 mb-2">No Favourites Yet</h2>
+            <p class="text-gray-500 dark:text-dark-400 mb-6">Start exploring and save your favorite ads!</p>
+            <a href="index.html" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                <i data-feather="home" class="h-4 w-4 mr-2"></i>
+                Browse Ads
+            </a>
+        </div>
+
+        <!-- Favorites container - dynamically filled -->
+        <div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </div>
+    
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script type="module" src="components/auth-modal.js"></script>
+    <script type="module" src="components/user-dropdown.js"></script>
+    <script type="module">
+        import authService from './js/auth-service.js';
+    </script>
+    <script src="/js/dark-mode.js"></script>
+    <script>
+        // Feather icons
+        if (window.feather && typeof feather.replace === 'function') {
+            feather.replace();
+        }
+        
+        // Update nav avatar/name
+        (function updateNavAuthUI(){
+            try {
+                const avatar = localStorage.getItem('userAvatar');
+                const name = localStorage.getItem('userName');
+                const avatarEl = document.getElementById('nav-avatar');
+                const nameEl = document.getElementById('nav-username');
+                const userBtn = document.getElementById('user-btn');
+                const iconSvg = userBtn && userBtn.querySelector('svg');
+                if (avatar) {
+                    avatarEl.src = avatar;
+                    avatarEl.classList.remove('hidden');
+                    if (iconSvg) iconSvg.style.display = 'none';
+                }
+                if (name) {
+                    nameEl.textContent = name;
+                    nameEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error('Error updating nav UI:', err);
+            }
+        })();
+
+        // Check authentication
+        const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+        const userEmail = localStorage.getItem('userEmail');
+        
+        if (!sessionToken || !userEmail) {
+            // Not logged in, redirect to home with registration prompt
+            window.location.href = 'index.html#register';
+        }
+
+        // Mock ad database - in production this would come from backend
+        const adDatabase = {
+            'vw-transporter': {
+                id: 'vw-transporter',
+                title: 'VW Transporter T6.1 2021',
+                price: '€28,500',
+                details: '45,000 km | Manual | Diesel',
+                location: 'Cluj-Napoca',
+                image: 'Demo ads/VW.m4v',
+                seller: 'John Doe',
+                sellerAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=john',
+                postedDate: '2 days ago',
+                category: 'Automotive'
+            },
+            'audi-a5': {
+                id: 'audi-a5',
+                title: 'Audi A5 Sportback 2020',
+                price: '€32,900',
+                details: '32,000 km | Automatic | Petrol',
+                location: 'Bucharest',
+                image: 'Demo ads/Audi.m4v',
+                seller: 'Jane Smith',
+                sellerAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jane',
+                postedDate: '5 days ago',
+                category: 'Automotive'
+            }
+        };
+
+        // Get user-specific favorited ads
+        function getUserFavorites() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) return [];
+            
+            // Get all favorites from localStorage (keyed by user email)
+            const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+            return allFavorites[userEmail] || [];
+        }
+
+        // Save user-specific favorites
+        function saveUserFavorites(favorites) {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) return;
+            
+            const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+            allFavorites[userEmail] = favorites;
+            localStorage.setItem('userFavorites', JSON.stringify(allFavorites));
+        }
+
+        // Remove from favorites
+        function removeFavorite(adId) {
+            const favorites = getUserFavorites();
+            const index = favorites.indexOf(adId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                saveUserFavorites(favorites);
+                renderFavorites();
+            }
+        }
+
+        // Render favorites
+        function renderFavorites() {
+            const container = document.getElementById('favorites-container');
+            const emptyState = document.getElementById('empty-state');
+            const countSpan = document.getElementById('favorites-count');
+            
+            const favorites = getUserFavorites();
+            
+            if (favorites.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                countSpan.textContent = '0 items';
+                feather.replace();
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            countSpan.textContent = `${favorites.length} ${favorites.length === 1 ? 'item' : 'items'}`;
+            
+            container.innerHTML = favorites.map(adId => {
+                const ad = adDatabase[adId];
+                if (!ad) return ''; // Skip if ad not found in database
+                
+                return `
+                    <div class="favorite-card bg-white dark:bg-dark-100 rounded-lg shadow-md overflow-hidden">
+                        <div class="relative aspect-video bg-gray-200 dark:bg-dark-200">
+                            <video class="w-full h-full object-cover" preload="metadata">
+                                <source src="${ad.image}" type="video/mp4" />
+                            </video>
+                            <span class="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded">
+                                ${ad.category}
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center mb-2">
+                                <img class="h-8 w-8 rounded-full" src="${ad.sellerAvatar}" alt="${ad.seller}">
+                                <div class="ml-2">
+                                    <h3 class="text-sm font-medium text-gray-900 dark:text-dark-600">${ad.seller}</h3>
+                                    <p class="text-xs text-gray-500 dark:text-dark-400">${ad.postedDate} · ${ad.location}</p>
+                                </div>
+                            </div>
+                            <a href="details.html?ad=${ad.id}" class="block group">
+                                <h2 class="text-lg font-bold text-gray-900 dark:text-dark-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
+                                    ${ad.title}
+                                </h2>
+                            </a>
+                            <p class="mt-1 text-sm text-gray-600 dark:text-dark-400">${ad.details}</p>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xl font-bold text-indigo-600 dark:text-indigo-400">${ad.price}</span>
+                                <div class="flex space-x-2">
+                                    <a href="details.html?ad=${ad.id}" class="px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-dark-200 rounded-md transition">
+                                        View
+                                    </a>
+                                    <button onclick="removeFavorite('${ad.id}')" class="px-3 py-1.5 text-sm font-medium text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-dark-200 rounded-md transition flex items-center">
+                                        <i data-feather="heart" class="h-4 w-4 fill-current"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Re-apply feather icons
+            feather.replace();
+        }
+
+        // Make removeFavorite available globally
+        window.removeFavorite = removeFavorite;
+
+        // Initial render
+        renderFavorites();
+
+        // Listen for user logout
+        document.addEventListener('user-logout', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
