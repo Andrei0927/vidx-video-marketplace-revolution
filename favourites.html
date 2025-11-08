@@ -152,14 +152,14 @@
             window.location.href = 'index.html#register';
         }
 
-        // Initialize ID Generator
-        const idGenerator = new IDGenerator();
+        // Use the global idGenerator instance from id-generator.js
+        // (it's already created as window.idGenerator)
         
         // Register existing ads if not already in registry
         function initializeAdRegistry() {
             // Automotive ads
-            if (!idGenerator.idExists('auto-vw-transporter-2021')) {
-                idGenerator.registerAd('auto-vw-transporter-2021', {
+            if (!window.idGenerator.idExists('auto-vw-transporter-2021')) {
+                window.idGenerator.registerAd('auto-vw-transporter-2021', {
                     title: 'VW Transporter T6.1 2021',
                     price: '€28,500',
                     details: '45,000 km | Manual | Diesel',
