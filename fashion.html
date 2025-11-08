@@ -1026,31 +1026,6 @@
                 const navBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
                 navBar.style.display = 'none'; // Hide default nav on iOS Safari
                 
-                // Add CSS to override mobile padding AND ensure proper snap scrolling
-                const style = document.createElement('style');
-                style.textContent = `
-                    @media (max-width: 1023px) {
-                        .video-overlay {
-                            padding-bottom: 1.5rem !important;
-                        }
-                        /* Ensure snap scrolling works on iOS Safari with momentum */
-                        .video-grid {
-                            scroll-snap-type: y proximity !important;
-                            -webkit-overflow-scrolling: touch !important;
-                            overflow-y: scroll !important;
-                        }
-                        .video-card {
-                            scroll-snap-align: start !important;
-                            scroll-snap-stop: normal !important;
-                            height: 100vh !important;
-                            height: 100dvh !important;
-                            min-height: 100vh !important;
-                            min-height: 100dvh !important;
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-                
                 // Create floating menu container
                 const menuContainer = document.createElement('div');
                 menuContainer.id = 'ios-floating-menu';
