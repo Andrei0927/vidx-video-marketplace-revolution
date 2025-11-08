@@ -49,10 +49,16 @@ const jobsFilterSchema = {
         label: 'Salary Range (€/month)',
         width: 'full',
         alwaysVisible: true,
-        min: 0,
-        max: 15000,
-        step: 500,
-        unit: '€'
+        range: {
+            min: 0,
+            max: 15000,
+            step: 500,
+            unit: '€'
+        },
+        inputs: {
+            from: { placeholder: 'Min salary', id: 'salary-from' },
+            to: { placeholder: 'Max salary', id: 'salary-to' }
+        }
     },
 
     // Location - Always visible

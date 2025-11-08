@@ -40,10 +40,16 @@ const realEstateFilterSchema = {
         label: 'Price Range (€)',
         width: 'full',
         alwaysVisible: true,
-        min: 0,
-        max: 2000000,
-        step: 10000,
-        unit: '€'
+        range: {
+            min: 0,
+            max: 2000000,
+            step: 10000,
+            unit: '€'
+        },
+        inputs: {
+            from: { placeholder: 'Min price', id: 'price-from' },
+            to: { placeholder: 'Max price', id: 'price-to' }
+        }
     },
 
     // Location - Always visible
@@ -90,10 +96,16 @@ const realEstateFilterSchema = {
         type: 'range',
         label: 'Area (m²)',
         width: 'full',
-        min: 0,
-        max: 500,
-        step: 10,
-        unit: 'm²'
+        range: {
+            min: 0,
+            max: 500,
+            step: 10,
+            unit: 'm²'
+        },
+        inputs: {
+            from: { placeholder: 'Min area', id: 'area-from' },
+            to: { placeholder: 'Max area', id: 'area-to' }
+        }
     },
 
     // Floor - Collapsible

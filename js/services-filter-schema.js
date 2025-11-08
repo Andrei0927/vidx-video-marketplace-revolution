@@ -109,10 +109,16 @@ const servicesFilterSchema = {
         label: 'Price Range (€)',
         width: 'full',
         alwaysVisible: true,
-        min: 0,
-        max: 5000,
-        step: 50,
-        unit: '€'
+        range: {
+            min: 0,
+            max: 5000,
+            step: 50,
+            unit: '€'
+        },
+        inputs: {
+            from: { placeholder: 'Min price', id: 'service-price-from' },
+            to: { placeholder: 'Max price', id: 'service-price-to' }
+        }
     },
 
     // Location - Always visible
