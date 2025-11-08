@@ -131,11 +131,11 @@
         @media (min-width: 1024px) {
             .video-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                justify-items: center;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 360px));
+                justify-content: center;
                 gap: 2.5rem;
                 padding: 0 2rem 2.5rem;
-                max-width: 1200px;
+                max-width: 1400px;
                 margin: 6rem auto 0; /* Added top margin to push videos below header */
             }
         }
@@ -149,11 +149,11 @@
             aspect-ratio: 9 / 16;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             cursor: pointer;
+            width: 100%;
         }
         
         @media (min-width: 1024px) {
             .video-card {
-                width: min(100%, 360px);
                 max-width: 360px;
             }
         }
