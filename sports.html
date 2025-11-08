@@ -1013,7 +1013,7 @@
                 video.setAttribute('playsinline', '');
                 video.setAttribute('webkit-playsinline', '');
                 
-                // On mobile, start unmuted for autoplay; on desktop, start muted
+                // On mobile, try to start unmuted; on desktop, start muted
                 video.muted = !isMobile;
                 
                 // Force iOS to load video metadata
@@ -1030,6 +1030,10 @@
                                     if (index !== 0) {
                                         video.pause();
                                         video.currentTime = 0;
+                                    } else {
+                                        // First video is playing - update icon
+                                        updateVolumeIcon(video.muted);
+                                        flashVolumeIndicator();
                                     }
                                 } else {
                                     // Desktop: pause after showing first frame, except for first video
@@ -1043,7 +1047,18 @@
                                 }
                             }, 100);
                         }).catch(() => {
-                            video.currentTime = 0.1;
+                            // iOS blocks unmuted autoplay - fall back to muted
+                            if (isMobile && index === 0) {
+                                video.muted = true;
+                                video.play().then(() => {
+                                    updateVolumeIcon(true);
+                                    flashVolumeIndicator();
+                                }).catch(() => {
+                                    video.currentTime = 0.1;
+                                });
+                            } else {
+                                video.currentTime = 0.1;
+                            }
                         });
                     }
                 };
@@ -1082,6 +1097,7 @@
                             if (card.style.display === 'none') return;
                             
                             if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
+                                // Try to play with user's preferred mute state
                                 video.muted = userMutedPreference;
                                 const playAttempt = video.play();
                                 if (playAttempt && typeof playAttempt.then === 'function') {
@@ -1089,10 +1105,18 @@
                                         updateVolumeIcon(video.muted);
                                         flashVolumeIndicator();
                                     }).catch(() => {
-                                        video.muted = true;
-                                        userMutedPreference = true;
-                                        updateVolumeIcon(true);
-                                        flashVolumeIndicator();
+                                        // If unmuted autoplay fails, try muted
+                                        if (!video.muted) {
+                                            video.muted = true;
+                                            userMutedPreference = true;
+                                            video.play().then(() => {
+                                                updateVolumeIcon(true);
+                                                flashVolumeIndicator();
+                                            }).catch(() => {
+                                                // Even muted failed
+                                                console.log('Video play failed');
+                                            });
+                                        }
                                     });
                                 }
                             } else {
