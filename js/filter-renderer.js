@@ -524,7 +524,7 @@ class FilterRenderer {
     renderActionButtons() {
         const buttonContainer = document.createElement('div');
         buttonContainer.id = 'filter-action-buttons';
-        buttonContainer.className = 'filter-full flex space-x-4 mt-6 md:mt-6 md:order-last';
+        buttonContainer.className = 'filter-full flex space-x-4 mt-6';
 
         const applyBtn = document.createElement('button');
         applyBtn.id = 'apply-filters';
@@ -541,12 +541,8 @@ class FilterRenderer {
         buttonContainer.appendChild(applyBtn);
         buttonContainer.appendChild(clearBtn);
         
-        // Insert at the beginning on mobile, at the end on desktop
-        if (this.container.firstChild) {
-            this.container.insertBefore(buttonContainer, this.container.firstChild);
-        } else {
-            this.container.appendChild(buttonContainer);
-        }
+        // Append buttons at the end of the filter container
+        this.container.appendChild(buttonContainer);
 
         // Replace feather icons
         if (window.feather) {
