@@ -51,6 +51,9 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
+    <script src="js/id-generator.js"></script>
+    <script src="components/video-card.js"></script>
+    <script src="js/video-card-engagement.js"></script>
     <style>
         html, body {
             min-height: 100%;
@@ -472,7 +475,7 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: Modern Sofa -->
-    <div class="video-card" data-video-card data-category="Furniture" data-room="Living Room" data-style="Modern" data-condition="Like New" data-details-url="details.html?ad=modern-sofa">
+    <div class="video-card" data-video-card data-ad-id="home-modern-sofa-3-seater" data-category="Furniture" data-room="Living Room" data-style="Modern" data-condition="Like New" data-details-url="details.html?ad=home-modern-sofa-3-seater">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -499,15 +502,18 @@
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€450</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="home-modern-sofa-3-seater">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
+                        </button>
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="home-modern-sofa-3-seater" data-favorite-count="28">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">28</span>
+                            <span class="ml-1 text-sm" data-count-display>28</span>
                         </button>
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">8</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="home-modern-sofa-3-seater" data-ad-title="Modern 3-Seater Sofa" data-ad-price="€450">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -516,7 +522,7 @@
         </div>
 
         <!-- Video Card 2: Dining Table Set -->
-    <div class="video-card" data-video-card data-category="Furniture" data-room="Dining Room" data-style="Scandinavian" data-condition="Excellent" data-details-url="details.html?ad=dining-table">
+    <div class="video-card" data-video-card data-ad-id="home-dining-table-set-6-chairs" data-category="Furniture" data-room="Dining Room" data-style="Scandinavian" data-condition="Excellent" data-details-url="details.html?ad=home-dining-table-set-6-chairs">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -543,15 +549,18 @@
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€850</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="home-dining-table-set-6-chairs">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
+                        </button>
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="home-dining-table-set-6-chairs" data-favorite-count="35">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">35</span>
+                            <span class="ml-1 text-sm" data-count-display>35</span>
                         </button>
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">14</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="home-dining-table-set-6-chairs" data-ad-title="Dining Table Set with 6 Chairs" data-ad-price="€850">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -587,15 +596,18 @@
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€1,200</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="home-rattan-garden-furniture">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
+                        </button>
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="home-rattan-garden-furniture" data-favorite-count="52">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">52</span>
+                            <span class="ml-1 text-sm" data-count-display>52</span>
                         </button>
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">19</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="home-rattan-garden-furniture" data-ad-title="Rattan Garden Furniture Set" data-ad-price="€1,200">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -631,15 +643,18 @@
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€95</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="home-industrial-floor-lamp">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
+                        </button>
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="home-industrial-floor-lamp" data-favorite-count="18">
                             <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">18</span>
+                            <span class="ml-1 text-sm" data-count-display>18</span>
                         </button>
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">6</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="home-industrial-floor-lamp" data-ad-title="Industrial Style Floor Lamp" data-ad-price="€95">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>

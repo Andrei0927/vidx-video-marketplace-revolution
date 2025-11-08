@@ -44,50 +44,12 @@
         body {
             overflow-x: hidden;
         }
-        /* Mobile-first portrait video grid */
         .video-grid {
             display: grid;
             gap: 1.5rem;
             padding: 0 1rem;
         }
         
-        /* Mobile: Full-screen snap scrolling (TikTok style) */
-        @media (max-width: 1023px) {
-            body {
-                padding: 0;
-                margin: 0;
-                overflow-x: hidden;
-            }
-            
-            .video-grid {
-                display: block;
-                height: 100vh;
-                height: 100dvh;
-                overflow-y: scroll;
-                overflow-x: hidden;
-                scroll-snap-type: y mandatory;
-                scroll-behavior: smooth;
-                padding: 0;
-                margin: 0;
-                gap: 0;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .video-card {
-                scroll-snap-align: start;
-                scroll-snap-stop: always;
-                min-height: 100vh;
-                min-height: 100dvh;
-                height: 100vh;
-                height: 100dvh;
-                width: 100vw;
-                max-width: 100vw;
-                margin-bottom: 0 !important;
-                border-radius: 0;
-            }
-        }
-        
-        /* Desktop layout */
         @media (min-width: 1024px) {
             .video-grid {
                 display: grid;
@@ -96,7 +58,7 @@
                 gap: 2.5rem;
                 padding: 0 2rem 2.5rem;
                 max-width: 1200px;
-                margin: 6rem auto 0;
+                margin: 2rem auto 0;
             }
         }
 
@@ -107,7 +69,7 @@
             overflow: hidden;
             margin-bottom: 1.5rem;
             aspect-ratio: 9 / 16;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             cursor: pointer;
         }
         
@@ -116,12 +78,6 @@
                 margin-bottom: 0;
                 width: min(100%, 360px);
                 max-width: 360px;
-            }
-        }
-
-        @media (min-width: 1440px) {
-            .video-card {
-                max-width: 400px;
             }
         }
         
@@ -133,15 +89,6 @@
             height: 100%;
             object-fit: cover;
             background: #000;
-            pointer-events: none;
-        }
-        
-        .video-card video::-webkit-media-controls {
-            display: none !important;
-        }
-        
-        .video-card video::-webkit-media-controls-enclosure {
-            display: none !important;
         }
         
         .volume-indicator {
@@ -149,10 +96,11 @@
             top: 1rem;
             right: 1rem;
             background: rgba(0, 0, 0, 0.6);
-            border-radius: 9999px;
+            border-radius: 50%;
             padding: 0.5rem;
             z-index: 10;
-            transition: opacity 0.3s ease;
+            cursor: pointer;
+            transition: opacity 0.3s;
         }
         
         .volume-indicator.fade-out {
@@ -166,21 +114,9 @@
             left: 0;
             right: 0;
             padding: 1.5rem;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             z-index: 5;
             pointer-events: none;
-        }
-
-        @media (max-width: 1023px) {
-            .video-overlay {
-                padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .video-overlay {
-                padding-bottom: 1.5rem;
-            }
         }
         
         .video-overlay a,
@@ -190,33 +126,27 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-50">
+<body class="bg-gray-50 dark:bg-dark-50">
+    <nav class="bg-white dark:bg-dark-100 shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="index.html" class="flex-shrink-0 flex items-center">
-                        <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
+                    <a href="index.html" class="flex items-center">
+                        <i data-feather="video" class="text-indigo-600 h-8 w-8"></i>
                         <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="#" id="desktop-favorites-link" class="hidden lg:flex items-center text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                        <i data-feather="heart" class="h-5 w-5 mr-1"></i>
-                        <span class="text-sm font-medium">Favourites</span>
-                    </a>
-                    <a href="upload.html" class="bg-indigo-600 dark:bg-indigo-500 text-white h-7 sm:h-8 px-3 sm:px-4 rounded-full flex items-center hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm sm:text-base whitespace-nowrap">
-                        <i data-feather="plus" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2"></i>
+                    <a href="upload.html" class="bg-indigo-600 text-white px-4 py-2 rounded-full flex items-center hover:bg-indigo-700">
+                        <i data-feather="plus" class="h-5 w-5 mr-2"></i>
                         <span>New Ad</span>
                     </a>
-                    <button id="theme-toggle" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200">
                         <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
                     </button>
-                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200 flex items-center">
-                        <img id="nav-avatar" src="" alt="" class="hidden h-6 w-6 rounded-full object-cover">
-                        <i data-feather="user" id="nav-user-icon" class="h-5 w-5"></i>
+                    <button id="user-btn" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200">
+                        <i data-feather="user" class="h-5 w-5"></i>
                     </button>
                 </div>
             </div>
@@ -224,493 +154,114 @@
         <user-dropdown></user-dropdown>
     </nav>
 
-    <!-- Mobile Bottom Navigation -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-100 border-t border-gray-200 dark:border-dark-300 z-40" style="padding-bottom: env(safe-area-inset-bottom);">
-        <div class="flex justify-around items-center h-16">
-            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="home" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Home</span>
-            </a>
-            <a href="search.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="sliders" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Filters</span>
-            </a>
-            <a href="#" id="mobile-favorites-link" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="heart" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Favourites</span>
-            </a>
-            <a href="my-ads.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="list" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">My Ads</span>
-            </a>
-            <a href="profile.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="user" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Profile</span>
-            </a>
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-6">All Ads</h1>
+        
+        <div class="video-grid" id="video-grid">
+            <div class="text-center py-12"><p class="text-gray-500">Loading...</p></div>
         </div>
-    </div>
-
-    <!-- Video Grid (Full-screen format) -->
-    <div class="video-grid" id="video-grid">
-        <!-- Videos will be loaded progressively from all category pages -->
-    </div>
+        
+        <div class="hidden lg:flex justify-center items-center gap-6 py-8 mt-8">
+            <button id="prev-page" class="px-6 py-3 bg-white dark:bg-dark-100 border rounded-lg disabled:opacity-50">
+                <i data-feather="chevron-left" class="h-5 w-5 inline"></i> Previous
+            </button>
+            <span id="page-info" class="text-gray-600 dark:text-dark-400 px-4">Page 1</span>
+            <button id="next-page" class="px-6 py-3 bg-white dark:bg-dark-100 border rounded-lg disabled:opacity-50">
+                Next <i data-feather="chevron-right" class="h-5 w-5 inline"></i>
+            </button>
+        </div>
+    </main>
 
     <script type="module">
         import './components/user-dropdown.js';
+        import { setupThemeToggle } from './js/dark-mode.js';
+        import { applyFeatherIcons } from './js/auth-service.js';
+        import { bindUserButton, updateNavAuthUI } from './components/user-dropdown.js';
 
-        // Category pages to aggregate ads from
-        const CATEGORY_PAGES = [
-            'automotive.html',
-            'real-estate.html',
-            'jobs.html',
-            'services.html',
-            'sports.html',
-            'home-garden.html',
-            'electronics.html',
-            'fashion.html'
-        ];
+        const PAGES = ['automotive.html', 'real-estate.html', 'electronics.html', 'fashion.html', 'furniture.html', 'sports.html', 'jobs.html', 'services.html'];
+        const PER_PAGE = 9;
+        let page = 1, allCards = [], playing = null;
 
-        const applyFeatherIcons = () => {
-            if (window.feather && typeof window.feather.replace === 'function') {
-                window.feather.replace();
-            }
-        };
-
-        const setupThemeToggle = () => {
-            document.getElementById('theme-toggle').addEventListener('click', function() {
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.theme = isDark ? 'dark' : 'light';
-                feather.replace();
-            });
-        };
-
-        const bindUserButton = () => {
-            const btn = document.getElementById('user-btn');
-            const dropdown = document.querySelector('user-dropdown');
-            if (btn && dropdown) {
-                btn.addEventListener('click', () => {
-                    dropdown.toggleDropdown();
-                });
-            }
-        };
-
-        const updateNavAuthUI = () => {
-            const authToken = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
-            const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-            
-            const navAvatar = document.getElementById('nav-avatar');
-            const navUserIcon = document.getElementById('nav-user-icon');
-            
-            if (authToken && userProfile.avatar) {
-                navAvatar.src = userProfile.avatar;
-                navAvatar.classList.remove('hidden');
-                navUserIcon.classList.add('hidden');
-            } else {
-                navAvatar.classList.add('hidden');
-                navUserIcon.classList.remove('hidden');
-            }
-        };
-
-        const setupFavoritesLinks = () => {
-            const desktopLink = document.getElementById('desktop-favorites-link');
-            const mobileLink = document.getElementById('mobile-favorites-link');
-
-            [desktopLink, mobileLink].forEach(link => {
-                if (link) {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const isLoggedIn = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
-                        if (isLoggedIn) {
-                            window.location.href = 'favourites.html';
-                        } else {
-                            window.location.href = 'index.html#register';
-                        }
-                    });
-                }
-            });
-        };
-
-        // Fetch and aggregate video cards from all category pages
-        // Progressive loading: Load first page immediately, then load rest in background
-        const loadAllAds = async () => {
-            const videoGrid = document.getElementById('video-grid');
-            let cardCounter = 0;
-            let firstBatchLoaded = false;
-
-            // Helper function to process and append video cards from a page
-            const processVideoCards = (doc, shouldShuffle = false) => {
-                const videoCards = doc.querySelectorAll('[data-video-card]');
-                const cards = [];
-                
-                videoCards.forEach(card => {
-                    const clonedCard = card.cloneNode(true);
-                    
-                    // Optimize video loading
-                    const video = clonedCard.querySelector('video');
-                    if (video) {
-                        // Change preload to metadata for better performance
-                        video.setAttribute('preload', 'metadata');
-                        video.id = `video-${cardCounter}`;
-                    }
-                    
-                    // Add unique ID to avoid conflicts
-                    clonedCard.id = `video-card-${cardCounter++}`;
-                    
-                    const volumeIndicator = clonedCard.querySelector('.volume-indicator');
-                    if (volumeIndicator) volumeIndicator.id = `volume-${cardCounter}`;
-                    
-                    cards.push(clonedCard);
-                });
-
-                // Shuffle if requested (for subsequent batches to mix categories)
-                if (shouldShuffle) {
-                    for (let i = cards.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [cards[i], cards[j]] = [cards[j], cards[i]];
-                    }
-                }
-
-                // Append cards to grid
-                cards.forEach(card => videoGrid.appendChild(card));
-                
-                return cards.length;
-            };
-
-            // Load first category immediately (priority load)
-            try {
-                const firstResponse = await fetch(CATEGORY_PAGES[0]);
-                if (firstResponse.ok) {
-                    const html = await firstResponse.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    
-                    const count = processVideoCards(doc, false);
-                    
-                    if (count > 0) {
-                        // Initialize first batch immediately
-                        applyFeatherIcons();
-                        initVideos();
-                        firstBatchLoaded = true;
-                    }
-                }
-            } catch (error) {
-                console.warn(`Failed to load first batch from ${CATEGORY_PAGES[0]}:`, error);
-            }
-
-            // Load remaining categories in the background
-            const remainingPages = CATEGORY_PAGES.slice(1);
-            const allRemainingCards = [];
-
-            // Fetch all remaining pages in parallel
-            const fetchPromises = remainingPages.map(async (categoryPage) => {
+        async function load() {
+            const all = [];
+            for (const p of PAGES) {
                 try {
-                    const response = await fetch(categoryPage);
-                    if (!response.ok) return [];
-                    
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    
-                    const videoCards = doc.querySelectorAll('[data-video-card]');
-                    const cards = [];
-                    
-                    videoCards.forEach(card => {
-                        cards.push(card.cloneNode(true));
-                    });
-                    
-                    return cards;
-                } catch (error) {
-                    console.warn(`Failed to load ads from ${categoryPage}:`, error);
-                    return [];
-                }
-            });
+                    const r = await fetch(p);
+                    const t = await r.text();
+                    const d = new DOMParser().parseFromString(t, 'text/html');
+                    d.querySelectorAll('[data-video-card]').forEach(c => all.push(c.cloneNode(true)));
+                } catch(e) { console.warn(e); }
+            }
+            return all;
+        }
 
-            // Wait for all remaining pages to load
-            const results = await Promise.all(fetchPromises);
+        function render(p) {
+            const grid = document.getElementById('video-grid');
+            grid.innerHTML = '';
+            const start = (p - 1) * PER_PAGE;
+            const cards = allCards.slice(start, start + PER_PAGE);
             
-            // Combine all remaining cards
-            results.forEach(cards => {
-                allRemainingCards.push(...cards);
+            cards.forEach((c, i) => {
+                c.id = `card-${p}-${i}`;
+                const v = c.querySelector('video');
+                if (v) v.id = `vid-${p}-${i}`;
+                grid.appendChild(c);
             });
+            
+            initVids();
+            updatePag();
+            applyFeatherIcons();
+            window.scrollTo(0, 0);
+        }
 
-            // Shuffle all remaining cards together
-            for (let i = allRemainingCards.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [allRemainingCards[i], allRemainingCards[j]] = [allRemainingCards[j], allRemainingCards[i]];
-            }
-
-            // Process and append remaining cards
-            allRemainingCards.forEach(card => {
-                const clonedCard = card;
+        function initVids() {
+            document.querySelectorAll('[data-video-card]').forEach((c, i) => {
+                const v = c.querySelector('video');
+                if (!v) return;
+                const vol = c.querySelector('.volume-indicator');
                 
-                // Add unique ID to avoid conflicts
-                clonedCard.id = `video-card-${cardCounter++}`;
-                
-                // Add unique IDs to nested elements and optimize
-                const video = clonedCard.querySelector('video');
-                if (video) {
-                    video.id = `video-${cardCounter}`;
-                    video.setAttribute('preload', 'metadata');
-                }
-                
-                const volumeIndicator = clonedCard.querySelector('.volume-indicator');
-                if (volumeIndicator) volumeIndicator.id = `volume-${cardCounter}`;
-                
-                videoGrid.appendChild(clonedCard);
-            });
-
-            // Re-initialize videos with all cards
-            if (allRemainingCards.length > 0) {
-                applyFeatherIcons();
-                initVideos();
-            }
-        };
-
-        const initVideos = () => {
-            const videoCards = document.querySelectorAll('[data-video-card]');
-            const isMobile = window.innerWidth < 1024;
-            let currentlyPlayingVideo = null;
-
-            // Lazy load videos using Intersection Observer
-            const videoLoadObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const card = entry.target;
-                        const video = card.querySelector('video');
-                        const source = video?.querySelector('source');
-                        
-                        // Load video source if not already loaded
-                        if (video && source && !video.src && source.dataset.src) {
-                            source.src = source.dataset.src;
-                            video.load();
-                        }
-                    }
-                });
-            }, {
-                rootMargin: '200px' // Start loading 200px before entering viewport
-            });
-
-            videoCards.forEach((card, index) => {
-                const video = card.querySelector('video');
-                if (!video) return;
-
-                // Mark first 3 videos to load immediately, others lazy load
-                const source = video.querySelector('source');
-                if (source && index > 2) {
-                    source.dataset.src = source.src;
-                    source.removeAttribute('src');
-                }
-
-                // Observe card for lazy loading
-                videoLoadObserver.observe(card);
-
-                const volumeIndicator = card.querySelector('.volume-indicator');
-                if (!volumeIndicator) return;
-
-                const volumeOff = volumeIndicator.querySelector('.volume-off');
-                const volumeOn = volumeIndicator.querySelector('.volume-on');
-                const detailsUrl = card.dataset.detailsUrl;
-
-                const updateVolumeIcon = (muted) => {
-                    if (volumeOff && volumeOn) {
-                        if (muted) {
-                            volumeOff.style.display = 'block';
-                            volumeOn.style.display = 'none';
-                        } else {
-                            volumeOff.style.display = 'none';
-                            volumeOn.style.display = 'block';
-                        }
-                    }
-                };
-
-                const flashVolumeIndicator = () => {
-                    volumeIndicator.classList.remove('fade-out');
-                    setTimeout(() => {
-                        volumeIndicator.classList.add('fade-out');
-                    }, 2000);
-                };
-
-                const showFirstFrame = () => {
-                    if (!video.src && !video.currentSrc) return;
-
-                    // Desktop: First video autoplays with sound, others show first frame paused
-                    // Mobile: First video autoplays with sound (fallback to muted)
-                    if (index === 0) {
-                        // First video: try to autoplay with sound
-                        video.muted = false;
-                        video.play().then(() => {
-                            currentlyPlayingVideo = video;
-                            updateVolumeIcon(false);
-                            flashVolumeIndicator();
-                        }).catch(() => {
-                            // Fallback: autoplay muted
-                            video.muted = true;
-                            video.play().then(() => {
-                                currentlyPlayingVideo = video;
-                                updateVolumeIcon(true);
-                                flashVolumeIndicator();
-                            }).catch(() => {
-                                // Last resort: show first frame
-                                video.currentTime = 0.1;
-                            });
-                        });
-                    } else {
-                        // Other videos: muted, show first frame, then pause
-                        video.muted = true;
-                        const attempt = video.play();
-                        if (attempt) {
-                            attempt.then(() => {
-                                setTimeout(() => {
-                                    video.pause();
-                                    video.currentTime = 0;
-                                }, 100);
-                            }).catch(() => {
-                                video.currentTime = 0.1;
-                            });
-                        }
-                    }
-                };
-
-                if (video.readyState >= 2) {
-                    showFirstFrame();
+                v.load();
+                if (i === 0) {
+                    v.muted = false;
+                    v.play().catch(() => { v.muted = true; v.play(); });
                 } else {
-                    video.addEventListener('loadeddata', showFirstFrame, { once: true });
+                    v.muted = true;
+                    v.currentTime = 0.1;
                 }
 
-                // Desktop starts muted (except first video which tries unmuted)
-                // Mobile starts unmuted (with fallback to muted)
-                let userMutedPreference = index === 0 ? false : true;
-
-                const applyMuteState = (muted) => {
-                    video.muted = muted;
-                    userMutedPreference = muted;
-                    updateVolumeIcon(muted);
-                    flashVolumeIndicator();
-                };
-
-                const toggleAudio = () => {
-                    const targetMuted = !video.muted;
-                    applyMuteState(targetMuted);
-
-                    if (!targetMuted && video.paused) {
-                        const resumeAttempt = video.play();
-                        if (resumeAttempt && typeof resumeAttempt.catch === 'function') {
-                            resumeAttempt.catch(() => applyMuteState(true));
-                        }
-                    }
-                };
-
-                if (isMobile) {
-                    const playbackObserver = new IntersectionObserver(entries => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
-                                video.muted = userMutedPreference;
-                                const playAttempt = video.play();
-                                if (playAttempt && typeof playAttempt.then === 'function') {
-                                    playAttempt.then(() => {
-                                        updateVolumeIcon(video.muted);
-                                        flashVolumeIndicator();
-                                    }).catch(() => {
-                                        if (!video.muted) {
-                                            video.muted = true;
-                                            userMutedPreference = true;
-                                            video.play().then(() => {
-                                                updateVolumeIcon(true);
-                                                flashVolumeIndicator();
-                                            }).catch(() => {
-                                                console.log('Video play failed');
-                                            });
-                                        }
-                                    });
-                                }
-                            } else {
-                                video.pause();
-                                // Don't reset currentTime to save memory and CPU
-                            }
-                        });
-                    }, { threshold: [0.75] });
-
-                    playbackObserver.observe(card);
-
-                } else {
-                    // Desktop hover handlers with debouncing
-                    let hoverTimeout;
-                    card.addEventListener('mouseenter', () => {
-                        clearTimeout(hoverTimeout);
-                        hoverTimeout = setTimeout(() => {
-                            if (currentlyPlayingVideo && currentlyPlayingVideo !== video) {
-                                currentlyPlayingVideo.pause();
-                            }
-                            
-                            video.muted = userMutedPreference;
-                            const playAttempt = video.play();
-                            if (playAttempt && typeof playAttempt.then === 'function') {
-                                playAttempt.then(() => {
-                                    currentlyPlayingVideo = video;
-                                    updateVolumeIcon(video.muted);
-                                    flashVolumeIndicator();
-                                }).catch(() => {
-                                    video.muted = true;
-                                    userMutedPreference = true;
-                                    updateVolumeIcon(true);
-                                    flashVolumeIndicator();
-                                });
-                            }
-                        }, 50); // 50ms debounce
-                    });
-
-                    card.addEventListener('mouseleave', () => {
-                        clearTimeout(hoverTimeout);
-                    });
-                }
-
-                volumeIndicator.addEventListener('click', event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    toggleAudio();
+                c.addEventListener('mouseenter', () => {
+                    if (playing && playing !== v) playing.pause();
+                    v.play().then(() => playing = v);
                 });
-
-                if (detailsUrl) {
-                    card.addEventListener('click', event => {
-                        if (event.target.closest('a, button, .volume-indicator')) return;
-
-                        try {
-                            sessionStorage.setItem('detailsScrollTarget', 'description');
-                        } catch (err) {
-                            console.warn('Unable to persist scroll preference', err);
-                        }
-
-                        window.location.href = detailsUrl;
+                c.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
+                
+                if (vol) {
+                    vol.addEventListener('click', e => {
+                        e.stopPropagation();
+                        v.muted = !v.muted;
                     });
-                    
-                    const titleLink = card.querySelector('a[href]');
-                    if (titleLink) {
-                        titleLink.addEventListener('click', event => {
-                            try {
-                                sessionStorage.setItem('detailsScrollTarget', 'description');
-                            } catch (err) {
-                                console.warn('Unable to persist scroll preference', err);
-                            }
-                        });
-                    }
                 }
-
-                updateVolumeIcon(video.muted);
-                window.setTimeout(() => volumeIndicator.classList.add('fade-out'), 2000);
             });
-        };
+        }
+
+        function updatePag() {
+            const total = Math.ceil(allCards.length / PER_PAGE);
+            document.getElementById('page-info').textContent = `Page ${page} of ${total}`;
+            document.getElementById('prev-page').disabled = page === 1;
+            document.getElementById('next-page').disabled = page === total;
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             applyFeatherIcons();
             setupThemeToggle();
             bindUserButton();
             updateNavAuthUI();
-            setupFavoritesLinks();
             
-            // Load all ads from category pages
-            await loadAllAds();
+            document.getElementById('prev-page').onclick = () => { if (page > 1) { page--; render(page); }};
+            document.getElementById('next-page').onclick = () => { const t = Math.ceil(allCards.length / PER_PAGE); if (page < t) { page++; render(page); }};
             
-            window.setTimeout(applyFeatherIcons, 100);
+            allCards = await load();
+            render(page);
         });
     </script>
 </body>

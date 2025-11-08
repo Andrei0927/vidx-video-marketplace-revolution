@@ -51,6 +51,9 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
+    <script src="js/id-generator.js"></script>
+    <script src="components/video-card.js"></script>
+    <script src="js/video-card-engagement.js"></script>
     <style>
         html, body {
             min-height: 100%;
@@ -475,7 +478,7 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: Road Bike -->
-    <div class="video-card" data-video-card data-category="Cycling" data-sport-type="Road Cycling" data-brand="Specialized" data-condition="Excellent" data-details-url="details.html?ad=road-bike">
+    <div class="video-card" data-video-card data-ad-id="sports-specialized-road-bike" data-category="Cycling" data-sport-type="Road Cycling" data-brand="Specialized" data-condition="Excellent" data-details-url="details.html?ad=sports-specialized-road-bike">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -495,22 +498,32 @@
                         <p class="text-gray-300 text-sm">2 days ago · București</p>
                     </div>
                 </div>
-                <a href="details.html?ad=road-bike" class="block group">
+                <a href="details.html?ad=sports-specialized-road-bike" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Specialized Allez Road Bike</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Carbon Fiber | Excellent | Size M (54cm)</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€1,800</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">42</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="sports-specialized-road-bike">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="sports-specialized-road-bike" data-favorite-count="42">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>42</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">15</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="sports-specialized-road-bike" data-ad-title="Specialized Allez Road Bike" data-ad-price="€1,800">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -519,7 +532,7 @@
         </div>
 
         <!-- Video Card 2: Gym Equipment - Treadmill -->
-    <div class="video-card" data-video-card data-category="Fitness & Gym" data-sport-type="Gym Equipment" data-brand="Technogym" data-condition="Like New" data-details-url="details.html?ad=treadmill">
+    <div class="video-card" data-video-card data-ad-id="sports-technogym-treadmill" data-category="Fitness & Gym" data-sport-type="Gym Equipment" data-brand="Technogym" data-condition="Like New" data-details-url="details.html?ad=sports-technogym-treadmill">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -539,22 +552,32 @@
                         <p class="text-gray-300 text-sm">5 days ago · Cluj-Napoca</p>
                     </div>
                 </div>
-                <a href="details.html?ad=treadmill" class="block group">
+                <a href="details.html?ad=sports-technogym-treadmill" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Technogym Run Treadmill</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Professional | Like New | Bluetooth & Heart Rate</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€2,500</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">68</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="sports-technogym-treadmill">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="sports-technogym-treadmill" data-favorite-count="68">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>68</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">23</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="sports-technogym-treadmill" data-ad-title="Technogym Run Treadmill" data-ad-price="€2,500">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -563,7 +586,7 @@
         </div>
 
         <!-- Video Card 3: Tennis Racket -->
-    <div class="video-card" data-video-card data-category="Racket Sports" data-sport-type="Tennis" data-brand="Wilson" data-condition="New" data-details-url="details.html?ad=tennis-racket">
+    <div class="video-card" data-video-card data-ad-id="sports-wilson-pro-tennis-racket" data-category="Racket Sports" data-sport-type="Tennis" data-brand="Wilson" data-condition="New" data-details-url="details.html?ad=sports-wilson-pro-tennis-racket">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -583,22 +606,32 @@
                         <p class="text-gray-300 text-sm">1 week ago · Brașov</p>
                     </div>
                 </div>
-                <a href="details.html?ad=tennis-racket" class="block group">
+                <a href="details.html?ad=sports-wilson-pro-tennis-racket" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Wilson Pro Staff Tennis Racket</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Carbon Fiber | Brand New | Grip Size 3</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€180</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">31</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="sports-wilson-pro-tennis-racket">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="sports-wilson-pro-tennis-racket" data-favorite-count="31">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>31</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">12</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="sports-wilson-pro-tennis-racket" data-ad-title="Wilson Pro Staff Tennis Racket" data-ad-price="€180">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -607,7 +640,7 @@
         </div>
 
         <!-- Video Card 4: Ski Set -->
-    <div class="video-card" data-video-card data-category="Winter Sports" data-sport-type="Skiing" data-brand="Rossignol" data-condition="Good" data-details-url="details.html?ad=ski-set">
+    <div class="video-card" data-video-card data-ad-id="sports-rossignol-ski-set" data-category="Winter Sports" data-sport-type="Skiing" data-brand="Rossignol" data-condition="Good" data-details-url="details.html?ad=sports-rossignol-ski-set">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -627,22 +660,32 @@
                         <p class="text-gray-300 text-sm">3 days ago · Timișoara</p>
                     </div>
                 </div>
-                <a href="details.html?ad=ski-set" class="block group">
+                <a href="details.html?ad=sports-rossignol-ski-set" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Rossignol Ski Set with Bindings</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Alpine | Good | 170cm Length</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€650</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">24</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="sports-rossignol-ski-set">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="sports-rossignol-ski-set" data-favorite-count="24">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>24</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">9</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="sports-rossignol-ski-set" data-ad-title="Rossignol Ski Set with Bindings" data-ad-price="€650">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -651,7 +694,7 @@
         </div>
 
         <!-- Video Card 5: Running Shoes -->
-    <div class="video-card" data-video-card data-category="Running" data-sport-type="Running" data-brand="Nike" data-condition="New" data-details-url="details.html?ad=running-shoes">
+    <div class="video-card" data-video-card data-ad-id="sports-nike-running-shoes" data-category="Running" data-sport-type="Running" data-brand="Nike" data-condition="New" data-details-url="details.html?ad=sports-nike-running-shoes">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -671,22 +714,32 @@
                         <p class="text-gray-300 text-sm">1 day ago · Iași</p>
                     </div>
                 </div>
-                <a href="details.html?ad=running-shoes" class="block group">
+                <a href="details.html?ad=sports-nike-running-shoes" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Nike Air Zoom Pegasus Running Shoes</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Brand New | Size 42 EU | Breathable & Lightweight</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€120</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">56</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="sports-nike-running-shoes">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="sports-nike-running-shoes" data-favorite-count="56">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>56</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">18</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="sports-nike-running-shoes" data-ad-title="Nike Air Zoom Pegasus Running Shoes" data-ad-price="€120">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -695,7 +748,7 @@
         </div>
 
         <!-- Video Card 6: Yoga Mat -->
-    <div class="video-card" data-video-card data-category="Fitness & Gym" data-sport-type="Yoga" data-brand="Manduka" data-condition="Like New" data-details-url="details.html?ad=yoga-mat">
+    <div class="video-card" data-video-card data-ad-id="sports-manduka-yoga-mat" data-category="Fitness & Gym" data-sport-type="Yoga" data-brand="Manduka" data-condition="Like New" data-details-url="details.html?ad=sports-manduka-yoga-mat">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -715,22 +768,32 @@
                         <p class="text-gray-300 text-sm">6 days ago · Constanța</p>
                     </div>
                 </div>
-                <a href="details.html?ad=yoga-mat" class="block group">
+                <a href="details.html?ad=sports-manduka-yoga-mat" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Manduka PRO Yoga Mat</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Professional | Like New | Non-Slip & Eco-Friendly</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€45</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">38</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="sports-manduka-yoga-mat">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="sports-manduka-yoga-mat" data-favorite-count="38">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>38</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">11</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="sports-manduka-yoga-mat" data-ad-title="Manduka PRO Yoga Mat" data-ad-price="€45">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>

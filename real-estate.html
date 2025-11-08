@@ -51,6 +51,9 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
+    <script src="js/id-generator.js"></script>
+    <script src="components/video-card.js"></script>
+    <script src="js/video-card-engagement.js"></script>
     <style>
         html, body {
             min-height: 100%;
@@ -478,7 +481,7 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: Modern 2BR Apartment -->
-    <div class="video-card" data-video-card data-property-type="Apartment" data-listing-type="For Sale" data-bedrooms="2" data-condition="Excellent" data-details-url="details.html?ad=2br-apartment">
+    <div class="video-card" data-video-card data-ad-id="realestate-2br-apartment-bucharest" data-property-type="Apartment" data-listing-type="For Sale" data-bedrooms="2" data-condition="Excellent" data-details-url="details.html?ad=realestate-2br-apartment-bucharest">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -498,22 +501,32 @@
                         <p class="text-gray-300 text-sm">1 day ago · București</p>
                     </div>
                 </div>
-                <a href="details.html?ad=2br-apartment" class="block group">
+                <a href="details.html?ad=realestate-2br-apartment-bucharest" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Modern 2BR Apartment</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">75m² | Balcony, AC, Parking | 5th Floor | Sector 2</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€150,000</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">42</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="realestate-2br-apartment-bucharest">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="realestate-2br-apartment-bucharest" data-favorite-count="42">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>42</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">15</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="realestate-2br-apartment-bucharest" data-ad-title="Modern 2BR Apartment" data-ad-price="€150,000">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -522,7 +535,7 @@
         </div>
 
         <!-- Video Card 2: Villa with Pool -->
-    <div class="video-card" data-video-card data-property-type="Villa" data-listing-type="For Sale" data-bedrooms="4" data-condition="New Construction" data-details-url="details.html?ad=villa-pool">
+    <div class="video-card" data-video-card data-ad-id="realestate-villa-pool-brasov" data-property-type="Villa" data-listing-type="For Sale" data-bedrooms="4" data-condition="New Construction" data-details-url="details.html?ad=realestate-villa-pool-brasov">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -542,31 +555,42 @@
                         <p class="text-gray-300 text-sm">3 days ago · Brașov</p>
                     </div>
                 </div>
-                <a href="details.html?ad=villa-pool" class="block group">
+                <a href="details.html?ad=realestate-villa-pool-brasov" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">4BR Villa with Pool</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">280m² | Garden, Pool, Garage | Mountain View | New Construction</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€450,000</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">68</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="realestate-villa-pool-brasov">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="realestate-villa-pool-brasov" data-favorite-count="68">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>68</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">23</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="realestate-villa-pool-brasov" data-ad-title="4BR Villa with Pool" data-ad-price="€450,000">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
                 </div>
             </div>
+            </div>
         </div>
 
         <!-- Video Card 3: Studio Apartment for Rent -->
-    <div class="video-card" data-video-card data-property-type="Studio" data-listing-type="For Rent" data-bedrooms="Studio" data-condition="Furnished" data-details-url="details.html?ad=studio-rent">
+    <div class="video-card" data-video-card data-ad-id="realestate-studio-rent-cluj" data-property-type="Studio" data-listing-type="For Rent" data-bedrooms="Studio" data-condition="Furnished" data-details-url="details.html?ad=realestate-studio-rent-cluj">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -586,31 +610,42 @@
                         <p class="text-gray-300 text-sm">2 days ago · Cluj-Napoca</p>
                     </div>
                 </div>
-                <a href="details.html?ad=studio-rent" class="block group">
+                <a href="details.html?ad=realestate-studio-rent-cluj" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Cozy Studio Apartment</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">35m² | Fully Furnished | Central Location | AC</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€650/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">31</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="realestate-studio-rent-cluj">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="realestate-studio-rent-cluj" data-favorite-count="31">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>31</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">12</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="realestate-studio-rent-cluj" data-ad-title="Cozy Studio Apartment" data-ad-price="€650/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
 
         <!-- Video Card 4: House for Rent -->
-    <div class="video-card" data-video-card data-property-type="House" data-listing-type="For Rent" data-bedrooms="3" data-condition="Semi-Furnished" data-details-url="details.html?ad=house-rent">
+    <div class="video-card" data-video-card data-ad-id="realestate-3br-house-rent-timisoara" data-property-type="House" data-listing-type="For Rent" data-bedrooms="3" data-condition="Semi-Furnished" data-details-url="details.html?ad=realestate-3br-house-rent-timisoara">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -630,31 +665,43 @@
                         <p class="text-gray-300 text-sm">5 days ago · Timișoara</p>
                     </div>
                 </div>
-                <a href="details.html?ad=house-rent" class="block group">
+                <a href="details.html?ad=realestate-3br-house-rent-timisoara" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">3BR House with Garden</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">150m² | Garden, Garage | Semi-Furnished | Quiet Neighborhood</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€1,200/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">24</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="realestate-3br-house-rent-timisoara">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="realestate-3br-house-rent-timisoara" data-favorite-count="24">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>24</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">9</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="realestate-3br-house-rent-timisoara" data-ad-title="3BR House with Garden" data-ad-price="€1,200/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Video Card 5: Commercial Office Space -->
-    <div class="video-card" data-video-card data-property-type="Office" data-listing-type="For Rent" data-bedrooms="N/A" data-condition="Modern" data-details-url="details.html?ad=office-space">
+    <div class="video-card" data-video-card data-ad-id="realestate-office-space-bucharest" data-property-type="Office" data-listing-type="For Rent" data-bedrooms="N/A" data-condition="Modern" data-details-url="details.html?ad=realestate-office-space-bucharest">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -674,22 +721,36 @@
                         <p class="text-gray-300 text-sm">4 days ago · București</p>
                     </div>
                 </div>
-                <a href="details.html?ad=office-space" class="block group">
+                <a href="details.html?ad=realestate-office-space-bucharest" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Commercial Office Space</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">120m² | Central Location | Parking | Modern Finishes</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€2,500/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">56</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="realestate-office-space-bucharest">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="realestate-office-space-bucharest" data-favorite-count="56">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>56</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">18</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="realestate-office-space-bucharest" data-ad-title="Commercial Office Space" data-ad-price="€2,500/month">
+                            <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
+                        </button>
+                    </div>
+                </div>
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -698,7 +759,7 @@
         </div>
 
         <!-- Video Card 6: Building Land for Sale -->
-    <div class="video-card" data-video-card data-property-type="Land" data-listing-type="For Sale" data-bedrooms="N/A" data-condition="Ready to Build" data-details-url="details.html?ad=land-plot">
+    <div class="video-card" data-video-card data-ad-id="realestate-land-plot-ilfov" data-property-type="Land" data-listing-type="For Sale" data-bedrooms="N/A" data-condition="Ready to Build" data-details-url="details.html?ad=realestate-land-plot-ilfov">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -718,18 +779,36 @@
                         <p class="text-gray-300 text-sm">1 week ago · Constanța</p>
                     </div>
                 </div>
-                <a href="details.html?ad=land-plot" class="block group">
+                <a href="details.html?ad=realestate-land-plot-ilfov" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Building Land Plot</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">500m² | Utilities Available | Seaside Area | Ready to Build</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€80,000</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">38</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="realestate-land-plot-ilfov">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="realestate-land-plot-ilfov" data-favorite-count="38">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>38</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
+                            <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
+                            <span class="ml-1 text-sm">11</span>
+                        </button>
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="realestate-land-plot-ilfov" data-ad-title="Building Land Plot" data-ad-price="€80,000">
+                            <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
+                        </button>
+                    </div>
+                </div>
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">11</span>
                         </button>

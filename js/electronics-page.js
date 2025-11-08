@@ -287,8 +287,8 @@ const renderListings = () => {
     const markup = electronicsListings.map(listing => {
         listingMap.set(listing.id, listing);
         return `
-            <div class="video-card" data-listing-id="${escapeHtml(listing.id)}" data-details-url="${escapeHtml(listing.detailsUrl)}">
-                <video loop playsinline preload="auto">
+            <div class="video-card" data-video-card data-listing-id="${escapeHtml(listing.id)}" data-details-url="${escapeHtml(listing.detailsUrl)}">
+                <video loop playsinline preload="metadata">
                     <source src="${escapeHtml(listing.videoUrl)}" type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>
@@ -311,15 +311,14 @@ const renderListings = () => {
                     <div class="mt-3 flex items-center justify-between">
                         <span class="text-xl font-bold text-white">${formatPrice(listing.price)}</span>
                         <div class="flex space-x-3">
-                            <button class="flex items-center text-white group">
+                            <button class="like-btn flex items-center text-white group" data-ad-id="${escapeHtml(listing.id)}">
                                 <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                                <span class="ml-1 text-sm">${escapeHtml(listing.likes)}</span>
+                                <span class="ml-1 text-sm like-count">${escapeHtml(listing.likes)}</span>
                             </button>
-                            <button class="flex items-center text-white group">
-                                <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
-                                <span class="ml-1 text-sm">${escapeHtml(listing.comments)}</span>
+                            <button class="favorite-btn flex items-center text-white group" data-ad-id="${escapeHtml(listing.id)}">
+                                <i data-feather="star" class="h-5 w-5 group-hover:text-yellow-500 transition"></i>
                             </button>
-                            <button class="flex items-center text-white group">
+                            <button class="share-btn flex items-center text-white group" data-ad-id="${escapeHtml(listing.id)}">
                                 <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                             </button>
                         </div>

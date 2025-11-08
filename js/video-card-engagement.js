@@ -7,6 +7,7 @@
 class VideoCardEngagement {
     constructor() {
         this.initializeStorage();
+        this.migrateOldIDs(); // Migrate old IDs to new format
         this.attachEventListeners();
         this.initializeButtonStates();
     }
@@ -23,6 +24,71 @@ class VideoCardEngagement {
         }
         if (!localStorage.getItem('globalFavoriteCounts')) {
             localStorage.setItem('globalFavoriteCounts', '{}');
+        }
+    }
+
+    /**
+     * Migrate old ad IDs to new format
+     * Old: vw-transporter, audi-a5
+     * New: auto-vw-transporter-2021, auto-audi-a5-sportback-2020
+     */
+    migrateOldIDs() {
+        const idMappings = {
+            'vw-transporter': 'auto-vw-transporter-2021',
+            'audi-a5': 'auto-audi-a5-sportback-2020'
+        };
+
+        const userEmail = this.getUserEmail();
+        if (!userEmail) return;
+
+        let migrated = false;
+
+        // Migrate favorites
+        const allFavorites = JSON.parse(localStorage.getItem('userFavorites') || '{}');
+        if (allFavorites[userEmail]) {
+            const userFavorites = allFavorites[userEmail];
+            const updatedFavorites = userFavorites.map(id => idMappings[id] || id);
+            
+            if (JSON.stringify(userFavorites) !== JSON.stringify(updatedFavorites)) {
+                allFavorites[userEmail] = updatedFavorites;
+                localStorage.setItem('userFavorites', JSON.stringify(allFavorites));
+                migrated = true;
+                console.log('[ID MIGRATION] Updated favorites:', userFavorites, '→', updatedFavorites);
+            }
+        }
+
+        // Migrate likes
+        const allLikes = JSON.parse(localStorage.getItem('userLikes') || '{}');
+        if (allLikes[userEmail]) {
+            const userLikes = allLikes[userEmail];
+            const updatedLikes = userLikes.map(id => idMappings[id] || id);
+            
+            if (JSON.stringify(userLikes) !== JSON.stringify(updatedLikes)) {
+                allLikes[userEmail] = updatedLikes;
+                localStorage.setItem('userLikes', JSON.stringify(allLikes));
+                migrated = true;
+                console.log('[ID MIGRATION] Updated likes:', userLikes, '→', updatedLikes);
+            }
+        }
+
+        // Migrate global favorite counts
+        const globalCounts = JSON.parse(localStorage.getItem('globalFavoriteCounts') || '{}');
+        let countsUpdated = false;
+        for (const [oldId, newId] of Object.entries(idMappings)) {
+            if (globalCounts[oldId] !== undefined && globalCounts[newId] === undefined) {
+                globalCounts[newId] = globalCounts[oldId];
+                delete globalCounts[oldId];
+                countsUpdated = true;
+            }
+        }
+        if (countsUpdated) {
+            localStorage.setItem('globalFavoriteCounts', JSON.stringify(globalCounts));
+            migrated = true;
+            console.log('[ID MIGRATION] Updated global favorite counts');
+        }
+
+        if (migrated) {
+            console.log('[ID MIGRATION] ✅ Migration complete! Old IDs have been updated to new format.');
         }
     }
 

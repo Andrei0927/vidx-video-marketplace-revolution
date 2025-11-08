@@ -51,6 +51,9 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
+    <script src="js/id-generator.js"></script>
+    <script src="components/video-card.js"></script>
+    <script src="js/video-card-engagement.js"></script>
     <style>
         html, body {
             min-height: 100%;
@@ -472,7 +475,7 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: VW Transporter -->
-    <div class="video-card" data-video-card data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel" data-details-url="details.html?ad=vw-transporter">
+    <div class="video-card" data-video-card data-ad-id="fashion-vw-transporter-2021" data-make="Volkswagen" data-year="2021" data-transmission="Manual" data-fuel="Diesel" data-details-url="details.html?ad=fashion-vw-transporter-2021">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -492,22 +495,32 @@
                         <p class="text-gray-300 text-sm">2 days ago · Cluj-Napoca</p>
                     </div>
                 </div>
-                <a href="details.html?ad=vw-transporter" class="block group">
+                <a href="details.html?ad=fashion-vw-transporter-2021" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">VW Transporter T6.1 2021</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">45,000 km | Manual | Diesel</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€28,500</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">42</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="fashion-vw-transporter-2021">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="fashion-vw-transporter-2021" data-favorite-count="42">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>42</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">12</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="fashion-vw-transporter-2021" data-ad-title="VW Transporter T6.1 2021" data-ad-price="€28,500">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -517,7 +530,7 @@
 
         <!-- Video Card 2: Audi A5 -->
             <!-- Video Card 2: Audi A5 -->
-    <div class="video-card" data-video-card data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol" data-details-url="details.html?ad=audi-a5">
+    <div class="video-card" data-video-card data-ad-id="fashion-audi-a5-sportback-2020" data-make="Audi" data-year="2020" data-transmission="Automatic" data-fuel="Petrol" data-details-url="details.html?ad=fashion-audi-a5-sportback-2020">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -537,9 +550,37 @@
                         <p class="text-gray-300 text-sm">5 days ago · Bucharest</p>
                     </div>
                 </div>
-                <a href="details.html?ad=audi-a5" class="block group">
+                <a href="details.html?ad=fashion-audi-a5-sportback-2020" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Audi A5 Sportback 2020</h2>
                 </a>
+                <p class="mt-1 text-gray-300 text-sm">32,000 km | Automatic | Petrol</p>
+                <div class="mt-3 flex items-center justify-between">
+                    <span class="text-xl font-bold text-white">€35,900</span>
+                    <div class="flex space-x-3">
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="fashion-audi-a5-sportback-2020">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
+                        </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="fashion-audi-a5-sportback-2020" data-favorite-count="58">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>58</span>
+                        </button>
+                        
+                        <!-- Message Button -->
+                        <button class="flex items-center text-white group">
+                            <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
+                            <span class="ml-1 text-sm">8</span>
+                        </button>
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="fashion-audi-a5-sportback-2020" data-ad-title="Audi A5 Sportback 2020" data-ad-price="€35,900">
+                            <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <script type="module">

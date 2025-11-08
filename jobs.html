@@ -51,6 +51,9 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
+    <script src="js/id-generator.js"></script>
+    <script src="components/video-card.js"></script>
+    <script src="js/video-card-engagement.js"></script>
     <style>
         html, body {
             min-height: 100%;
@@ -478,7 +481,7 @@
     <!-- Video Grid (Portrait/Mobile-optimized) -->
     <div class="video-grid" id="video-grid">
         <!-- Video Card 1: Senior Software Engineer -->
-    <div class="video-card" data-video-card data-category="IT & Technology" data-job-type="Full-Time,Remote" data-experience="Senior Level" data-salary="4500" data-details-url="details.html?ad=software-engineer">
+    <div class="video-card" data-video-card data-ad-id="jobs-software-engineer-senior" data-category="IT & Technology" data-job-type="Full-Time,Remote" data-experience="Senior Level" data-salary="4500" data-details-url="details.html?ad=jobs-software-engineer-senior">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -498,22 +501,32 @@
                         <p class="text-gray-300 text-sm">2 days ago · Remote</p>
                     </div>
                 </div>
-                <a href="details.html?ad=software-engineer" class="block group">
+                <a href="details.html?ad=jobs-software-engineer-senior" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Senior Software Engineer - React/Node.js</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Full-Time | Remote | Health Insurance, Stock Options</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€4,500/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">42</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="jobs-software-engineer-senior">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="jobs-software-engineer-senior" data-favorite-count="42">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>42</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">15</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="jobs-software-engineer-senior" data-ad-title="Senior Software Engineer - React/Node.js" data-ad-price="€4,500/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -522,7 +535,7 @@
         </div>
 
         <!-- Video Card 2: Marketing Manager -->
-    <div class="video-card" data-video-card data-category="Marketing & Sales" data-job-type="Full-Time" data-experience="Mid Level" data-salary="3500" data-details-url="details.html?ad=marketing-manager">
+    <div class="video-card" data-video-card data-ad-id="jobs-marketing-manager-mid" data-category="Marketing & Sales" data-job-type="Full-Time" data-experience="Mid Level" data-salary="3500" data-details-url="details.html?ad=jobs-marketing-manager-mid">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -542,22 +555,32 @@
                         <p class="text-gray-300 text-sm">3 days ago · București</p>
                     </div>
                 </div>
-                <a href="details.html?ad=marketing-manager" class="block group">
+                <a href="details.html?ad=jobs-marketing-manager-mid" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Marketing Manager - Digital Marketing</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Full-Time | București | Flexible Hours, Performance Bonuses</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€3,500/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">68</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="jobs-marketing-manager-mid">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="jobs-marketing-manager-mid" data-favorite-count="68">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>68</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">23</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="jobs-marketing-manager-mid" data-ad-title="Marketing Manager - Digital Marketing" data-ad-price="€3,500/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -566,7 +589,7 @@
         </div>
 
         <!-- Video Card 3: Accountant -->
-    <div class="video-card" data-video-card data-category="Finance" data-job-type="Full-Time" data-experience="Mid Level" data-salary="2800" data-details-url="details.html?ad=accountant">
+    <div class="video-card" data-video-card data-ad-id="jobs-accountant-mid" data-category="Finance" data-job-type="Full-Time" data-experience="Mid Level" data-salary="2800" data-details-url="details.html?ad=jobs-accountant-mid">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -586,22 +609,32 @@
                         <p class="text-gray-300 text-sm">4 days ago · Cluj-Napoca</p>
                     </div>
                 </div>
-                <a href="details.html?ad=accountant" class="block group">
+                <a href="details.html?ad=jobs-accountant-mid" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Accountant - Financial Services</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Full-Time | Cluj-Napoca | Health Insurance, Meal Vouchers</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€2,800/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">31</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="jobs-accountant-mid">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="jobs-accountant-mid" data-favorite-count="31">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>31</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">12</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="jobs-accountant-mid" data-ad-title="Accountant - Financial Services" data-ad-price="€2,800/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -610,7 +643,7 @@
         </div>
 
         <!-- Video Card 4: Customer Service Representative -->
-    <div class="video-card" data-video-card data-category="Retail" data-job-type="Part-Time,Hybrid" data-experience="Entry Level" data-salary="1800" data-details-url="details.html?ad=customer-service">
+    <div class="video-card" data-video-card data-ad-id="jobs-customer-service-entry" data-category="Retail" data-job-type="Part-Time,Hybrid" data-experience="Entry Level" data-salary="1800" data-details-url="details.html?ad=jobs-customer-service-entry">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -630,22 +663,32 @@
                         <p class="text-gray-300 text-sm">5 days ago · București</p>
                     </div>
                 </div>
-                <a href="details.html?ad=customer-service" class="block group">
+                <a href="details.html?ad=jobs-customer-service-entry" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Customer Service Representative</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Part-Time | Hybrid | Flexible Schedule</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€1,800/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">24</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="jobs-customer-service-entry">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="jobs-customer-service-entry" data-favorite-count="24">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>24</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">9</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="jobs-customer-service-entry" data-ad-title="Customer Service Representative" data-ad-price="€1,800/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -654,7 +697,7 @@
         </div>
 
         <!-- Video Card 5: Civil Engineer -->
-    <div class="video-card" data-video-card data-category="Engineering" data-job-type="Full-Time" data-experience="Senior Level" data-salary="4000" data-details-url="details.html?ad=civil-engineer">
+    <div class="video-card" data-video-card data-ad-id="jobs-civil-engineer-senior" data-category="Engineering" data-job-type="Full-Time" data-experience="Senior Level" data-salary="4000" data-details-url="details.html?ad=jobs-civil-engineer-senior">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/VW.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -674,22 +717,32 @@
                         <p class="text-gray-300 text-sm">1 week ago · Brașov</p>
                     </div>
                 </div>
-                <a href="details.html?ad=civil-engineer" class="block group">
+                <a href="details.html?ad=jobs-civil-engineer-senior" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">Civil Engineer - Construction Projects</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Full-Time | Brașov | Company Car, Health Insurance</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€4,000/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">56</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="jobs-civil-engineer-senior">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="jobs-civil-engineer-senior" data-favorite-count="56">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>56</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">18</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="jobs-civil-engineer-senior" data-ad-title="Civil Engineer - Construction Projects" data-ad-price="€4,000/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>
@@ -698,7 +751,7 @@
         </div>
 
         <!-- Video Card 6: English Teacher -->
-    <div class="video-card" data-video-card data-category="Education" data-job-type="Full-Time" data-experience="Mid Level" data-salary="2200" data-details-url="details.html?ad=english-teacher">
+    <div class="video-card" data-video-card data-ad-id="jobs-english-teacher-mid" data-category="Education" data-job-type="Full-Time" data-experience="Mid Level" data-salary="2200" data-details-url="details.html?ad=jobs-english-teacher-mid">
             <video loop playsinline preload="auto">
                 <source src="Demo ads/Audi.m4v" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -718,22 +771,32 @@
                         <p class="text-gray-300 text-sm">3 days ago · Timișoara</p>
                     </div>
                 </div>
-                <a href="details.html?ad=english-teacher" class="block group">
+                <a href="details.html?ad=jobs-english-teacher-mid" class="block group">
                     <h2 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">English Teacher - International School</h2>
                 </a>
                 <p class="mt-1 text-gray-300 text-sm">Full-Time | Timișoara | Summer Break, Professional Development</p>
                 <div class="mt-3 flex items-center justify-between">
                     <span class="text-xl font-bold text-white">€2,200/month</span>
                     <div class="flex space-x-3">
-                        <button class="flex items-center text-white group">
-                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
-                            <span class="ml-1 text-sm">38</span>
+                        <!-- Like Button (Thumbs Up) -->
+                        <button class="flex items-center text-white group" data-like-btn data-ad-id="jobs-english-teacher-mid">
+                            <i data-feather="thumbs-up" class="h-5 w-5 group-hover:text-indigo-400 transition"></i>
                         </button>
+                        
+                        <!-- Favorite Button (Heart) with count -->
+                        <button class="flex items-center text-white group" data-favorite-btn data-ad-id="jobs-english-teacher-mid" data-favorite-count="38">
+                            <i data-feather="heart" class="h-5 w-5 group-hover:text-pink-500 transition"></i>
+                            <span class="ml-1 text-sm" data-count-display>38</span>
+                        </button>
+                        
+                        <!-- Message Button -->
                         <button class="flex items-center text-white group">
                             <i data-feather="message-square" class="h-5 w-5 group-hover:text-blue-500 transition"></i>
                             <span class="ml-1 text-sm">11</span>
                         </button>
-                        <button class="flex items-center text-white group">
+                        
+                        <!-- Share Button -->
+                        <button class="flex items-center text-white group" data-share-btn data-ad-id="jobs-english-teacher-mid" data-ad-title="English Teacher - International School" data-ad-price="€2,200/month">
                             <i data-feather="share-2" class="h-5 w-5 group-hover:text-green-500 transition"></i>
                         </button>
                     </div>

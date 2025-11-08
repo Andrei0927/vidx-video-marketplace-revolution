@@ -315,23 +315,12 @@
                         <i data-feather="moon" class="h-5 w-5 dark:hidden"></i>
                         <i data-feather="sun" class="h-5 w-5 hidden dark:block"></i>
                     </button>
-                    <button id="login-btn" class="hidden px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
-                        Login
+                    <button id="user-btn" class="p-1.5 sm:p-2 rounded-full text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200 flex items-center">
+                        <img id="nav-avatar" src="" alt="" class="hidden h-6 w-6 rounded-full object-cover">
+                        <span id="nav-username" class="hidden ml-2 text-sm font-medium"></span>
+                        <i data-feather="user" class="h-5 w-5"></i>
                     </button>
-                    <!-- User Menu Container -->
-                    <div id="user-menu-container" class="hidden relative">
-                        <button id="user-avatar-btn" class="flex items-center space-x-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-dark-200 transition">
-                            <img id="user-avatar" src="" alt="User" class="h-8 w-8 rounded-full">
-                            <span id="user-name" class="hidden sm:inline-block text-sm font-medium text-gray-700 dark:text-dark-500"></span>
-                        </button>
-                        <!-- Dropdown Menu -->
-                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-dark-100 rounded-lg shadow-lg dark:shadow-dark-200 border border-gray-200 dark:border-dark-300 py-1 z-50">
-                            <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">My Profile</a>
-                            <a href="my-ads.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">My ads</a>
-                            <div class="border-t border-gray-200 dark:border-dark-300 my-1"></div>
-                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">Log out</button>
-                        </div>
-                    </div>
+                    <user-dropdown id="user-menu" class="hidden"></user-dropdown>
                 </div>
             </div>
         </div>
@@ -377,92 +366,98 @@
     <script type="module" src="components/user-dropdown.js"></script>
 
     <!-- Auth Check -->
-    <script>
-        async function checkAuth() {
-            const token = localStorage.getItem('authToken') || localStorage.getItem('sessionToken');
-            const loginBtn = document.getElementById('login-btn');
-            const userMenuContainer = document.getElementById('user-menu-container');
-            
-            if (!token) {
-                if (loginBtn) loginBtn.classList.remove('hidden');
-                if (userMenuContainer) userMenuContainer.classList.add('hidden');
-                return;
-            }
-            
-            if (loginBtn) loginBtn.classList.add('hidden');
-            if (userMenuContainer) userMenuContainer.classList.remove('hidden');
-            
-            // Set user info from localStorage
-            const userName = localStorage.getItem('userName') || localStorage.getItem('userEmail');
-            const userAvatar = localStorage.getItem('userAvatar') || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=6366f1&color=fff`;
-            
-            const userNameEl = document.getElementById('user-name');
-            const userAvatarEl = document.getElementById('user-avatar');
-            
-            if (userNameEl) userNameEl.textContent = userName;
-            if (userAvatarEl) userAvatarEl.src = userAvatar;
-        }
-        
-        checkAuth();
-        
-        // Login button handler
-        const loginBtn = document.getElementById('login-btn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', () => {
-                const authModal = document.querySelector('auth-modal');
-                if (authModal) authModal.open();
-            });
-        }
-        
-        // User avatar dropdown
-        const userAvatarBtn = document.getElementById('user-avatar-btn');
-        const userDropdown = document.getElementById('user-dropdown');
-        
-        if (userAvatarBtn && userDropdown) {
-            userAvatarBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('hidden');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', () => {
-                if (userDropdown && !userDropdown.classList.contains('hidden')) {
-                    userDropdown.classList.add('hidden');
+    <script type="module">
+        import authService from './js/auth-service.js';
+
+        const isLoggedIn = () => authService.isLoggedIn();
+
+        // Update navigation auth UI
+        function updateNavAuthUI() {
+            try {
+                const avatar = localStorage.getItem('userAvatar');
+                const name = localStorage.getItem('userName');
+                const avatarEl = document.getElementById('nav-avatar');
+                const nameEl = document.getElementById('nav-username');
+                const userBtn = document.getElementById('user-btn');
+                const iconSvg = userBtn && userBtn.querySelector('svg');
+
+                if (avatar) {
+                    avatarEl.src = avatar;
+                    avatarEl.classList.remove('hidden');
+                    if (iconSvg) iconSvg.classList.add('hidden');
+                } else {
+                    avatarEl.classList.add('hidden');
+                    if (iconSvg) iconSvg.classList.remove('hidden');
                 }
+
+                if (name) {
+                    nameEl.textContent = name;
+                    nameEl.classList.remove('hidden');
+                } else {
+                    nameEl.classList.add('hidden');
+                }
+
+                // Ensure the user menu is hidden when logged out
+                const userMenuEl = document.getElementById('user-menu');
+                if (userMenuEl && !avatar && !name) {
+                    userMenuEl.classList.add('hidden');
+                }
+            } catch (err) {
+                console.error('updateNavAuthUI error', err);
+            }
+        }
+
+        // Run once on load
+        updateNavAuthUI();
+
+        // Handle user button click
+        const userBtnEl = document.getElementById('user-btn');
+        const userMenuEl = document.getElementById('user-menu');
+
+        if (userBtnEl && userMenuEl) {
+            userBtnEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!isLoggedIn()) {
+                    // Not logged in -> show auth modal
+                    const modal = document.createElement('auth-modal');
+                    document.body.appendChild(modal);
+                    return;
+                }
+
+                // Toggle menu visibility
+                userMenuEl.classList.toggle('hidden');
             });
-            
-            // Logout handler
-            const logoutBtn = document.getElementById('logout-btn');
-            logoutBtn.addEventListener('click', async () => {
-                // Close dropdown
-                if (userDropdown) userDropdown.classList.add('hidden');
-                
-                // Clear localStorage
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('sessionToken');
-                localStorage.removeItem('userId');
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userAvatar');
-                localStorage.removeItem('userUsername');
-                
-                // Redirect to home
-                window.location.href = 'index.html';
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (ev) => {
+                try {
+                    const path = ev.composedPath ? ev.composedPath() : (ev.path || []);
+                    if (!path) return;
+                    if (path.includes(userMenuEl) || path.includes(userBtnEl)) return;
+                } catch (err) {
+                    const target = ev.target;
+                    if (userMenuEl.contains(target) || userBtnEl.contains(target)) return;
+                }
+                userMenuEl.classList.add('hidden');
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Escape') userMenuEl.classList.add('hidden');
             });
         }
 
-        // Listen for login success
-        window.addEventListener('user-login', () => {
-            checkAuth();
-        });
-
-        // Listen for logout
+        // Listen for auth events
+        window.addEventListener('user-login', () => updateNavAuthUI());
         window.addEventListener('user-logout', () => {
-            checkAuth();
+            updateNavAuthUI();
+            window.location.href = 'index.html';
         });
 
-        // Replace feather icons after DOM updates
-        setTimeout(() => feather.replace(), 100);
+        // Replace feather icons
+        feather.replace();
     </script>
 
     <!-- Filter Renderer Scripts -->
