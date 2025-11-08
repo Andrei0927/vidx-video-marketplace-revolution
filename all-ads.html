@@ -345,12 +345,16 @@
                 videoCards.forEach(card => {
                     const clonedCard = card.cloneNode(true);
                     
+                    // Optimize video loading
+                    const video = clonedCard.querySelector('video');
+                    if (video) {
+                        // Change preload to metadata for better performance
+                        video.setAttribute('preload', 'metadata');
+                        video.id = `video-${cardCounter}`;
+                    }
+                    
                     // Add unique ID to avoid conflicts
                     clonedCard.id = `video-card-${cardCounter++}`;
-                    
-                    // Add unique IDs to nested elements
-                    const video = clonedCard.querySelector('video');
-                    if (video) video.id = `video-${cardCounter}`;
                     
                     const volumeIndicator = clonedCard.querySelector('.volume-indicator');
                     if (volumeIndicator) volumeIndicator.id = `volume-${cardCounter}`;
@@ -442,9 +446,12 @@
                 // Add unique ID to avoid conflicts
                 clonedCard.id = `video-card-${cardCounter++}`;
                 
-                // Add unique IDs to nested elements
+                // Add unique IDs to nested elements and optimize
                 const video = clonedCard.querySelector('video');
-                if (video) video.id = `video-${cardCounter}`;
+                if (video) {
+                    video.id = `video-${cardCounter}`;
+                    video.setAttribute('preload', 'metadata');
+                }
                 
                 const volumeIndicator = clonedCard.querySelector('.volume-indicator');
                 if (volumeIndicator) volumeIndicator.id = `volume-${cardCounter}`;
@@ -464,9 +471,38 @@
             const isMobile = window.innerWidth < 1024;
             let currentlyPlayingVideo = null;
 
+            // Lazy load videos using Intersection Observer
+            const videoLoadObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const card = entry.target;
+                        const video = card.querySelector('video');
+                        const source = video?.querySelector('source');
+                        
+                        // Load video source if not already loaded
+                        if (video && source && !video.src && source.dataset.src) {
+                            source.src = source.dataset.src;
+                            video.load();
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '200px' // Start loading 200px before entering viewport
+            });
+
             videoCards.forEach((card, index) => {
                 const video = card.querySelector('video');
                 if (!video) return;
+
+                // Mark first 3 videos to load immediately, others lazy load
+                const source = video.querySelector('source');
+                if (source && index > 2) {
+                    source.dataset.src = source.src;
+                    source.removeAttribute('src');
+                }
+
+                // Observe card for lazy loading
+                videoLoadObserver.observe(card);
 
                 const volumeIndicator = card.querySelector('.volume-indicator');
                 if (!volumeIndicator) return;
@@ -476,12 +512,14 @@
                 const detailsUrl = card.dataset.detailsUrl;
 
                 const updateVolumeIcon = (muted) => {
-                    if (muted) {
-                        volumeOff.style.display = 'block';
-                        volumeOn.style.display = 'none';
-                    } else {
-                        volumeOff.style.display = 'none';
-                        volumeOn.style.display = 'block';
+                    if (volumeOff && volumeOn) {
+                        if (muted) {
+                            volumeOff.style.display = 'block';
+                            volumeOn.style.display = 'none';
+                        } else {
+                            volumeOff.style.display = 'none';
+                            volumeOn.style.display = 'block';
+                        }
                     }
                 };
 
@@ -563,7 +601,7 @@
                 };
 
                 if (isMobile) {
-                    const observer = new IntersectionObserver(entries => {
+                    const playbackObserver = new IntersectionObserver(entries => {
                         entries.forEach(entry => {
                             if (entry.isIntersecting && entry.intersectionRatio >= 0.75) {
                                 video.muted = userMutedPreference;
@@ -587,33 +625,42 @@
                                 }
                             } else {
                                 video.pause();
-                                video.currentTime = 0;
+                                // Don't reset currentTime to save memory and CPU
                             }
                         });
                     }, { threshold: [0.75] });
 
-                    observer.observe(card);
+                    playbackObserver.observe(card);
 
                 } else {
+                    // Desktop hover handlers with debouncing
+                    let hoverTimeout;
                     card.addEventListener('mouseenter', () => {
-                        if (currentlyPlayingVideo && currentlyPlayingVideo !== video) {
-                            currentlyPlayingVideo.pause();
-                        }
-                        
-                        video.muted = userMutedPreference;
-                        const playAttempt = video.play();
-                        if (playAttempt && typeof playAttempt.then === 'function') {
-                            playAttempt.then(() => {
-                                currentlyPlayingVideo = video;
-                                updateVolumeIcon(video.muted);
-                                flashVolumeIndicator();
-                            }).catch(() => {
-                                video.muted = true;
-                                userMutedPreference = true;
-                                updateVolumeIcon(true);
-                                flashVolumeIndicator();
-                            });
-                        }
+                        clearTimeout(hoverTimeout);
+                        hoverTimeout = setTimeout(() => {
+                            if (currentlyPlayingVideo && currentlyPlayingVideo !== video) {
+                                currentlyPlayingVideo.pause();
+                            }
+                            
+                            video.muted = userMutedPreference;
+                            const playAttempt = video.play();
+                            if (playAttempt && typeof playAttempt.then === 'function') {
+                                playAttempt.then(() => {
+                                    currentlyPlayingVideo = video;
+                                    updateVolumeIcon(video.muted);
+                                    flashVolumeIndicator();
+                                }).catch(() => {
+                                    video.muted = true;
+                                    userMutedPreference = true;
+                                    updateVolumeIcon(true);
+                                    flashVolumeIndicator();
+                                });
+                            }
+                        }, 50); // 50ms debounce
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        clearTimeout(hoverTimeout);
                     });
                 }
 
