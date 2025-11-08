@@ -1,146 +1,154 @@
 /**
- * Fashion & Apparel Filter Schema
- * For vidx-video-marketplace-revolution
+ * Fashion Filter Schema
+ * Comprehensive clothing and accessories filters
+ * Based on Amazon Fashion, eBay Clothing, OLX, FashionDays, AboutYou
  */
 
 const fashionFilterSchema = {
-    // Main category structure
-    categories: {
-        type: 'single-select',
-        label: 'Type',
+    // ===== CORE FILTERS (Always Visible) =====
+    category: {
+        type: 'dropdown',
+        label: 'Category',
+        alwaysVisible: true,
+        placeholder: 'Choose Category - All Fashion',
+        width: 'full',
         options: [
-            { id: 'all', value: '', label: 'All Fashion', count: null },
-            { id: 'womens', value: "Women's Clothing", label: "Women's Clothing", count: null },
-            { id: 'mens', value: "Men's Clothing", label: "Men's Clothing", count: null },
-            { id: 'kids', value: "Kids & Baby", label: "Kids & Baby", count: null },
-            { id: 'shoes', value: 'Shoes', label: 'Shoes', count: null },
-            { id: 'accessories', value: 'Accessories', label: 'Accessories', count: null },
-            { id: 'bags', value: 'Bags & Luggage', label: 'Bags & Luggage', count: null },
-            { id: 'jewelry', value: 'Jewelry & Watches', label: 'Jewelry & Watches', count: null }
+            { value: '', label: '📦 All Categories' },
+            { value: 'womens-clothing', label: '👗 Women\'s Clothing' },
+            { value: 'mens-clothing', label: '👔 Men\'s Clothing' },
+            { value: 'shoes', label: '👟 Shoes' },
+            { value: 'bags', label: '👜 Bags & Accessories' },
+            { value: 'jewelry', label: '💍 Jewelry & Watches' },
+            { value: 'kids', label: '👶 Kids & Baby' },
+            { value: 'sportswear', label: '🏃 Sportswear' },
+            { value: 'underwear', label: '👙 Underwear & Sleepwear' },
+            { value: 'vintage', label: '🕰️ Vintage & Second Hand' }
         ]
     },
 
-    // Subcategory (clothing type)
-    subcategory: {
-        type: 'multi-select',
-        label: 'Clothing Type',
-        collapsible: true,
-        options: [
-            // Women's
-            { value: 'Dresses', label: 'Dresses' },
-            { value: 'Tops', label: 'Tops & Blouses' },
-            { value: 'Sweaters', label: 'Sweaters & Cardigans' },
-            { value: 'Jeans', label: 'Jeans' },
-            { value: 'Pants', label: 'Pants & Trousers' },
-            { value: 'Skirts', label: 'Skirts' },
-            { value: 'Shorts', label: 'Shorts' },
-            { value: 'Activewear', label: 'Activewear' },
-            { value: 'Swimwear', label: 'Swimwear' },
-            { value: 'Outerwear', label: 'Coats & Jackets' },
-            { value: 'Suits', label: 'Suits & Blazers' },
-            { value: 'Lingerie', label: 'Lingerie & Sleepwear' },
-            // Men's
-            { value: 'Shirts', label: 'Shirts' },
-            { value: 'T-shirts', label: 'T-shirts & Polos' },
-            { value: 'Hoodies', label: 'Hoodies & Sweatshirts' },
-            // Shoes
-            { value: 'Sneakers', label: 'Sneakers' },
-            { value: 'Boots', label: 'Boots' },
-            { value: 'Sandals', label: 'Sandals' },
-            { value: 'Heels', label: 'Heels' },
-            { value: 'Flats', label: 'Flats' },
-            { value: 'Formal Shoes', label: 'Formal Shoes' }
-        ]
-    },
-
-    // Price Range
-    price: {
-        type: 'range',
-        label: 'Price',
-        currency: {
-            default: 'EUR',
-            options: ['EUR', 'USD', 'RON', 'GBP']
-        },
-        range: {
-            min: 0,
-            max: 5000,
-            step: 10,
-            unit: '€'
-        },
-        inputs: {
-            from: { placeholder: 'Min price', id: 'price-from' },
-            to: { placeholder: 'Max price', id: 'price-to' }
-        }
-    },
-
-    // Brand
     brand: {
         type: 'dropdown',
         label: 'Brand',
-        required: false,
+        alwaysVisible: true,
+        placeholder: 'Any Brand',
+        width: 'half',
         options: [
-            { value: '', label: 'Any' },
-            // Luxury
-            { value: 'Gucci', label: 'Gucci' },
-            { value: 'Louis Vuitton', label: 'Louis Vuitton' },
-            { value: 'Chanel', label: 'Chanel' },
-            { value: 'Prada', label: 'Prada' },
-            { value: 'Versace', label: 'Versace' },
-            { value: 'Dior', label: 'Dior' },
-            { value: 'Burberry', label: 'Burberry' },
-            { value: 'Hermès', label: 'Hermès' },
-            // Premium
-            { value: 'Ralph Lauren', label: 'Ralph Lauren' },
-            { value: 'Tommy Hilfiger', label: 'Tommy Hilfiger' },
-            { value: 'Calvin Klein', label: 'Calvin Klein' },
-            { value: 'Hugo Boss', label: 'Hugo Boss' },
-            { value: 'Armani', label: 'Armani' },
-            { value: 'Lacoste', label: 'Lacoste' },
-            { value: 'Michael Kors', label: 'Michael Kors' },
+            { value: '', label: 'Any Brand' },
+            // Luxury Brands
+            { value: 'gucci', label: 'Gucci' },
+            { value: 'prada', label: 'Prada' },
+            { value: 'louis-vuitton', label: 'Louis Vuitton' },
+            { value: 'chanel', label: 'Chanel' },
+            { value: 'versace', label: 'Versace' },
+            { value: 'dior', label: 'Dior' },
+            { value: 'burberry', label: 'Burberry' },
+            // Premium Brands
+            { value: 'hugo-boss', label: 'Hugo Boss' },
+            { value: 'tommy-hilfiger', label: 'Tommy Hilfiger' },
+            { value: 'calvin-klein', label: 'Calvin Klein' },
+            { value: 'ralph-lauren', label: 'Ralph Lauren' },
+            { value: 'michael-kors', label: 'Michael Kors' },
+            { value: 'armani', label: 'Armani' },
             // Sportswear
-            { value: 'Nike', label: 'Nike' },
-            { value: 'Adidas', label: 'Adidas' },
-            { value: 'Puma', label: 'Puma' },
-            { value: 'Under Armour', label: 'Under Armour' },
-            { value: 'Reebok', label: 'Reebok' },
-            { value: 'New Balance', label: 'New Balance' },
-            { value: 'The North Face', label: 'The North Face' },
-            { value: 'Columbia', label: 'Columbia' },
-            // High Street
-            { value: 'Zara', label: 'Zara' },
-            { value: 'H&M', label: 'H&M' },
-            { value: 'Mango', label: 'Mango' },
-            { value: 'Massimo Dutti', label: 'Massimo Dutti' },
-            { value: 'Gap', label: 'Gap' },
-            { value: 'Uniqlo', label: 'Uniqlo' },
-            { value: "Levi's", label: "Levi's" },
-            { value: 'Diesel', label: 'Diesel' },
-            { value: 'Guess', label: 'Guess' },
-            // Shoes
-            { value: 'Converse', label: 'Converse' },
-            { value: 'Vans', label: 'Vans' },
-            { value: 'Timberland', label: 'Timberland' },
-            { value: 'Dr. Martens', label: 'Dr. Martens' },
-            { value: 'Clarks', label: 'Clarks' },
-            { value: 'Other', label: 'Other' }
+            { value: 'nike', label: 'Nike' },
+            { value: 'adidas', label: 'Adidas' },
+            { value: 'puma', label: 'Puma' },
+            { value: 'under-armour', label: 'Under Armour' },
+            { value: 'reebok', label: 'Reebok' },
+            { value: 'new-balance', label: 'New Balance' },
+            // Fast Fashion
+            { value: 'zara', label: 'Zara' },
+            { value: 'h&m', label: 'H&M' },
+            { value: 'mango', label: 'Mango' },
+            { value: 'pull&bear', label: 'Pull&Bear' },
+            { value: 'bershka', label: 'Bershka' },
+            { value: 'reserved', label: 'Reserved' },
+            { value: 'massimo-dutti', label: 'Massimo Dutti' },
+            // Denim
+            { value: 'levis', label: 'Levi\'s' },
+            { value: 'diesel', label: 'Diesel' },
+            { value: 'guess', label: 'Guess' },
+            { value: 'wrangler', label: 'Wrangler' },
+            // Romanian Brands
+            { value: 'murmur', label: 'Murmur' },
+            { value: 'andra-designs', label: 'Andra Designs' },
+            { value: 'other', label: 'Other Brand' }
         ]
     },
 
-    // Size
-    size: {
-        type: 'multi-select',
-        label: 'Size',
+    price: {
+        type: 'range',
+        label: 'Price Range',
+        alwaysVisible: true,
+        min: 0,
+        max: 5000,
+        step: 10,
+        unit: '€',
+        width: 'half',
+        defaultMin: 0,
+        defaultMax: 5000
+    },
+
+    condition: {
+        type: 'dropdown',
+        label: 'Condition',
+        alwaysVisible: true,
+        placeholder: 'Any Condition',
+        width: 'half',
         options: [
-            // General
-            { value: 'XXS', label: 'XXS' },
-            { value: 'XS', label: 'XS' },
-            { value: 'S', label: 'S' },
-            { value: 'M', label: 'M' },
-            { value: 'L', label: 'L' },
-            { value: 'XL', label: 'XL' },
-            { value: 'XXL', label: 'XXL' },
-            { value: 'XXXL', label: 'XXXL' },
-            // EU sizes
+            { value: '', label: 'Any Condition' },
+            { value: 'new-with-tags', label: '🏷️ New with Tags' },
+            { value: 'new-without-tags', label: '✨ New without Tags' },
+            { value: 'like-new', label: '⭐ Like New' },
+            { value: 'excellent', label: '👍 Excellent' },
+            { value: 'good', label: '👌 Good' },
+            { value: 'fair', label: '✓ Fair' },
+            { value: 'vintage', label: '🕰️ Vintage' }
+        ]
+    },
+
+    location: {
+        type: 'text',
+        label: 'Location',
+        alwaysVisible: true,
+        placeholder: 'Enter city or region',
+        width: 'half'
+    },
+
+    // ===== ADVANCED FILTERS (Collapsible) =====
+    gender: {
+        type: 'dropdown',
+        label: 'Gender',
+        placeholder: 'Any Gender',
+        width: 'third',
+        options: [
+            { value: '', label: 'Any Gender' },
+            { value: 'women', label: 'Women' },
+            { value: 'men', label: 'Men' },
+            { value: 'unisex', label: 'Unisex' },
+            { value: 'kids-girls', label: 'Girls' },
+            { value: 'kids-boys', label: 'Boys' },
+            { value: 'baby', label: 'Baby' }
+        ]
+    },
+
+    size: {
+        type: 'dropdown',
+        label: 'Size',
+        placeholder: 'Select Size',
+        width: 'third',
+        options: [
+            { value: '', label: 'Any Size' },
+            // Women's Clothing
+            { value: 'xxs', label: 'XXS' },
+            { value: 'xs', label: 'XS' },
+            { value: 's', label: 'S' },
+            { value: 'm', label: 'M' },
+            { value: 'l', label: 'L' },
+            { value: 'xl', label: 'XL' },
+            { value: 'xxl', label: 'XXL' },
+            { value: 'xxxl', label: 'XXXL' },
+            // Numeric sizes
             { value: '34', label: '34' },
             { value: '36', label: '36' },
             { value: '38', label: '38' },
@@ -149,169 +157,190 @@ const fashionFilterSchema = {
             { value: '44', label: '44' },
             { value: '46', label: '46' },
             { value: '48', label: '48' },
-            { value: '50', label: '50+' },
-            // Shoe sizes
-            { value: 'One Size', label: 'One Size' }
+            { value: '50', label: '50' },
+            { value: 'one-size', label: 'One Size' }
         ]
     },
 
-    // Gender
-    gender: {
-        type: 'radio',
-        label: 'Gender',
+    shoeSize: {
+        type: 'dropdown',
+        label: 'Shoe Size (EU)',
+        placeholder: 'Select Size',
+        width: 'third',
         options: [
-            { value: '', label: 'Any' },
-            { value: 'Women', label: 'Women' },
-            { value: 'Men', label: 'Men' },
-            { value: 'Unisex', label: 'Unisex' },
-            { value: 'Kids', label: 'Kids' }
+            { value: '', label: 'Any Size' },
+            { value: '35', label: '35' },
+            { value: '36', label: '36' },
+            { value: '37', label: '37' },
+            { value: '38', label: '38' },
+            { value: '39', label: '39' },
+            { value: '40', label: '40' },
+            { value: '41', label: '41' },
+            { value: '42', label: '42' },
+            { value: '43', label: '43' },
+            { value: '44', label: '44' },
+            { value: '45', label: '45' },
+            { value: '46', label: '46' },
+            { value: '47', label: '47' },
+            { value: '48', label: '48' }
         ]
     },
 
-    // Color
     color: {
-        type: 'multi-select',
+        type: 'dropdown',
         label: 'Color',
-        collapsible: true,
+        placeholder: 'Any Color',
+        width: 'third',
         options: [
-            { value: 'Black', label: 'Black' },
-            { value: 'White', label: 'White' },
-            { value: 'Grey', label: 'Grey' },
-            { value: 'Navy', label: 'Navy Blue' },
-            { value: 'Blue', label: 'Blue' },
-            { value: 'Red', label: 'Red' },
-            { value: 'Pink', label: 'Pink' },
-            { value: 'Purple', label: 'Purple' },
-            { value: 'Green', label: 'Green' },
-            { value: 'Yellow', label: 'Yellow' },
-            { value: 'Orange', label: 'Orange' },
-            { value: 'Brown', label: 'Brown' },
-            { value: 'Beige', label: 'Beige' },
-            { value: 'Gold', label: 'Gold' },
-            { value: 'Silver', label: 'Silver' },
-            { value: 'Multicolor', label: 'Multicolor' },
-            { value: 'Other', label: 'Other' }
+            { value: '', label: 'Any Color' },
+            { value: 'black', label: '⬛ Black' },
+            { value: 'white', label: '⬜ White' },
+            { value: 'gray', label: '🔲 Gray' },
+            { value: 'beige', label: '🟤 Beige' },
+            { value: 'brown', label: '🟫 Brown' },
+            { value: 'red', label: '🟥 Red' },
+            { value: 'pink', label: '🩷 Pink' },
+            { value: 'orange', label: '🟧 Orange' },
+            { value: 'yellow', label: '🟨 Yellow' },
+            { value: 'green', label: '🟩 Green' },
+            { value: 'blue', label: '🟦 Blue' },
+            { value: 'navy', label: '🔷 Navy' },
+            { value: 'purple', label: '🟪 Purple' },
+            { value: 'gold', label: '🟨 Gold' },
+            { value: 'silver', label: '⬜ Silver' },
+            { value: 'multicolor', label: '🌈 Multicolor' }
         ]
     },
 
-    // Material
     material: {
-        type: 'multi-select',
+        type: 'dropdown',
         label: 'Material',
-        collapsible: true,
-        optional: true,
+        placeholder: 'Any Material',
+        width: 'third',
         options: [
-            { value: 'Cotton', label: 'Cotton' },
-            { value: 'Polyester', label: 'Polyester' },
-            { value: 'Wool', label: 'Wool' },
-            { value: 'Silk', label: 'Silk' },
-            { value: 'Linen', label: 'Linen' },
-            { value: 'Denim', label: 'Denim' },
-            { value: 'Leather', label: 'Leather' },
-            { value: 'Synthetic Leather', label: 'Synthetic Leather' },
-            { value: 'Suede', label: 'Suede' },
-            { value: 'Cashmere', label: 'Cashmere' },
-            { value: 'Velvet', label: 'Velvet' },
-            { value: 'Nylon', label: 'Nylon' },
-            { value: 'Spandex', label: 'Spandex / Elastane' }
+            { value: '', label: 'Any Material' },
+            { value: 'cotton', label: 'Cotton' },
+            { value: 'linen', label: 'Linen' },
+            { value: 'silk', label: 'Silk' },
+            { value: 'wool', label: 'Wool' },
+            { value: 'cashmere', label: 'Cashmere' },
+            { value: 'leather', label: 'Leather' },
+            { value: 'faux-leather', label: 'Faux Leather' },
+            { value: 'denim', label: 'Denim' },
+            { value: 'polyester', label: 'Polyester' },
+            { value: 'nylon', label: 'Nylon' },
+            { value: 'viscose', label: 'Viscose' },
+            { value: 'synthetic', label: 'Synthetic' },
+            { value: 'mixed', label: 'Mixed Materials' }
         ]
     },
 
-    // Condition
-    condition: {
-        type: 'multi-select',
-        label: 'Condition',
-        options: [
-            { value: 'New with tags', label: 'New with Tags' },
-            { value: 'New without tags', label: 'New without Tags' },
-            { value: 'Like New', label: 'Like New' },
-            { value: 'Excellent', label: 'Excellent' },
-            { value: 'Good', label: 'Good' },
-            { value: 'Fair', label: 'Fair / Worn' }
-        ]
-    },
-
-    // Style/Pattern
     style: {
-        type: 'multi-select',
-        label: 'Style / Pattern',
-        collapsible: true,
-        optional: true,
+        type: 'dropdown',
+        label: 'Style',
+        placeholder: 'Any Style',
+        width: 'third',
         options: [
-            { value: 'Solid', label: 'Solid Color' },
-            { value: 'Striped', label: 'Striped' },
-            { value: 'Floral', label: 'Floral' },
-            { value: 'Polka Dot', label: 'Polka Dot' },
-            { value: 'Plaid', label: 'Plaid / Checkered' },
-            { value: 'Animal Print', label: 'Animal Print' },
-            { value: 'Geometric', label: 'Geometric' },
-            { value: 'Abstract', label: 'Abstract' },
-            { value: 'Graphic', label: 'Graphic / Print' },
-            { value: 'Embroidered', label: 'Embroidered' }
+            { value: '', label: 'Any Style' },
+            { value: 'casual', label: 'Casual' },
+            { value: 'formal', label: 'Formal' },
+            { value: 'business', label: 'Business' },
+            { value: 'sporty', label: 'Sporty' },
+            { value: 'elegant', label: 'Elegant' },
+            { value: 'vintage', label: 'Vintage' },
+            { value: 'bohemian', label: 'Bohemian' },
+            { value: 'streetwear', label: 'Streetwear' },
+            { value: 'minimalist', label: 'Minimalist' },
+            { value: 'romantic', label: 'Romantic' },
+            { value: 'edgy', label: 'Edgy' },
+            { value: 'classic', label: 'Classic' }
         ]
     },
 
-    // Season
     season: {
-        type: 'multi-select',
+        type: 'dropdown',
         label: 'Season',
-        collapsible: true,
-        optional: true,
+        placeholder: 'Any Season',
+        width: 'third',
         options: [
-            { value: 'Spring', label: 'Spring' },
-            { value: 'Summer', label: 'Summer' },
-            { value: 'Fall', label: 'Fall / Autumn' },
-            { value: 'Winter', label: 'Winter' },
-            { value: 'All Season', label: 'All Season' }
+            { value: '', label: 'Any Season' },
+            { value: 'spring', label: '🌸 Spring' },
+            { value: 'summer', label: '☀️ Summer' },
+            { value: 'autumn', label: '🍂 Autumn' },
+            { value: 'winter', label: '❄️ Winter' },
+            { value: 'all-season', label: '🔄 All Season' }
         ]
     },
 
-    // Features
+    pattern: {
+        type: 'dropdown',
+        label: 'Pattern',
+        placeholder: 'Any Pattern',
+        width: 'third',
+        options: [
+            { value: '', label: 'Any Pattern' },
+            { value: 'solid', label: 'Solid' },
+            { value: 'striped', label: 'Striped' },
+            { value: 'floral', label: 'Floral' },
+            { value: 'polka-dot', label: 'Polka Dot' },
+            { value: 'checkered', label: 'Checkered' },
+            { value: 'animal-print', label: 'Animal Print' },
+            { value: 'geometric', label: 'Geometric' },
+            { value: 'abstract', label: 'Abstract' },
+            { value: 'camouflage', label: 'Camouflage' }
+        ]
+    },
+
+    fit: {
+        type: 'dropdown',
+        label: 'Fit',
+        placeholder: 'Any Fit',
+        width: 'third',
+        options: [
+            { value: '', label: 'Any Fit' },
+            { value: 'slim', label: 'Slim Fit' },
+            { value: 'regular', label: 'Regular Fit' },
+            { value: 'loose', label: 'Loose Fit' },
+            { value: 'oversized', label: 'Oversized' },
+            { value: 'tailored', label: 'Tailored' },
+            { value: 'skinny', label: 'Skinny' },
+            { value: 'relaxed', label: 'Relaxed' }
+        ]
+    },
+
+    occasion: {
+        type: 'dropdown',
+        label: 'Occasion',
+        placeholder: 'Any Occasion',
+        width: 'third',
+        options: [
+            { value: '', label: 'Any Occasion' },
+            { value: 'everyday', label: 'Everyday' },
+            { value: 'work', label: 'Work' },
+            { value: 'party', label: 'Party' },
+            { value: 'wedding', label: 'Wedding' },
+            { value: 'formal-event', label: 'Formal Event' },
+            { value: 'beach', label: 'Beach' },
+            { value: 'sport', label: 'Sport' },
+            { value: 'casual-outing', label: 'Casual Outing' }
+        ]
+    },
+
     features: {
-        type: 'multi-select',
+        type: 'checkboxes',
         label: 'Features',
-        collapsible: true,
-        optional: true,
+        width: 'full',
         options: [
-            { value: 'Vintage', label: 'Vintage' },
-            { value: 'Designer', label: 'Designer' },
-            { value: 'Limited Edition', label: 'Limited Edition' },
-            { value: 'Handmade', label: 'Handmade' },
-            { value: 'Sustainable', label: 'Sustainable / Eco' },
-            { value: 'Waterproof', label: 'Waterproof' },
-            { value: 'Breathable', label: 'Breathable' },
-            { value: 'Reversible', label: 'Reversible' },
-            { value: 'Wrinkle-free', label: 'Wrinkle-free' },
-            { value: 'Quick-dry', label: 'Quick-dry' }
+            { value: 'sustainable', label: 'Sustainable/Eco-Friendly' },
+            { value: 'handmade', label: 'Handmade' },
+            { value: 'designer', label: 'Designer' },
+            { value: 'limited-edition', label: 'Limited Edition' },
+            { value: 'waterproof', label: 'Waterproof' },
+            { value: 'breathable', label: 'Breathable' },
+            { value: 'reversible', label: 'Reversible' },
+            { value: 'wrinkle-free', label: 'Wrinkle-Free' },
+            { value: 'quick-dry', label: 'Quick Dry' },
+            { value: 'plus-size', label: 'Plus Size Available' }
         ]
-    },
-
-    // Seller Type
-    sellerType: {
-        type: 'radio',
-        label: 'Seller Type',
-        collapsible: true,
-        options: [
-            { value: '', label: 'All' },
-            { value: 'private', label: 'Private Seller' },
-            { value: 'boutique', label: 'Boutique / Store' }
-        ]
-    },
-
-    // Location
-    location: {
-        type: 'text',
-        label: 'Location',
-        placeholder: 'e.g., București, Cluj-Napoca',
-        optional: true
     }
 };
-
-// Export
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = fashionFilterSchema;
-}
-
-if (typeof window !== 'undefined') {
-    window.fashionFilterSchema = fashionFilterSchema;
-}
