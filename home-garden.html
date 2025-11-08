@@ -921,13 +921,15 @@
 
                 video.setAttribute('playsinline', '');
                 video.setAttribute('webkit-playsinline', '');
-                video.muted = true;
+                
+                // On mobile, start unmuted for autoplay; on desktop, start muted
+                video.muted = !isMobile;
                 
                 // Force iOS to load video metadata
                 video.load();
 
                 const showFirstFrame = () => {
-                    video.muted = true;
+                    // Keep the mute state set above
                     const playPromise = video.play();
                     if (playPromise && typeof playPromise.then === 'function') {
                         playPromise.then(() => {
@@ -961,7 +963,7 @@
                     video.addEventListener('loadeddata', showFirstFrame, { once: true });
                 }
 
-                let userMutedPreference = false;
+                let userMutedPreference = !isMobile; // Start unmuted on mobile, muted on desktop
 
                 const applyMuteState = (muted) => {
                     video.muted = muted;
