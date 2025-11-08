@@ -1016,6 +1016,53 @@
             updateNavAuthUI();
             initVideos();
             window.setTimeout(applyFeatherIcons, 100);
+
+            // iOS Safari: Collapsible navigation bar
+            const isIOSSafari = /iPhone|iPad|iPod/.test(navigator.userAgent) && 
+                               /Safari/.test(navigator.userAgent) && 
+                               !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+            
+            if (isIOSSafari) {
+                const navBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
+                
+                // Remove nav bar border for seamless look
+                navBar.style.border = 'none';
+                
+                // Make nav bar narrower to fit toggle button
+                navBar.style.right = '40px'; // Leave 40px for toggle button
+                
+                // Initially collapse the nav bar
+                navBar.style.transform = 'translateX(calc(100% + 40px))'; // Slide completely off-screen
+                navBar.style.transition = 'transform 0.3s ease';
+                
+                // Create toggle button that matches nav bar height and style
+                const toggleBtn = document.createElement('button');
+                toggleBtn.id = 'nav-toggle';
+                toggleBtn.className = 'fixed bottom-0 z-50 bg-white dark:bg-dark-100 flex items-center justify-center transition-all duration-300';
+                toggleBtn.style.cssText = 'right: 0; width: 40px; height: 64px; border: none;'; // Match nav bar height, no border
+                toggleBtn.innerHTML = '<i data-feather="chevron-left" class="h-5 w-5 text-gray-700 dark:text-dark-600"></i>';
+                
+                let navExpanded = false;
+                
+                toggleBtn.addEventListener('click', () => {
+                    navExpanded = !navExpanded;
+                    
+                    if (navExpanded) {
+                        // Expand nav bar
+                        navBar.style.transform = 'translateX(0)';
+                        toggleBtn.querySelector('i').setAttribute('data-feather', 'chevron-right');
+                    } else {
+                        // Collapse nav bar
+                        navBar.style.transform = 'translateX(calc(100% + 40px))';
+                        toggleBtn.querySelector('i').setAttribute('data-feather', 'chevron-left');
+                    }
+                    
+                    feather.replace();
+                });
+                
+                document.body.appendChild(toggleBtn);
+                feather.replace();
+            }
         });
 
         applyFeatherIcons();

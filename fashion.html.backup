@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Fashion - VidX</title>
+    <title>Automotive - VidX</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#6366f1">
@@ -204,23 +204,10 @@
             left: 0;
             right: 0;
             padding: 1.5rem;
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); /* Account for Safari nav bar */
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
             z-index: 5;
             pointer-events: none; /* Allow clicks to pass through overlay */
-        }
-
-        /* Mobile: Add padding for bottom nav */
-        @media (max-width: 1023px) {
-            .video-overlay {
-                padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); /* 5rem = 80px for nav bar + 1.5rem padding */
-            }
-        }
-
-        /* Desktop: Normal padding */
-        @media (min-width: 1024px) {
-            .video-overlay {
-                padding-bottom: 1.5rem;
-            }
         }
         
         .video-overlay a,
@@ -236,26 +223,11 @@
     <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 hidden lg:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center space-x-8">
+                <div class="flex items-center">
                     <a href="index.html" class="flex-shrink-0 flex items-center">
                         <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-8 w-8"></i>
                         <span class="ml-2 text-xl font-bold text-gray-900 dark:text-dark-600">VidX</span>
                     </a>
-                    <!-- Category Quick Links in Header (Desktop Only) -->
-                    <div class="hidden md:flex items-center space-x-2">
-                        <a href="automotive.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
-                            Automotive
-                        </a>
-                        <a href="electronics.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
-                            Electronics
-                        </a>
-                        <a href="fashion.html" class="px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200 rounded-md">
-                            Fashion
-                        </a>
-                        <a href="index.html" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200 rounded-md transition">
-                            Home & Garden
-                        </a>
-                    </div>
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="upload.html" class="bg-indigo-600 dark:bg-indigo-500 text-white h-7 sm:h-8 px-3 sm:px-4 rounded-full flex items-center hover:bg-indigo-700 dark:hover:bg-indigo-600 transition text-sm sm:text-base whitespace-nowrap">
@@ -276,31 +248,60 @@
         </div>
     </nav>
 
-    <!-- Mobile Bottom Navigation Menu (Mobile Only) -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-100 border-t border-gray-200 dark:border-dark-300 z-40" style="padding-bottom: env(safe-area-inset-bottom);">
-        <div class="flex justify-around items-center h-16">
-            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="home" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Home</span>
-            </a>
-            <a href="search-fashion.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="sliders" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Filters</span>
-            </a>
-            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="heart" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Favourites</span>
-            </a>
-            <a href="upload.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="plus-circle" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Upload</span>
-            </a>
-            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                <i data-feather="message-circle" class="h-5 w-5 mb-1"></i>
-                <span class="text-xs">Messages</span>
-            </a>
-        </div>
+    <!-- Vertical Navigation Buttons (Left Edge) -->
+    <div class="fixed left-0 top-1/2 -translate-y-1/2 z-50 flex flex-col" style="gap: 2px;">
+        <!-- Home Button -->
+        <a href="index.html" id="vertical-home-btn" class="bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 8px 0 0;">
+            <div class="relative flex items-center justify-center">
+                <i data-feather="home" class="h-5 w-5 sm:h-6 sm:w-6"></i>
+            </div>
+        </a>
+        
+        <!-- Filter Button -->
+        <a href="search.html" id="vertical-filter-btn" class="bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 0 8px 0;">
+            <div class="relative flex items-center justify-center">
+                <i data-feather="sliders" class="h-5 w-5 sm:h-6 sm:w-6" style="transform: rotate(90deg);"></i>
+                <span id="floating-badge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center"></span>
+            </div>
+        </a>
     </div>
+
+    <style>
+        #vertical-home-btn,
+        #vertical-filter-btn {
+            /* Mobile: 3:4 aspect ratio, compact */
+            width: 36px;
+            height: 48px;
+        }
+        
+        @media (min-width: 640px) {
+            /* Desktop: slightly larger with text */
+            #vertical-home-btn,
+            #vertical-filter-btn {
+                width: 44px;
+                height: 100px;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem 0.5rem;
+            }
+            #vertical-home-btn::after {
+                content: 'HOME';
+                font-size: 0.625rem;
+                font-weight: 500;
+                letter-spacing: 0.05em;
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+            }
+            #vertical-filter-btn::after {
+                content: 'FILTER';
+                font-size: 0.625rem;
+                font-weight: 500;
+                letter-spacing: 0.05em;
+                writing-mode: vertical-rl;
+                transform: rotate(180deg);
+            }
+        }
+    </style>
 
     <!-- Hidden Filters (keeping for backward compatibility) -->
     <div class="hidden">
@@ -1016,53 +1017,6 @@
             updateNavAuthUI();
             initVideos();
             window.setTimeout(applyFeatherIcons, 100);
-
-            // iOS Safari: Collapsible navigation bar
-            const isIOSSafari = /iPhone|iPad|iPod/.test(navigator.userAgent) && 
-                               /Safari/.test(navigator.userAgent) && 
-                               !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
-            
-            if (isIOSSafari) {
-                const navBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
-                
-                // Remove nav bar border for seamless look
-                navBar.style.border = 'none';
-                
-                // Make nav bar narrower to fit toggle button
-                navBar.style.right = '40px'; // Leave 40px for toggle button
-                
-                // Initially collapse the nav bar
-                navBar.style.transform = 'translateX(calc(100% + 40px))'; // Slide completely off-screen
-                navBar.style.transition = 'transform 0.3s ease';
-                
-                // Create toggle button that matches nav bar height and style
-                const toggleBtn = document.createElement('button');
-                toggleBtn.id = 'nav-toggle';
-                toggleBtn.className = 'fixed bottom-0 z-50 bg-white dark:bg-dark-100 flex items-center justify-center transition-all duration-300';
-                toggleBtn.style.cssText = 'right: 0; width: 40px; height: 64px; border: none;'; // Match nav bar height, no border
-                toggleBtn.innerHTML = '<i data-feather="chevron-left" class="h-5 w-5 text-gray-700 dark:text-dark-600"></i>';
-                
-                let navExpanded = false;
-                
-                toggleBtn.addEventListener('click', () => {
-                    navExpanded = !navExpanded;
-                    
-                    if (navExpanded) {
-                        // Expand nav bar
-                        navBar.style.transform = 'translateX(0)';
-                        toggleBtn.querySelector('i').setAttribute('data-feather', 'chevron-right');
-                    } else {
-                        // Collapse nav bar
-                        navBar.style.transform = 'translateX(calc(100% + 40px))';
-                        toggleBtn.querySelector('i').setAttribute('data-feather', 'chevron-left');
-                    }
-                    
-                    feather.replace();
-                });
-                
-                document.body.appendChild(toggleBtn);
-                feather.replace();
-            }
         });
 
         applyFeatherIcons();

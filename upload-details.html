@@ -181,12 +181,17 @@
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="make" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Make</label>
-                            <input type="text" id="make" name="make" placeholder="e.g., Volkswagen" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label for="make" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Make *</label>
+                            <select id="make" name="make" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                <option value="">Select make</option>
+                            </select>
                         </div>
                         <div>
-                            <label for="model" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Model</label>
-                            <input type="text" id="model" name="model" placeholder="e.g., Transporter" class="mt-1 block w-full border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <label for="model" class="block text-sm font-medium text-gray-700 dark:text-dark-500">Model <span class="text-gray-500" id="model-optional-label"></span></label>
+                            <select id="model" name="model" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" disabled>
+                                <option value="">Select make first</option>
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-dark-400">Select a make to see available models</p>
                         </div>
                     </div>
 
@@ -239,6 +244,63 @@
     <script type="module" src="components/user-dropdown.js"></script>
     <script>
         feather.replace();
+
+        // Car makes and models data
+        const carMakes = [
+            'Abarth', 'Acura', 'Aiways', 'Aixam', 'Alfa Romeo', 'Aro', 'Aston Martin', 'Audi', 'Austin',
+            'Baic', 'Bentley', 'BMW', 'Bugatti', 'Buick', 'Cadillac', 'Chery', 'Chevrolet', 'Chrysler',
+            'Citroen', 'Comarth', 'Cupra', 'Dacia', 'Daewoo', 'Daihatsu', 'DFSK', 'Dodge', 'Dongwei',
+            'DS Automobiles', 'Ferrari', 'Fiat', 'Fisker', 'Ford', 'Forthing', 'Geely', 'GMC', 'Honda',
+            'Hummer', 'Hyundai', 'Ineos', 'Infiniti', 'Isuzu', 'JAC', 'Jaguar', 'Jeep', 'KG Mobility',
+            'Kia', 'Lada', 'Lamborghini', 'Lancia', 'Land Rover', 'Lexus', 'Ligier', 'Lincoln', 'Lotus',
+            'Lucid', 'Lynk&Co', 'Mahindra', 'Maserati', 'Mazda', 'McLaren', 'Maybach', 'Mercedes-Benz',
+            'MG', 'Microlino', 'Mini', 'Mitsubishi', 'Microcar', 'Morgan', 'Nio', 'Nissan', 'Opel',
+            'Peugeot', 'Plymouth', 'Polestar', 'Pontiac', 'Porsche', 'Renault', 'Rolls-Royce', 'Relive',
+            'Rover', 'Saab', 'Seat', 'Seres', 'Skoda', 'Smart', 'SsangYong', 'Skywell', 'Subaru',
+            'Suzuki', 'SWM', 'Tesla', 'Tazzari', 'Toyota', 'Trabant', 'Triumph', 'Vauxhall',
+            'Volkswagen', 'Volvo', 'Weismann', 'XEV', 'Xpeng', 'Zeekr', 'Other'
+        ];
+
+        const carModels = {
+            'Audi': ['A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'Q2', 'Q3', 'Q4 e-tron', 'Q5', 'Q7', 'Q8', 'TT', 'R8', 'e-tron GT'],
+            'BMW': ['1 Series', '2 Series', '3 Series', '4 Series', '5 Series', '6 Series', '7 Series', '8 Series', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'Z4', 'i3', 'i4', 'iX', 'iX3'],
+            'Mercedes-Benz': ['A-Class', 'B-Class', 'C-Class', 'E-Class', 'S-Class', 'CLA', 'CLS', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS', 'G-Class', 'EQA', 'EQB', 'EQC', 'EQE', 'EQS'],
+            'Volkswagen': ['Polo', 'Golf', 'Jetta', 'Passat', 'Arteon', 'Tiguan', 'Touareg', 'T-Roc', 'T-Cross', 'ID.3', 'ID.4', 'ID.5', 'ID.Buzz', 'Transporter', 'Caddy', 'Amarok'],
+            'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Mustang', 'Kuga', 'Puma', 'EcoSport', 'Explorer', 'Edge', 'Ranger', 'F-150', 'Bronco', 'Mustang Mach-E'],
+            'Toyota': ['Yaris', 'Corolla', 'Camry', 'Avalon', 'C-HR', 'RAV4', 'Highlander', 'Land Cruiser', '4Runner', 'Tacoma', 'Tundra', 'Prius', 'Mirai', 'bZ4X'],
+            'Honda': ['Civic', 'Accord', 'CR-V', 'HR-V', 'Pilot', 'Passport', 'Ridgeline', 'Odyssey', 'Fit', 'Insight', 'e'],
+            'Nissan': ['Micra', 'Sentra', 'Altima', 'Maxima', 'Juke', 'Qashqai', 'X-Trail', 'Murano', 'Pathfinder', 'Armada', 'Frontier', 'Titan', 'GT-R', 'Z', 'Leaf', 'Ariya'],
+            'Mazda': ['Mazda2', 'Mazda3', 'Mazda6', 'CX-3', 'CX-30', 'CX-5', 'CX-50', 'CX-60', 'CX-90', 'MX-5', 'MX-30'],
+            'Hyundai': ['i10', 'i20', 'i30', 'Elantra', 'Sonata', 'Kona', 'Tucson', 'Santa Fe', 'Palisade', 'Ioniq', 'Ioniq 5', 'Ioniq 6'],
+            'Kia': ['Picanto', 'Rio', 'Ceed', 'Forte', 'Stinger', 'Seltos', 'Sportage', 'Sorento', 'Telluride', 'Niro', 'EV6', 'EV9'],
+            'Renault': ['Clio', 'Megane', 'Kadjar', 'Captur', 'Arkana', 'Koleos', 'Talisman', 'Twingo', 'Zoe', 'Megane E-Tech'],
+            'Peugeot': ['108', '208', '308', '408', '508', '2008', '3008', '5008', 'Rifter', 'e-208', 'e-2008'],
+            'Citroen': ['C3', 'C4', 'C5 Aircross', 'Berlingo', 'SpaceTourer', 'e-C4'],
+            'Skoda': ['Fabia', 'Scala', 'Octavia', 'Superb', 'Kamiq', 'Karoq', 'Kodiaq', 'Enyaq'],
+            'Seat': ['Ibiza', 'Leon', 'Tarraco', 'Arona', 'Ateca'],
+            'Opel': ['Corsa', 'Astra', 'Insignia', 'Crossland', 'Grandland', 'Mokka', 'Combo'],
+            'Fiat': ['500', 'Panda', 'Tipo', '500X', '500L', 'Ducato'],
+            'Alfa Romeo': ['Giulia', 'Stelvio', 'Tonale'],
+            'Jeep': ['Renegade', 'Compass', 'Cherokee', 'Grand Cherokee', 'Wrangler', 'Gladiator', 'Avenger'],
+            'Volvo': ['XC40', 'XC60', 'XC90', 'V60', 'V90', 'S60', 'S90', 'C40', 'EX30', 'EX90'],
+            'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Cybertruck', 'Roadster'],
+            'Porsche': ['911', '718 Boxster', '718 Cayman', 'Panamera', 'Macan', 'Cayenne', 'Taycan'],
+            'Lexus': ['CT', 'IS', 'ES', 'GS', 'LS', 'UX', 'NX', 'RX', 'LX', 'LC'],
+            'Mini': ['Cooper', 'Countryman', 'Clubman', 'Convertible', 'Electric'],
+            'Land Rover': ['Defender', 'Discovery', 'Discovery Sport', 'Range Rover Evoque', 'Range Rover Velar', 'Range Rover Sport', 'Range Rover'],
+            'Jaguar': ['XE', 'XF', 'XJ', 'F-Type', 'E-Pace', 'F-Pace', 'I-Pace'],
+            'Subaru': ['Impreza', 'Legacy', 'Outback', 'Forester', 'Crosstrek', 'Ascent', 'BRZ', 'WRX'],
+            'Mitsubishi': ['Mirage', 'Lancer', 'Eclipse Cross', 'Outlander', 'Pajero', 'L200'],
+            'Suzuki': ['Swift', 'Baleno', 'Vitara', 'S-Cross', 'Jimny', 'Ignis'],
+            'Dacia': ['Sandero', 'Logan', 'Duster', 'Jogger', 'Spring'],
+            'Chevrolet': ['Spark', 'Malibu', 'Camaro', 'Corvette', 'Trax', 'Equinox', 'Traverse', 'Tahoe', 'Suburban', 'Silverado'],
+            'Dodge': ['Charger', 'Challenger', 'Durango'],
+            'Chrysler': ['300', 'Pacifica'],
+            'Buick': ['Encore', 'Envision', 'Enclave'],
+            'Cadillac': ['CT4', 'CT5', 'XT4', 'XT5', 'XT6', 'Escalade', 'Lyriq'],
+            'GMC': ['Terrain', 'Acadia', 'Yukon', 'Sierra'],
+            'Other': []
+        };
 
         // Theme toggle
         const themeToggle = document.getElementById('theme-toggle');
@@ -294,10 +356,84 @@
         categorySelect.addEventListener('change', () => {
             if (categorySelect.value === 'automotive') {
                 automotiveFields.classList.remove('hidden');
+                // Populate make dropdown when automotive is selected
+                populateMakeDropdown();
             } else {
                 automotiveFields.classList.add('hidden');
             }
         });
+
+        // Populate make dropdown
+        function populateMakeDropdown() {
+            const makeSelect = document.getElementById('make');
+            if (makeSelect && makeSelect.options.length === 1) { // Only populate if not already done
+                carMakes.forEach(make => {
+                    const option = document.createElement('option');
+                    option.value = make;
+                    option.textContent = make;
+                    makeSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Handle make selection to populate models
+        const makeSelect = document.getElementById('make');
+        const modelSelect = document.getElementById('model');
+        const modelOptionalLabel = document.getElementById('model-optional-label');
+        
+        if (makeSelect && modelSelect) {
+            makeSelect.addEventListener('change', () => {
+                const selectedMake = makeSelect.value;
+                modelSelect.innerHTML = '';
+                
+                if (selectedMake === 'Other') {
+                    // For "Other" make, model is not required and not applicable
+                    modelSelect.innerHTML = '<option value="">Not applicable</option>';
+                    modelSelect.disabled = true;
+                    modelSelect.removeAttribute('required');
+                    modelOptionalLabel.textContent = '(not applicable)';
+                } else if (selectedMake && carModels[selectedMake]) {
+                    // Make selected with models defined
+                    modelSelect.disabled = false;
+                    const models = carModels[selectedMake];
+                    
+                    if (models.length === 0) {
+                        // Make has no models
+                        modelSelect.innerHTML = '<option value="">Not applicable</option>';
+                        modelSelect.disabled = true;
+                        modelSelect.removeAttribute('required');
+                        modelOptionalLabel.textContent = '(not applicable)';
+                    } else {
+                        // Populate with models
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Select model';
+                        modelSelect.appendChild(defaultOption);
+                        
+                        models.forEach(model => {
+                            const option = document.createElement('option');
+                            option.value = model;
+                            option.textContent = model;
+                            modelSelect.appendChild(option);
+                        });
+                        modelSelect.setAttribute('required', 'required');
+                        modelOptionalLabel.textContent = '*';
+                    }
+                } else if (selectedMake) {
+                    // Make selected but no models defined - allow "Other"
+                    modelSelect.disabled = false;
+                    modelSelect.innerHTML = '<option value="">Select model</option><option value="Other">Other</option>';
+                    modelSelect.removeAttribute('required');
+                    modelOptionalLabel.textContent = '(optional)';
+                } else {
+                    // No make selected
+                    modelSelect.innerHTML = '<option value="">Select make first</option>';
+                    modelSelect.disabled = true;
+                    modelSelect.removeAttribute('required');
+                    modelOptionalLabel.textContent = '';
+                }
+            });
+        }
 
         // Load upload data from previous step
         try {
