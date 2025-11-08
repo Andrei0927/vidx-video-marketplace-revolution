@@ -204,10 +204,23 @@
             left: 0;
             right: 0;
             padding: 1.5rem;
-            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); /* Account for Safari nav bar */
             background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
             z-index: 5;
             pointer-events: none; /* Allow clicks to pass through overlay */
+        }
+
+        /* Mobile: Add padding for bottom nav */
+        @media (max-width: 1023px) {
+            .video-overlay {
+                padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); /* 5rem = 80px for nav bar + 1.5rem padding */
+            }
+        }
+
+        /* Desktop: Normal padding */
+        @media (min-width: 1024px) {
+            .video-overlay {
+                padding-bottom: 1.5rem;
+            }
         }
         
         .video-overlay a,

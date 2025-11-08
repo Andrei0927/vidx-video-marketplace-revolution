@@ -64,40 +64,34 @@
         </div>
     </nav>
 
-    <!-- Vertical Home Button (Left Edge) -->
-    <a href="index.html" id="vertical-home-btn" class="fixed left-0 top-1/2 -translate-y-1/2 z-50 bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center justify-center" style="border-radius: 0 8px 8px 0;">
-        <div class="relative flex items-center justify-center">
-            <i data-feather="home" class="h-5 w-5 sm:h-6 sm:w-6"></i>
+    <!-- Mobile Bottom Navigation Menu (Mobile Only) -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-100 border-t border-gray-200 dark:border-dark-300 z-40" style="padding-bottom: env(safe-area-inset-bottom);">
+        <div class="flex justify-around items-center h-16">
+            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i data-feather="home" class="h-5 w-5 mb-1"></i>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="search.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i data-feather="sliders" class="h-5 w-5 mb-1"></i>
+                <span class="text-xs">Filters</span>
+            </a>
+            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i data-feather="heart" class="h-5 w-5 mb-1"></i>
+                <span class="text-xs">Favourites</span>
+            </a>
+            <a href="upload.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i data-feather="plus-circle" class="h-5 w-5 mb-1"></i>
+                <span class="text-xs">Upload</span>
+            </a>
+            <a href="index.html" class="flex flex-col items-center justify-center flex-1 py-2 text-gray-600 dark:text-dark-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i data-feather="message-circle" class="h-5 w-5 mb-1"></i>
+                <span class="text-xs">Messages</span>
+            </a>
         </div>
-    </a>
-
-    <style>
-        #vertical-home-btn {
-            width: 36px;
-            height: 48px;
-        }
-        
-        @media (min-width: 640px) {
-            #vertical-home-btn {
-                width: 44px;
-                height: 100px;
-                flex-direction: column;
-                gap: 0.5rem;
-                padding: 1rem 0.5rem;
-            }
-            #vertical-home-btn::after {
-                content: 'HOME';
-                font-size: 0.625rem;
-                font-weight: 500;
-                letter-spacing: 0.05em;
-                writing-mode: vertical-rl;
-                transform: rotate(180deg);
-            }
-        }
-    </style>
+    </div>
 
     <!-- Ad Details Container -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Video/Images Section -->
             <div>
