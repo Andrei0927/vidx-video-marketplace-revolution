@@ -336,22 +336,39 @@
             }
         };
 
+        // Detect iOS devices (Vanta.js THREE.js doesn't work well on iOS)
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
         const updateVantaBackground = (isDark) => {
-            VANTA.NET({
-                el: "#vanta-bg",
-                mouseControls: true,
-                touchControls: true,
-                gyroControls: false,
-                minHeight: 200.00,
-                minWidth: 200.00,
-                scale: 1.00,
-                scaleMobile: 1.00,
-                color: 0x6366f1,
-                backgroundColor: isDark ? 0x18191A : 0xf8fafc,
-                points: 10.00,
-                maxDistance: 20.00,
-                spacing: 15.00
-            });
+            // Skip Vanta on iOS - use gradient instead
+            if (isIOS) {
+                const bgEl = document.getElementById('vanta-bg');
+                if (bgEl) {
+                    bgEl.style.background = isDark 
+                        ? 'linear-gradient(135deg, #18191A 0%, #242526 50%, #18191A 100%)'
+                        : 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f8fafc 100%)';
+                }
+                return;
+            }
+
+            // Desktop: Use Vanta.js animation
+            if (typeof VANTA !== 'undefined' && VANTA.NET) {
+                VANTA.NET({
+                    el: "#vanta-bg",
+                    mouseControls: true,
+                    touchControls: true,
+                    gyroControls: false,
+                    minHeight: 200.00,
+                    minWidth: 200.00,
+                    scale: 1.00,
+                    scaleMobile: 1.00,
+                    color: 0x6366f1,
+                    backgroundColor: isDark ? 0x18191A : 0xf8fafc,
+                    points: 10.00,
+                    maxDistance: 20.00,
+                    spacing: 15.00
+                });
+            }
         };
 
         // Initialize theme
