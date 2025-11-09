@@ -1147,7 +1147,7 @@ def get_upload_url():
 - [x] **Day 1 End**: Add upload flow auth check (15 min) ✅ COMPLETED
 - [x] **Day 2**: Implement IndexedDB storage manager (4-6 hours) ✅ COMPLETED
 - [x] **Day 3**: Add image resizing and validation (3-4 hours) ✅ COMPLETED
-- [ ] **Day 3**: Add draft resume UI (1-2 hours)
+- [x] **Day 3**: Add draft resume UI (1-2 hours) ✅ COMPLETED
 - [x] **Day 3**: Fix Vanta.js memory leak (30 min) ✅ COMPLETED
 
 ### Week 2: Data & Backend (Requires Deployment)
@@ -1164,9 +1164,9 @@ def get_upload_url():
 
 ### Week 3: UX & Performance (Local + Deploy)
 - [ ] **Day 1**: Add video generation loading states (2-3 hours)
-- [ ] **Day 1**: Add empty states to category pages (1-2 hours)
+- [x] **Day 1**: Add empty states to category pages (1-2 hours) ✅ COMPLETED
 - [ ] **Day 2**: Add share fallback modal (2-3 hours)
-- [ ] **Day 2**: Add confirmation dialogs (2-3 hours)
+- [x] **Day 2**: Add confirmation dialogs (2-3 hours) ✅ COMPLETED
 - [ ] **Day 3**: Bundle Tailwind CSS (2-3 hours)
 - [ ] **Day 3**: Consolidate Feather icons (1-2 hours)
 - [ ] **Day 3**: Fix Vanta.js memory leak (30 min)
