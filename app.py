@@ -337,6 +337,109 @@ def reset_password_request():
         'message': 'Password reset code sent to your email'
     }), 200
 
+# ==================================
+# VIDEO GENERATION ENDPOINTS
+# ==================================
+
+@app.route('/api/video/generate-script', methods=['POST'])
+@require_auth
+def api_generate_script():
+    """Generate AI script from product description"""
+    try:
+        from video_pipeline import generate_script
+        
+        data = request.json
+        description = data.get('description', '')
+        title = data.get('title', '')
+        category = data.get('category', 'general')
+        price = data.get('price', 0)
+        details = data.get('details', {})
+        
+        if not description or not title:
+            return jsonify({'error': 'Description and title required'}), 400
+        
+        result = generate_script(description, title, category, price, details)
+        
+        return jsonify({
+            'success': True,
+            'script': result['script'],
+            'estimatedDuration': result['estimated_duration'],
+            'wordCount': result['word_count'],
+            'cost': result['cost']
+        })
+    
+    except Exception as e:
+        print(f"Script generation error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/video/generate', methods=['POST'])
+@require_auth
+def api_generate_video():
+    """Generate complete video from images and description"""
+    try:
+        from video_pipeline import generate_video_pipeline
+        import tempfile
+        import os
+        
+        # Get form data
+        description = request.form.get('description', '')
+        title = request.form.get('title', '')
+        category = request.form.get('category', 'general')
+        price = float(request.form.get('price', 0))
+        voice = request.form.get('voice', 'alloy')
+        
+        # Get uploaded images
+        images = request.files.getlist('images')
+        
+        if not images:
+            return jsonify({'error': 'At least one image required'}), 400
+        
+        if not description or not title:
+            return jsonify({'error': 'Description and title required'}), 400
+        
+        # Save images to temp files
+        temp_image_paths = []
+        try:
+            for img in images:
+                temp_img = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False)
+                img.save(temp_img.name)
+                temp_image_paths.append(temp_img.name)
+            
+            # Run pipeline
+            result = generate_video_pipeline(
+                images=temp_image_paths,
+                description=description,
+                title=title,
+                category=category,
+                price=price,
+                voice=voice
+            )
+            
+            return jsonify({
+                'success': True,
+                'videoUrl': result['video_url'],
+                'script': result['script'],
+                'duration': result['duration'],
+                'cost': result['cost'],
+                'thumbnailUrl': result['thumbnail_url'],
+                'captions': result['captions']
+            })
+        
+        finally:
+            # Cleanup temp image files
+            for temp_path in temp_image_paths:
+                try:
+                    if os.path.exists(temp_path):
+                        os.unlink(temp_path)
+                except Exception as e:
+                    print(f"Cleanup warning: {e}")
+    
+    except Exception as e:
+        print(f"Video generation error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
