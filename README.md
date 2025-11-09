@@ -81,6 +81,11 @@ OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx
 
 ## 📚 Documentation
 
+### 🚀 Deployment (NEW!)
+- **[DEPLOYMENT_GUIDE_CORRECTED.md](./docs/DEPLOYMENT_GUIDE_CORRECTED.md)** - Production deployment guide (Azure + R2) ⭐
+- **[DEPLOYMENT_STATUS.md](./docs/DEPLOYMENT_STATUS.md)** - Interactive deployment tracker
+- **[VIDEO_PIPELINE_COMPARISON.md](./docs/audits/VIDEO_PIPELINE_COMPARISON.md)** - Cost analysis & stack comparison
+
 ### Core Guides
 - **[VIDEO_GENERATION_QUICKSTART.md](./docs/guides/VIDEO_GENERATION_QUICKSTART.md)** - Quick start for video generation
 - **[OPENAI_VIDEO_PIPELINE.md](./docs/guides/OPENAI_VIDEO_PIPELINE.md)** - Complete pipeline documentation
@@ -93,9 +98,9 @@ OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx
 - **[CATEGORY_ARCHITECTURE.md](./docs/architecture/CATEGORY_ARCHITECTURE.md)** - Category system design
 
 ### Audits & Roadmap
+- **[COMPREHENSIVE_WORK_REPORT.md](./docs/COMPREHENSIVE_WORK_REPORT.md)** - Complete 48-hour development timeline
 - **[AUDIT_RECOMMENDATIONS.md](./docs/audits/AUDIT_RECOMMENDATIONS.md)** - Platform audit findings
 - **[GO_LIVE_ROADMAP.md](./docs/audits/GO_LIVE_ROADMAP.md)** - Production deployment roadmap
-- **[VIDEO_PIPELINE_COMPARISON.md](./docs/audits/VIDEO_PIPELINE_COMPARISON.md)** - Video solution comparison
 
 ## 🛠️ Tech Stack
 
@@ -264,25 +269,73 @@ Check for:
 
 ## 🚀 Deployment
 
-### Static Files
+### 📖 Complete Deployment Guide
+
+**IMPORTANT**: We've completed extensive cost analysis and identified the optimal production stack.
+
+**Recommended Architecture**: Azure Container Instances + Cloudflare R2
+
+**Cost**: $0.024/video (98% savings vs Revid.ai)
+
+📚 **Read the guides**:
+- **[DEPLOYMENT_GUIDE_CORRECTED.md](./docs/DEPLOYMENT_GUIDE_CORRECTED.md)** - Step-by-step production deployment ⭐
+- **[DEPLOYMENT_STATUS.md](./docs/DEPLOYMENT_STATUS.md)** - Interactive checklist & progress tracker
+- **[VIDEO_PIPELINE_COMPARISON.md](./docs/audits/VIDEO_PIPELINE_COMPARISON.md)** - Full cost analysis & recommendation rationale
+
+### Deployment Options
+
+**Option A: HuggingFace + Azure Backend** (~$42/month)
+- ✅ Easiest migration (3-4 hours)
+- ✅ Free frontend hosting (current HuggingFace Spaces)
+- ✅ Lowest cost
+- ⚠️ Public repos only
+
+**Option C: Full Azure Migration** (~$47/month)
+- ✅ Production-grade performance
+- ✅ Private repos available
+- ✅ Azure Static Web Apps + CDN
+- ⚠️ Requires GitHub migration (5-6 hours)
+
+### Quick Deploy Steps
+
+1. **Choose deployment option** (see DEPLOYMENT_STATUS.md)
+2. **Setup Azure account** (get $200 free credit)
+3. **Deploy backend** (Azure Container Instances)
+4. **Configure storage** (Cloudflare R2 - zero egress fees!)
+5. **Update frontend** (API endpoint change)
+6. **Test & launch** 🚀
+
+**Total Time**: 3-6 hours (depending on option)
+
+---
+
+### Legacy Options (Not Recommended)
+
+> ⚠️ **Note**: The original CLOUD_DEPLOYMENT_GUIDE.md recommended Railway + Vercel, but our detailed cost analysis found Azure + Cloudflare R2 to be superior (better performance, lower cost, zero egress fees). Please use DEPLOYMENT_GUIDE_CORRECTED.md instead.
+
+#### Static Files
 Deploy to any static host:
+- HuggingFace Spaces (current)
 - Vercel
 - Netlify
 - GitHub Pages
 - Cloudflare Pages
 
-### Backend
+#### Backend
 Deploy auth server:
+- Azure Container Instances ⭐ (Recommended)
 - Heroku
 - Railway
 - Digital Ocean
 - AWS Lambda
 
-### Database Migration
+#### Database Migration
 For production, migrate from JSON to PostgreSQL:
 ```python
-# See DEV_GUIDE.md for migration script
+# See DEPLOYMENT_GUIDE_CORRECTED.md for migration script
 ```
+
+---
 
 ## 🔒 Security Notes
 
