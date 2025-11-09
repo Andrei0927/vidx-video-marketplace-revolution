@@ -1164,6 +1164,36 @@
         // Engagement features (Like, Favorite, Share) are handled by js/video-card-engagement.js
         // No inline handlers needed - the global component uses event delegation
 
+        // ============================================
+        // Empty State Handler
+        // ============================================
+        function checkForEmptyState() {
+            const videoGrid = document.getElementById('video-grid');
+            const videoCards = videoGrid.querySelectorAll('.video-card');
+            
+            if (videoCards.length === 0) {
+                videoGrid.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center">
+                        <i data-feather="inbox" class="h-24 w-24 text-gray-400 dark:text-dark-400 mb-6"></i>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-2">
+                            No listings yet
+                        </h3>
+                        <p class="text-gray-600 dark:text-dark-400 mb-6 max-w-md">
+                            Be the first to post in this category! Upload your item and reach thousands of potential buyers.
+                        </p>
+                        <a href="upload.html" class="inline-flex items-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                            <i data-feather="plus-circle" class="h-5 w-5 mr-2"></i>
+                            Create First Listing
+                        </a>
+                    </div>
+                `;
+                feather.replace();
+            }
+        }
+
+        // Check for empty state on load
+        checkForEmptyState();
+
         applyFeatherIcons();
         window.addEventListener('load', registerServiceWorker);
     </script>

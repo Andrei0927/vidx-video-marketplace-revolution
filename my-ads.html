@@ -83,6 +83,7 @@
         import authService from './js/auth-service.js';
     </script>
     <script src="/js/dark-mode.js"></script>
+    <script src="/js/confirmation-modal.js"></script>
     <script>
         // Feather icons
         if (window.feather && typeof feather.replace === 'function') {
@@ -226,11 +227,35 @@
             // Re-render feather icons
             if (window.feather) feather.replace();
             
-            // Handle delete
-            container.querySelector('.delete-ad')?.addEventListener('click', () => {
-                if (confirm('Delete this ad? (demo)')) {
-                    alert('Ad deleted (demo)');
-                    container.innerHTML = '<p class="text-gray-500 dark:text-dark-400">No ads yet. <a href="upload.html" class="text-indigo-600 dark:text-indigo-400 hover:underline">Create your first ad</a></p>';
+            // Handle delete with confirmation modal
+            container.querySelector('.delete-ad')?.addEventListener('click', async () => {
+                const adTitle = ad.title || 'this ad';
+                const confirmed = await ConfirmationModal.confirmDelete(adTitle, 'ad');
+                
+                if (confirmed) {
+                    // Show deleting state
+                    const deleteBtn = container.querySelector('.delete-ad');
+                    const originalText = deleteBtn.textContent;
+                    deleteBtn.disabled = true;
+                    deleteBtn.textContent = 'Deleting...';
+                    
+                    // Simulate deletion (in production, call API)
+                    setTimeout(() => {
+                        // Remove the ad card with animation
+                        container.style.opacity = '0';
+                        container.style.transform = 'scale(0.95)';
+                        container.style.transition = 'all 0.3s ease';
+                        
+                        setTimeout(() => {
+                            container.remove();
+                            
+                            // Check if no ads left
+                            const adsContainer = document.querySelector('.grid');
+                            if (!adsContainer.querySelector('.bg-white, .dark\\:bg-dark-100')) {
+                                adsContainer.innerHTML = '<p class="text-gray-500 dark:text-dark-400 col-span-full text-center py-8">No ads yet. <a href="upload.html" class="text-indigo-600 dark:text-indigo-400 hover:underline">Create your first ad</a></p>';
+                            }
+                        }, 300);
+                    }, 500);
                 }
             });
         })();

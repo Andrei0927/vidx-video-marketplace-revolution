@@ -135,12 +135,20 @@ class UserDropdown extends HTMLElement {
       }
     });
 
-    // Logout handler
+    // Logout handler with confirmation
     this._logoutHandler = async (e) => {
       console.log('[user-dropdown] logout initiated', { event: e });
       e.preventDefault();
       e.stopPropagation();
       
+      // Show confirmation modal
+      const confirmed = await window.ConfirmationModal.confirmLogout();
+      
+      if (!confirmed) {
+        console.log('[user-dropdown] logout cancelled');
+        return;
+      }
+
       // Close menu immediately to provide feedback
       this._hidePortal();
 
