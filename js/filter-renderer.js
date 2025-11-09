@@ -152,7 +152,7 @@ class FilterRenderer {
             }
             // Re-render feather icons for the newly revealed content
             if (typeof feather !== 'undefined') {
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         });
         
@@ -162,7 +162,7 @@ class FilterRenderer {
         // Re-render feather icons
         setTimeout(() => {
             if (typeof feather !== 'undefined') {
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         }, 0);
         
@@ -546,7 +546,7 @@ class FilterRenderer {
 
         // Replace feather icons
         if (window.feather) {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
     }
 

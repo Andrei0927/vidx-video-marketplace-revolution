@@ -38,7 +38,7 @@ const formatPrice = (value) => `€${Number(value).toLocaleString('en-US')}`;
 
 const applyFeatherIcons = () => {
     if (window.feather && typeof window.feather.replace === 'function') {
-        window.feather.replace();
+        window.window.replaceFeatherIcons();
     }
 };
 

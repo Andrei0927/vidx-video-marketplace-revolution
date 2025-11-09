@@ -150,7 +150,7 @@ class VideoCard {
 
         // Replace feather icons
         if (window.feather) {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
 
         // Reinitialize engagement buttons if available

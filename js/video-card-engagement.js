@@ -177,7 +177,7 @@ class VideoCardEngagement {
 
     handleLikeClick(btn) {
         const adId = btn.dataset.adId;
-        // Query for both <i> and <svg> (after feather.replace())
+        // Query for both <i> and <svg> (after window.replaceFeatherIcons())
         const icon = btn.querySelector('i, svg');
 
         if (!icon) {
@@ -215,7 +215,7 @@ class VideoCardEngagement {
 
     handleFavoriteClick(btn) {
         const adId = btn.dataset.adId;
-        // Query for both <i> and <svg> (after feather.replace())
+        // Query for both <i> and <svg> (after window.replaceFeatherIcons())
         const icon = btn.querySelector('i, svg');
         const countDisplay = btn.querySelector('[data-count-display]');
 
@@ -331,13 +331,13 @@ class VideoCardEngagement {
         const originalIcon = btn.innerHTML;
         btn.innerHTML = '<i data-feather="check" class="h-5 w-5 text-green-500"></i>';
         if (window.feather) {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
 
         setTimeout(() => {
             btn.innerHTML = originalIcon;
             if (window.feather) {
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         }, 2000);
     }
@@ -405,7 +405,7 @@ class VideoCardEngagement {
         
         // Replace feather icons
         if (window.feather) {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
         
         // Focus and select the input
@@ -477,7 +477,7 @@ class VideoCardEngagement {
         btn.classList.add('bg-green-600', 'hover:bg-green-700');
         
         if (window.feather) {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
         
         setTimeout(() => {
@@ -485,7 +485,7 @@ class VideoCardEngagement {
             btn.classList.remove('bg-green-600', 'hover:bg-green-700');
             btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
             if (window.feather) {
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         }, 2000);
     }
@@ -505,7 +505,7 @@ class VideoCardEngagement {
         
         document.querySelectorAll('[data-like-btn]').forEach(btn => {
             const adId = btn.dataset.adId;
-            // Query for both <i> and <svg> (after feather.replace())
+            // Query for both <i> and <svg> (after window.replaceFeatherIcons())
             const icon = btn.querySelector('i, svg');
             
             if (!icon) {
@@ -525,7 +525,7 @@ class VideoCardEngagement {
         
         document.querySelectorAll('[data-favorite-btn]').forEach(btn => {
             const adId = btn.dataset.adId;
-            // Query for both <i> and <svg> (after feather.replace())
+            // Query for both <i> and <svg> (after window.replaceFeatherIcons())
             const icon = btn.querySelector('i, svg');
             const countDisplay = btn.querySelector('[data-count-display]');
             
@@ -586,7 +586,7 @@ let videoCardEngagement;
 function initializeEngagement() {
     // Ensure feather icons are rendered first
     if (window.feather) {
-        feather.replace();
+        window.replaceFeatherIcons();
     }
     
     // Small delay to ensure icons are fully rendered

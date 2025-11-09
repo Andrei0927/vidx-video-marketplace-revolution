@@ -118,7 +118,7 @@
             currentRenderer.render();
             
             // Replace feather icons
-            feather.replace();
+            window.replaceFeatherIcons();
             
             currentCategory = category;
         }
@@ -165,7 +165,7 @@
             
             html += '</div>';
             container.innerHTML = html;
-            feather.replace();
+            window.replaceFeatherIcons();
         }
 
         // Remove individual filter
@@ -204,7 +204,7 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadFilters('automotive');
-            feather.replace();
+            window.replaceFeatherIcons();
         });
     </script>
 </body>

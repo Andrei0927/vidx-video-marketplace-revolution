@@ -195,14 +195,14 @@
     <script>
         // Initialize feather icons
         if (window.feather) {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
 
         // Theme toggle
         document.getElementById('theme-toggle').addEventListener('click', function() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.theme = isDark ? 'dark' : 'light';
-            feather.replace();
+            window.replaceFeatherIcons();
         });
 
         // Mobile Favourites link handler
@@ -441,7 +441,7 @@ Immaculate inside and out.`,
             }
             
             // Reinitialize feather icons
-            feather.replace();
+            window.replaceFeatherIcons();
 
             maybeScrollToDescription();
         } else {

@@ -62,7 +62,7 @@ class ConfirmationModal {
 
             // Replace feather icons
             if (window.feather) {
-                window.feather.replace();
+                window.window.replaceFeatherIcons();
             }
 
             // Handle confirm

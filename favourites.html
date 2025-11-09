@@ -107,6 +107,7 @@
     
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="/js/icons.js"></script>
     <script src="js/id-generator.js"></script>
     <script type="module" src="components/auth-modal.js"></script>
     <script type="module" src="components/user-dropdown.js"></script>
@@ -117,7 +118,7 @@
     <script>
         // Feather icons
         if (window.feather && typeof feather.replace === 'function') {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
         
         // Update nav avatar/name
@@ -301,7 +302,7 @@
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 countSpan.textContent = '0 items';
-                feather.replace();
+                window.replaceFeatherIcons();
                 console.log('[FAVOURITES] Showing empty state');
                 return;
             }
@@ -381,7 +382,7 @@
             }).join('');
             
             // Re-apply feather icons
-            feather.replace();
+            window.replaceFeatherIcons();
             
             // Add hover-to-play functionality for video previews
             const videoContainers = document.querySelectorAll('[data-video-container]');

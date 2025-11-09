@@ -77,6 +77,7 @@
     </div>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="/js/icons.js"></script>
     <script type="module" src="components/auth-modal.js"></script>
     <script type="module" src="components/user-dropdown.js"></script>
     <script type="module">
@@ -87,7 +88,7 @@
     <script>
         // Feather icons
         if (window.feather && typeof feather.replace === 'function') {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
         // Update nav avatar/name
         (function updateNavAuthUI(){
@@ -225,7 +226,7 @@
             `;
             
             // Re-render feather icons
-            if (window.feather) feather.replace();
+            if (window.feather) window.replaceFeatherIcons();
             
             // Handle delete with confirmation modal
             container.querySelector('.delete-ad')?.addEventListener('click', async () => {

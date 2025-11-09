@@ -49,6 +49,7 @@
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="/js/icons.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <script src="components/auth-modal.js"></script>
     <script src="js/id-generator.js"></script>
@@ -518,7 +519,7 @@
             });
 
             // Apply feather icons after cards are added
-            if (window.feather) window.feather.replace();
+            if (window.feather) window.window.replaceFeatherIcons();
             
             // Initialize engagement handlers for dynamically loaded cards
             setTimeout(() => {
@@ -703,7 +704,7 @@
             });
 
             // Apply feather icons
-            if (window.feather) window.feather.replace();
+            if (window.feather) window.window.replaceFeatherIcons();
             
             // Initialize engagement handlers for dynamically loaded cards
             setTimeout(() => {
@@ -720,7 +721,7 @@
 
         const applyFeatherIcons = () => {
             if (window.feather && typeof window.feather.replace === 'function') {
-                window.feather.replace();
+                window.window.replaceFeatherIcons();
             }
         };
 
@@ -1230,11 +1231,11 @@
                         toggleBtn.querySelector('i').setAttribute('data-feather', 'chevron-left');
                     }
                     
-                    feather.replace();
+                    window.replaceFeatherIcons();
                 });
                 
                 document.body.appendChild(toggleBtn);
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         });
 
@@ -1263,7 +1264,7 @@
                         </a>
                     </div>
                 `;
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         }
 

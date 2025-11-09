@@ -171,14 +171,14 @@
     <script type="module">
         import videoGenerationService from './js/video-generation-service.js';
         
-        feather.replace();
+        window.replaceFeatherIcons();
 
         // Theme toggle
         const themeToggle = document.getElementById('theme-toggle');
         themeToggle.addEventListener('click', () => {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.theme = isDark ? 'dark' : 'light';
-            feather.replace();
+            window.replaceFeatherIcons();
         });
 
         // User authentication display
@@ -251,7 +251,7 @@
                         </a>
                     </div>
                 `;
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         }
 
@@ -340,7 +340,7 @@
                     </div>
                 </div>
             `;
-            feather.replace();
+            window.replaceFeatherIcons();
         }
 
         function formatMusicLabel(music) {
@@ -486,7 +486,7 @@
         function completeStep(stepId) {
             const step = document.getElementById(stepId);
             step.innerHTML = '<i data-feather="check-circle" class="h-4 w-4 mr-2 text-green-600"></i><span class="text-green-600 dark:text-green-400">Complete</span>';
-            feather.replace();
+            window.replaceFeatherIcons();
         }
 
         async function showSuccess() {
@@ -499,7 +499,7 @@
                     <p class="text-sm text-gray-600 dark:text-dark-400 mb-6">Redirecting to your ad...</p>
                 </div>
             `;
-            feather.replace();
+            window.replaceFeatherIcons();
 
             // Clear draft from IndexedDB
             try {
@@ -528,7 +528,7 @@
                     </button>
                 </div>
             `;
-            feather.replace();
+            window.replaceFeatherIcons();
             document.getElementById('publish-btn').disabled = false;
         }
     </script>

@@ -358,7 +358,7 @@
 
     <!-- Feather Icons -->
     <script>
-        feather.replace();
+        window.replaceFeatherIcons();
     </script>
 
     <!-- Auth Modal Component -->
@@ -460,7 +460,7 @@
         });
 
         // Replace feather icons
-        feather.replace();
+        window.replaceFeatherIcons();
     </script>
 
     <!-- Filter Renderer Scripts -->
@@ -493,7 +493,7 @@
         homeGardenRenderer.render();
 
         // Replace feather icons after rendering
-        setTimeout(() => feather.replace(), 100);
+        setTimeout(() => window.replaceFeatherIcons(), 100);
 
         function updateActiveFilters(filters) {
             const container = document.getElementById('active-filters');
@@ -531,12 +531,12 @@
             }
             
             if (typeof feather !== 'undefined') {
-                feather.replace();
+                window.replaceFeatherIcons();
             }
         }
 
         // Initialize feather icons
-        feather.replace();
+        window.replaceFeatherIcons();
 
         // More categories dropdown toggle
         const moreCategoriesBtn = document.getElementById('more-categories-btn');
@@ -547,7 +547,7 @@
                 e.stopPropagation();
                 moreCategoriesDropdown.classList.toggle('hidden');
                 // Refresh feather icons after dropdown opens
-                setTimeout(() => feather.replace(), 10);
+                setTimeout(() => window.replaceFeatherIcons(), 10);
             });
 
             // Close dropdown when clicking outside

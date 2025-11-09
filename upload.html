@@ -234,7 +234,7 @@
 
     <script type="module" src="components/user-dropdown.js"></script>
     <script>
-        feather.replace();
+        window.replaceFeatherIcons();
 
         // Check authentication - users must be logged in to upload
         const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
@@ -272,7 +272,7 @@
         themeToggle.addEventListener('click', () => {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.theme = isDark ? 'dark' : 'light';
-            feather.replace();
+            window.replaceFeatherIcons();
         });
 
         // User authentication display
@@ -360,7 +360,7 @@
                             </div>
                         </div>
                     `;
-                    feather.replace();
+                    window.replaceFeatherIcons();
                     
                     // Resume button handler
                     document.getElementById('resume-draft-btn').addEventListener('click', async () => {
@@ -396,7 +396,7 @@
                                 </div>
                             `;
                             bannerContainer.appendChild(successMsg);
-                            feather.replace();
+                            window.replaceFeatherIcons();
                             
                             setTimeout(() => {
                                 successMsg.remove();
@@ -450,7 +450,7 @@
                 </div>
             `;
             uploadArea.parentElement.insertBefore(successMsg, uploadArea);
-            feather.replace();
+            window.replaceFeatherIcons();
             
             setTimeout(() => {
                 successMsg.remove();
@@ -667,7 +667,7 @@
                 </div>
             `;
             uploadArea.parentElement.insertBefore(processingMsg, previewSection);
-            feather.replace();
+            window.replaceFeatherIcons();
 
             // Validate all files
             for (const file of fileArray) {
@@ -722,7 +722,7 @@
                     </div>
                 `;
                 uploadArea.parentElement.insertBefore(errorMsg, previewSection);
-                feather.replace();
+                window.replaceFeatherIcons();
                 
                 // Add dismiss handler
                 errorMsg.querySelector('button').addEventListener('click', () => {
@@ -753,7 +753,7 @@
                         </div>
                     `;
                     uploadArea.parentElement.insertBefore(successMsg, previewSection);
-                    feather.replace();
+                    window.replaceFeatherIcons();
                     
                     // Auto-dismiss after 3 seconds
                     setTimeout(() => {
@@ -812,7 +812,7 @@
                     }
 
                     previewContainer.appendChild(previewItem);
-                    feather.replace();
+                    window.replaceFeatherIcons();
                 };
                 reader.readAsDataURL(file);
             });
@@ -866,7 +866,7 @@
             nextBtn.disabled = true;
             const originalText = nextBtn.innerHTML;
             nextBtn.innerHTML = '<i data-feather="loader" class="h-4 w-4 inline animate-spin mr-2"></i>Saving...';
-            feather.replace();
+            window.replaceFeatherIcons();
             
             try {
                 // Prepare upload data
@@ -921,7 +921,7 @@
                 // Restore button state
                 nextBtn.disabled = false;
                 nextBtn.innerHTML = originalText;
-                feather.replace();
+                window.replaceFeatherIcons();
                 
                 // Show error message
                 alert('Error saving upload draft. Please try again.');

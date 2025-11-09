@@ -383,7 +383,7 @@
     <script>
         // Initialize feather icons
         if (window.feather) {
-            feather.replace();
+            window.replaceFeatherIcons();
         }
 
         // Theme toggle
@@ -392,7 +392,7 @@
             themeToggle.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.theme = isDark ? 'dark' : 'light';
-                feather.replace();
+                window.replaceFeatherIcons();
             });
         }
 
@@ -509,7 +509,7 @@
         });
 
         // Replace feather icons after DOM updates
-        setTimeout(() => feather.replace(), 100);
+        setTimeout(() => window.replaceFeatherIcons(), 100);
     </script>
 
     <!-- Filter Renderer Scripts -->
@@ -543,7 +543,7 @@
         automotiveRenderer.render();
 
         // Initialize feather icons for filter renderer
-        setTimeout(() => feather.replace(), 200);
+        setTimeout(() => window.replaceFeatherIcons(), 200);
 
         // More categories dropdown toggle
         const moreCategoriesBtn = document.getElementById('more-categories-btn');
@@ -554,7 +554,7 @@
                 e.stopPropagation();
                 moreCategoriesDropdown.classList.toggle('hidden');
                 // Refresh feather icons after dropdown opens
-                setTimeout(() => feather.replace(), 10);
+                setTimeout(() => window.replaceFeatherIcons(), 10);
             });
 
             // Close dropdown when clicking outside
