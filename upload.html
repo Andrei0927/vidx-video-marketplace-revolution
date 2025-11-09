@@ -232,6 +232,37 @@
     <script>
         feather.replace();
 
+        // Check authentication - users must be logged in to upload
+        const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+        
+        if (!sessionToken || !localStorage.getItem('userName')) {
+            // User not logged in - show auth modal
+            console.log('[Upload] User not authenticated, showing login modal');
+            
+            // Create and show auth modal
+            const authModal = document.createElement('auth-modal');
+            authModal.setAttribute('default-tab', 'login');
+            document.body.appendChild(authModal);
+            
+            // Handle modal close
+            authModal.addEventListener('close', () => {
+                // Check if user is now logged in
+                const newSessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+                if (!newSessionToken) {
+                    // User closed modal without logging in - redirect to home
+                    console.log('[Upload] User cancelled login, redirecting to home');
+                    window.location.href = 'index.html';
+                } else {
+                    // User logged in successfully - reload page to show upload form
+                    console.log('[Upload] User logged in successfully');
+                    window.location.reload();
+                }
+            });
+            
+            // Stop execution of the rest of the page logic
+            throw new Error('Authentication required');
+        }
+
         // Theme toggle
         const themeToggle = document.getElementById('theme-toggle');
         themeToggle.addEventListener('click', () => {

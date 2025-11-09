@@ -374,13 +374,12 @@ class AuthHandler(BaseHTTPRequestHandler):
             
             print(f"🔑 Password reset requested for {email}")
             print(f"   Reset code: {reset_code} (expires in 1 hour)")
+            print(f"   ⚠️  In production, this would be sent via email")
             
-            # In development, return the code in the response
-            # In production, send via email and don't return it
+            # Send success response without exposing the code
+            # In production, the code would be sent via email
             self._send_json({
-                'message': 'If an account exists with this email, a reset code has been sent',
-                'resetCode': reset_code,  # REMOVE IN PRODUCTION
-                'devNote': 'Reset code shown for development only'
+                'message': 'If an account exists with this email, a reset code has been sent'
             })
         else:
             # Still return success even if user not found (security best practice)

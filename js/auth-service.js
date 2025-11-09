@@ -7,27 +7,19 @@ class AuthService {
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         this.baseUrl = 'http://localhost:3001/api/auth';
       } 
-      // If on Hugging Face Spaces, try to use API (you'll need to update this with your Space URL)
-      else if (window.location.hostname.includes('hf.space')) {
-        this.baseUrl = null; // Will use localStorage for now (update with your API endpoint when deployed)
-      }
       else {
-        // For remote/production, use mock/localStorage-based auth
-        this.baseUrl = null; // Will use localStorage for demo
+        // For production/remote deployments, use relative API path (assumes backend is proxied)
+        this.baseUrl = '/api/auth';
       }
     } else {
       this.baseUrl = baseUrl;
     }
     
-    console.log('[AuthService] Initialized with baseUrl:', this.baseUrl || 'localStorage mode');
+    console.log('[AuthService] Initialized with baseUrl:', this.baseUrl);
   }
 
   async register(userData) {
     try {
-      // If no API server (remote deployment), use localStorage
-      if (!this.baseUrl) {
-        return this.registerLocal(userData);
-      }
 
       // Call new auth API
       const response = await fetch(`${this.baseUrl}/register`, {
@@ -57,12 +49,7 @@ class AuthService {
 
   async login(email, password) {
     try {
-      // If no API server (remote deployment), use localStorage
-      if (!this.baseUrl) {
-        return this.loginLocal(email, password);
-      }
-
-      // Call new auth API
+      // Call backend auth API
       const response = await fetch(`${this.baseUrl}/login`, {
         method: 'POST',
         headers: {
@@ -94,11 +81,6 @@ class AuthService {
 
   async logout(sessionToken) {
     try {
-      // If no API server, just clear localStorage
-      if (!this.baseUrl) {
-        return true;
-      }
-
       // Call logout endpoint
       const response = await fetch(`${this.baseUrl}/logout`, {
         method: 'POST',
@@ -120,11 +102,6 @@ class AuthService {
 
   async requestPasswordReset(email) {
     try {
-      // If no API server (remote deployment), use localStorage
-      if (!this.baseUrl) {
-        return this.requestPasswordResetLocal(email);
-      }
-
       const response = await fetch(`${this.baseUrl}/password-reset/request`, {
         method: 'POST',
         headers: {
@@ -142,6 +119,81 @@ class AuthService {
       return result;
     } catch (error) {
       console.error('Password reset request error:', error);
+      throw error;
+    }
+  }
+
+  async verifyResetCode(email, code) {
+    try {
+      const response = await fetch(`${this.baseUrl}/password-reset/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, code })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Invalid code');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Code verification error:', error);
+      throw error;
+    }
+  }
+
+  async resetPassword(email, code, newPassword) {
+    try {
+      const response = await fetch(`${this.baseUrl}/password-reset/reset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, code, newPassword })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to reset password');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Password reset error:', error);
+      throw error;
+    }
+  }
+
+  async changePassword(currentPassword, newPassword) {
+    try {
+      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      if (!sessionToken) {
+        throw new Error('Not logged in');
+      }
+
+      const response = await fetch(`${this.baseUrl}/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionToken}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to change password');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Password change error:', error);
       throw error;
     }
   }
