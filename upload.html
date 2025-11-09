@@ -1013,6 +1013,72 @@
         nextBtn.addEventListener('click', async () => {
             console.log('[Upload] Next button clicked, files:', uploadedFiles.length);
             
+            // Check if there are any video files mixed with images
+            const videoFiles = uploadedFiles.filter(f => f.type && f.type.startsWith('video/'));
+            const imageFiles = uploadedFiles.filter(f => f.type && f.type.startsWith('image/'));
+            
+            // If videos were uploaded but we only show images, warn user
+            if (videoFiles.length > 0) {
+                console.log('[Upload] Warning: Found', videoFiles.length, 'video files that will be filtered');
+                
+                // Show warning modal
+                const warningModal = document.createElement('div');
+                warningModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                warningModal.innerHTML = `
+                    <div class="bg-white dark:bg-dark-100 rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900">
+                                    <i data-feather="alert-triangle" class="h-6 w-6 text-yellow-600 dark:text-yellow-400"></i>
+                                </div>
+                                <h3 class="ml-4 text-lg font-medium text-gray-900 dark:text-dark-600">Video Files Not Supported</h3>
+                            </div>
+                            
+                            <p class="text-gray-700 dark:text-dark-400 mb-4">
+                                You uploaded <strong>${videoFiles.length}</strong> video file${videoFiles.length !== 1 ? 's' : ''} (${videoFiles.map(f => f.name).join(', ')}), but this platform generates AI videos from images only.
+                            </p>
+                            
+                            <p class="text-gray-700 dark:text-dark-400 mb-6">
+                                Your ad will be created using the <strong>${imageFiles.length}</strong> image${imageFiles.length !== 1 ? 's' : ''} you uploaded. The video file${videoFiles.length !== 1 ? 's' : ''} will be ignored.
+                            </p>
+                            
+                            ${imageFiles.length === 0 ? `
+                                <div class="mb-6 p-3 bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded">
+                                    <p class="text-sm text-red-700 dark:text-red-300">
+                                        <strong>Important:</strong> You need at least one image to create an ad.
+                                    </p>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="flex gap-3 justify-end">
+                                <button class="px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-md text-gray-700 dark:text-dark-400 hover:bg-gray-50 dark:hover:bg-dark-200 font-medium" onclick="this.closest('[class*=fixed]').remove()">
+                                    Go Back
+                                </button>
+                                <button class="px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 font-medium" onclick="document.getElementById('warning-continue-btn').click(); this.closest('[class*=fixed]').remove()">
+                                    Continue Without Videos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(warningModal);
+                window.replaceFeatherIcons();
+                
+                // Store a hidden button to trigger the actual next action
+                const continueBtn = document.createElement('button');
+                continueBtn.id = 'warning-continue-btn';
+                continueBtn.style.display = 'none';
+                document.body.appendChild(continueBtn);
+                
+                return; // Stop here, wait for user to click Continue
+            }
+            
+            // No videos, proceed normally
+            proceedToDetails();
+        });
+        
+        // Helper function to proceed with saving and navigation
+        async function proceedToDetails() {
             // Disable button and show loading state
             nextBtn.disabled = true;
             const originalText = nextBtn.innerHTML;
@@ -1020,17 +1086,19 @@
             window.replaceFeatherIcons();
             
             try {
-                // Prepare upload data
+                // Prepare upload data - filter to only keep images
+                const imageOnlyFiles = uploadedFiles.filter(f => !f.type || f.type.startsWith('image/'));
+                
                 const uploadData = {
-                    fileCount: uploadedFiles.length,
-                    fileNames: uploadedFiles.map(f => f.name),
+                    fileCount: imageOnlyFiles.length,
+                    fileNames: imageOnlyFiles.map(f => f.name),
                     music: document.getElementById('ai-music').value,
                     timestamp: new Date().toISOString(),
                     step: 'upload' // Track which step we're on
                 };
                 
                 // Convert files to base64 for storage
-                const filePromises = uploadedFiles.map(file => {
+                const filePromises = imageOnlyFiles.map(file => {
                     return new Promise((resolve, reject) => {
                         try {
                             const reader = new FileReader();
@@ -1076,6 +1144,13 @@
                 
                 // Show error message
                 alert('Error saving upload draft. Please try again.');
+            }
+        }
+        
+        // Continue button click handler for warning modal
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'warning-continue-btn' || (e.target.textContent === 'Continue Without Videos' && e.target.tagName === 'BUTTON')) {
+                proceedToDetails();
             }
         });
         
