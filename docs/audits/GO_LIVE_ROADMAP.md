@@ -1321,50 +1321,358 @@ def get_upload_url():
 
 ## Actionable Todo List ✅
 
+### AUDIT-CRITICAL FIXES (BEFORE Phase 1 - Must Do First)
+
+⚠️ **These 4 items are BLOCKING and discovered in audit cross-reference. Must be completed before any Phase 1 work:**
+
+- [ ] **FIX AUDIT-C1**: Storage Manager Metadata Bug (NaN timestamps) (30 min)
+  - File: `js/storage-manager.js` lines 40-92
+  - Issue: `getDraft()` returns only `.data`, loses numeric timestamp
+  - Fix: Return full record object with `timestamp` (numeric value)
+  - Test: Resume banner should show "5 minutes ago" not "NaN minutes ago"
+  - Audit finding: Claude #8, #13 - User trust blocker
+
+- [ ] **FIX AUDIT-C2**: Remove Password Reset Code from Response (15 min)
+  - File: `auth_server.py` `handle_password_reset_request` endpoint
+  - Issue: API response exposes 6-digit reset code (visible in DevTools)
+  - Fix: Remove `resetCode` field from JSON response
+  - Test: Call endpoint, verify no reset code in network tab
+  - Audit finding: GPT #9, Gemini #2 - **CRITICAL SECURITY ISSUE**
+
+- [ ] **FIX AUDIT-C3**: Add Warning When Videos Filtered in Upload (1 hour)
+  - File: `upload-review.html` around line ~270
+  - Issue: Videos silently filtered out, users confused
+  - Fix: Show explicit warning modal before filtering
+  - Test: Upload video, verify warning appears
+  - Audit finding: Claude #7 - Support ticket blocker
+
+- [ ] **FIX AUDIT-C4**: Consolidate Dark Mode Duplicate Code (2 hours)
+  - Location: 15+ HTML files with repeated theme bootstrap
+  - Issue: Dark mode initialization duplicated everywhere
+  - Fix: Create `js/theme-bootstrap.js`, import in all pages
+  - Test: Toggle theme, verify works globally
+  - Audit finding: Claude #29 - Technical debt/maintainability
+
 ### Week 1: Critical Fixes (Local)
 - [x] **Day 1 Morning**: Fix service worker (5 min) ✅ COMPLETED
 - [x] **Day 1 Morning**: Fix broken navigation links (20 min) ✅ COMPLETED
 - [x] **Day 1 Morning**: Fix invalid HTML in index.html (5 min) ✅ COMPLETED
 - [x] **Day 1 Afternoon**: Remove production auth bypass (30 min) ✅ COMPLETED
-- [x] **Day 1 Afternoon**: Hide password reset codes (15 min) ✅ COMPLETED
+- [x] **Day 1 Afternoon**: Hide password reset codes (15 min) ✅ COMPLETED (NOW: VERIFY AUDIT-C2)
 - [x] **Day 1 Afternoon**: Upgrade session tokens to crypto.randomUUID() (5 min) ✅ COMPLETED
 - [x] **Day 1 Afternoon**: Fix engagement module singleton (10 min) ✅ COMPLETED
 - [x] **Day 1 End**: Add upload flow auth check (15 min) ✅ COMPLETED
-- [x] **Day 2**: Implement IndexedDB storage manager (4-6 hours) ✅ COMPLETED
+- [x] **Day 2**: Implement IndexedDB storage manager (4-6 hours) ✅ COMPLETED (NOW: VERIFY AUDIT-C1)
 - [x] **Day 3**: Add image resizing and validation (3-4 hours) ✅ COMPLETED
-- [x] **Day 3**: Add draft resume UI (1-2 hours) ✅ COMPLETED
+- [x] **Day 3**: Add draft resume UI (1-2 hours) ✅ COMPLETED (NOW: VERIFY AUDIT-C3)
 - [x] **Day 3**: Fix Vanta.js memory leak (30 min) ✅ COMPLETED
 
 ### Week 2: Data & Backend (Requires Deployment)
 - [ ] **Day 1**: Set up production backend infrastructure (4-6 hours)
 - [ ] **Day 1**: Configure environment variables (1 hour)
+- [ ] **AUDIT-H4**: Set up health checks & Sentry monitoring (1-2 hours) ⚠️ NEW
 - [ ] **Day 2**: Create database and run migrations (3-4 hours)
 - [ ] **Day 2**: Implement ad storage API endpoints (4-6 hours)
+- [ ] **AUDIT-H5**: Enable PostgreSQL automated backups & document recovery (1 hour) ⚠️ NEW
 - [ ] **Day 3**: Fix hardcoded demo data in my-ads (2-3 hours)
+- [ ] **AUDIT-H3**: Verify ID Generator sync with backend (1-2 hours) ⚠️ NEW
 - [ ] **Day 4**: Set up email service (3-4 hours)
+- [ ] **AUDIT-H1**: Implement email verification for new users (3-4 hours) ⚠️ NEW BLOCKING
 - [ ] **Day 4**: Implement password reset email sending (2 hours)
+- [ ] **AUDIT-H2**: Add rate limiting on auth endpoints (2-3 hours) ⚠️ NEW
 - [ ] **Day 5**: Set up Cloudflare R2 storage (2-3 hours)
 - [ ] **Day 5**: Deploy frontend to CDN (2-3 hours)
 
-### Week 3: UX & Performance (Local + Deploy)
+### Week 3: Polish & Launch
 - [x] **Day 1**: Add video generation loading states (2-3 hours) ✅ COMPLETED
 - [x] **Day 1**: Add empty states to category pages (1-2 hours) ✅ COMPLETED
 - [x] **Day 2**: Add share fallback modal (2-3 hours) ✅ COMPLETED
-- [x] **Day 2**: Add confirmation dialogs (2-3 hours) ✅ COMPLETED
-- [ ] **Day 3**: Bundle Tailwind CSS (2-3 hours) ⏸️ DEFERRED (Tailwind CLI not available without npx/node setup, CDN works for MVP)
-- [x] **Day 3**: Consolidate Feather icons (1-2 hours) ✅ COMPLETED
-- [x] **Day 3**: Fix Vanta.js memory leak (30 min) ✅ COMPLETED (duplicate of Week 1, verified)
-- [ ] **Day 4**: Set up monitoring (Sentry) (1-2 hours) ⚠️ REQUIRES DEPLOYMENT
-- [ ] **Day 4**: Set up analytics (Plausible) (1 hour) ⚠️ REQUIRES DEPLOYMENT
-- [ ] **Day 5**: Production testing and bug fixes (full day) ⚠️ REQUIRES DEPLOYMENT
+- [x] **Day 2**: Add confirmation dialogs (2-3 hours) ✅ COMPLETED (NOW: VERIFY AUDIT-M4)
+- [ ] **AUDIT-M4**: Verify Confirmation dialogs for delete/logout (1 hour) ⚠️ VERIFY
+- [ ] **AUDIT-C4**: Consolidate Feather icons (1 hour) ⚠️ BLOCKING (from audit prereqs)
+- [ ] **AUDIT-M3**: Consolidate dark mode code (1 hour) ⚠️ BLOCKING (from audit prereqs)
+- [ ] **Day 3**: Bundle Tailwind CSS (2-3 hours) ⏸️ DEFERRED (CDN works for MVP)
+- [x] **Day 3**: Consolidate Feather icons (1-2 hours) ✅ COMPLETED (partial)
+- [x] **Day 3**: Fix Vanta.js memory leak (30 min) ✅ COMPLETED
+- [ ] **Day 4**: Set up monitoring (Sentry) (1-2 hours) - NOW INCLUDED in Week 2
+- [ ] **Day 4**: Set up analytics (Plausible) (1 hour) - NOW INCLUDED in Week 2
+- [ ] **AUDIT-M1**: Set up CI/CD pipeline (GitHub Actions) (4-6 hours) ⚠️ NEW
+- [ ] **AUDIT-M2**: Add API documentation (API_REFERENCE.md) (2-3 hours) ⚠️ NEW
+- [ ] **Day 5**: Production testing and bug fixes (full day)
+- [ ] **LAUNCH READY** 🚀
 
 ### Post-Launch (Ongoing)
 - [ ] **Week 4-5**: Monitor metrics and fix bugs
+- [ ] **AUDIT-M5**: Implement video preload optimization with Intersection Observer (2-3 hours)
+- [ ] **AUDIT-M6**: Parallelize image resizing with Web Workers (2-3 hours)
 - [ ] **Week 6-8**: Build custom video pipeline (95% cost savings)
 - [ ] **Week 9**: Add rate limiting and security hardening
 - [ ] **Week 10**: Implement job queue for async video generation
 - [ ] **Month 3**: Add WebSocket support for real-time updates
 - [ ] **Month 3**: Migrate to PostgreSQL if scaling beyond 1K users
+- [ ] **AUDIT-S1**: Video quality variants for adaptive streaming (360p/720p/1080p) (2-3 days) - STRATEGIC
+- [ ] **AUDIT-S2**: Comprehensive E2E test suite with Playwright (3-4 days) - STRATEGIC
+- [ ] **AUDIT-S3**: Transactional email templates (welcome, verification, password reset) (2-3 hours) - STRATEGIC
+
+## 🔍 AUDIT GAP ANALYSIS - Missing Action Items from AUDIT_RECOMMENDATIONS.md
+
+The following critical and high-priority items from the audit recommendations are NOT in the main Todo lists above. These represent gaps between planned deployment and audit findings that must be addressed:
+
+### 🔴 CRITICAL GAPS (P0 - Do Before Launch)
+
+#### C1: Fix Storage Manager Metadata Bug (MISSING - P0 Severity)
+**From Audit**: "Draft metadata bug (NaN timestamps)" - Claude finding #8, #13
+**Impact**: Resume banner shows "NaN minutes ago", destroying user trust
+**Current Status**: NOT IN ROADMAP
+**Action**: 
+- [ ] Fix `js/storage-manager.js` `getDraft()` to return full record with numeric timestamp
+- [ ] Update `upload.html` to handle timestamp correctly (use numeric value, not ISO string)
+- [ ] Test resume banner displays correct age (e.g., "Resume from 5 minutes ago")
+- [ ] **Effort**: 30 minutes | **Priority**: CRITICAL - User-facing bug
+
+**Code Fix Required**:
+```javascript
+// Change getDraft() in storage-manager.js from:
+resolve(request.result.data);  // ❌ Loses timestamp
+
+// To:
+resolve(request.result);  // ✅ Returns full record with numeric timestamp
+```
+
+#### C2: Remove Password Reset Code from API Response (MISSING - P0 Severity)
+**From Audit**: "Password reset leaks the one-time code" - GPT & Gemini finding
+**Impact**: CRITICAL SECURITY - Any attacker with browser DevTools can hijack accounts
+**Current Status**: NOT IN ROADMAP (Phase 1.3 mentioned but incomplete)
+**Action**:
+- [ ] **DONE IN ROADMAP** (Phase 1.3) - but ensure implementation:
+  - [ ] Remove `resetCode` field from `/api/password-reset` response
+  - [ ] Send code ONLY via email (not API response)
+  - [ ] Test that browser DevTools network tab shows no password codes
+- [ ] **Effort**: 15 minutes | **Priority**: CRITICAL SECURITY
+
+#### C3: Add Warning When Videos Filtered in Upload (MISSING - P0 Severity)
+**From Audit**: "Videos silently filtered out in upload-review.html (line ~270)" - Claude finding #7
+**Impact**: HIGH - Users confused why videos disappear, support tickets
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] In `upload-review.html`, detect when user uploads video but no video format in details
+- [ ] Show explicit warning: "⚠️ Video format not supported - AI-generated thumbnail will be used instead"
+- [ ] Allow user to proceed or go back to re-upload
+- [ ] **Effort**: 1 hour | **Priority**: CRITICAL - User experience blocker
+
+#### C4: Fix Dark Mode Duplicate Code Consolidation (MISSING - P2 Severity)
+**From Audit**: "Dark mode implementation duplicated in 15+ files" - Claude finding #29
+**Impact**: MEDIUM - Technical debt, hard to maintain globally
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Create `js/theme-bootstrap.js` with centralized dark mode initialization
+- [ ] Replace all 15+ inline theme scripts with single import
+- [ ] Verify no race conditions between theme scripts
+- [ ] **Effort**: 2 hours | **Priority**: MEDIUM
+
+---
+
+### 🟠 HIGH-PRIORITY GAPS (P1 - First Week Post-Launch)
+
+#### H1: Implement Email Verification for New Users (MISSING - P1/P2 Severity)
+**From Audit**: "No email verification" - Claude finding #31
+**Impact**: MEDIUM - Prevents spam accounts, enables email deliverability
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Add `email_verified` boolean to users table (default: false)
+- [ ] On registration, send verification email with clickable link/code
+- [ ] Require verification before allowing ad uploads
+- [ ] Add `/api/verify-email?token=xxx` endpoint
+- [ ] Display "Please verify your email" banner until verified
+- [ ] **Effort**: 4-6 hours | **Priority**: HIGH for go-live
+
+#### H2: Implement Rate Limiting on Auth Endpoints (MISSING - P1/P2 Severity)
+**From Audit**: "No rate limiting" - Claude finding #27
+**Impact**: MEDIUM - Vulnerable to brute force password attacks
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Add Flask-Limiter to backend: `pip install flask-limiter`
+- [ ] Rate limit `/api/login` to 5 attempts/minute per IP
+- [ ] Rate limit `/api/register` to 1 account/minute per IP
+- [ ] Rate limit `/api/password-reset` to 3 attempts/hour per email
+- [ ] Return `429 Too Many Requests` with retry-after header
+- [ ] **Effort**: 2-3 hours | **Priority**: HIGH for security
+
+#### H3: Fix ID Generator Registry Disconnection from Backend (MISSING - P1 Severity)
+**From Audit**: "ID Generator Registry disconnected from backend" - Claude finding #25
+**Impact**: HIGH - Upload flow may create data that doesn't appear in my-ads
+**Current Status**: Partially addressed in Phase 3.1 but not fully
+**Action**:
+- [ ] Ensure `/api/ads/my-ads` properly returns all user-created listings
+- [ ] Verify upload flow ads appear in my-ads dashboard within 1 second
+- [ ] Test that refresh token/redirect properly syncs data
+- [ ] Remove reliance on `id-generator.js` localStorage registry
+- [ ] **Effort**: 3-4 hours | **Priority**: HIGH - Core flow integrity
+
+#### H4: Add Operational Health Checks & Monitoring (MISSING - P2 Severity)
+**From Audit**: "No health checks or monitoring" - Claude finding #38
+**Impact**: MEDIUM - Can't detect when service goes down
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Add `/health` endpoint to backend (if not present)
+- [ ] Set up Sentry for error tracking: `pip install sentry-sdk`
+- [ ] Initialize Sentry in `app.py` with DSN from environment
+- [ ] Test that errors are captured and visible in dashboard
+- [ ] Set up Azure Monitor alerts for 404/500 errors
+- [ ] **Effort**: 2-3 hours | **Priority**: MEDIUM for ops
+
+#### H5: Document Database Backup & Disaster Recovery (MISSING - P1 Severity)
+**From Audit**: "No backup strategy" - Claude finding #40
+**Impact**: HIGH - Data loss risk if database is corrupted
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Enable Azure PostgreSQL automated daily backups (7-day retention)
+- [ ] Document backup locations and access procedures
+- [ ] Test point-in-time restore on test database
+- [ ] Enable R2 versioning for videos
+- [ ] Create runbook: "How to restore from backup"
+- [ ] **Effort**: 1-2 hours | **Priority**: HIGH for reliability
+
+---
+
+### 🟡 MEDIUM-PRIORITY GAPS (P2/P3 - First 2 Weeks Post-Launch)
+
+#### M1: Set Up CI/CD Pipeline (GitHub Actions) (MISSING - P2 Severity)
+**From Audit**: "No CI/CD pipeline detected" - Claude finding #37
+**Impact**: MEDIUM - Risk of human error, no automated testing before deploy
+**Current Status**: NOT IN ROADMAP (Phase 0 just has manual deployment)
+**Action**:
+- [ ] Create `.github/workflows/deploy.yml`
+- [ ] On every push to main:
+  - [ ] Run Python linter (flake8/pylint)
+  - [ ] Run unit tests (if available)
+  - [ ] Build Docker image
+  - [ ] Push to Azure Container Registry
+  - [ ] Deploy to Azure Container Apps (if tests pass)
+- [ ] On PR creation: Run tests but don't deploy
+- [ ] **Effort**: 4-6 hours | **Priority**: MEDIUM
+
+#### M2: Add API Documentation (MISSING - P2 Severity)
+**From Audit**: "Missing API documentation" - Claude finding #21
+**Impact**: MEDIUM - Makes it hard to onboard new developers
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Add docstrings to all Flask routes in `app.py`
+- [ ] Create `API_REFERENCE.md` with:
+  - [ ] All endpoints listed (method, path, auth required)
+  - [ ] Request/response examples for each
+  - [ ] Error codes and meanings
+  - [ ] Rate limits per endpoint
+- [ ] Consider Swagger/OpenAPI integration for interactive docs
+- [ ] **Effort**: 3-4 hours | **Priority**: MEDIUM
+
+#### M3: Consolidate Feather Icons (MISSING - P3 Performance)
+**From Audit**: "Duplicate Feather Icons initialization" - Claude finding #15
+**Impact**: LOW-MEDIUM - Performance (unnecessary DOM traversals)
+**Current Status**: Phase 5.2 in roadmap but incomplete
+**Action**:
+- [ ] Create `js/icons.js` with debounced feather.replace() helper
+- [ ] Replace all scattered `feather.replace()` calls with `window.replaceFeatherIcons()`
+- [ ] Only CDN-load Feather icons once (remove duplicates)
+- [ ] **Effort**: 1-2 hours | **Priority**: MEDIUM
+
+#### M4: Implement Confirmation Dialogs for Destructive Actions (MISSING - P2 UX)
+**From Audit**: "No confirmation dialogs" - Claude finding #10
+**Impact**: MEDIUM - Users can accidentally delete ads/logout without confirmation
+**Current Status**: Phase 4.4 mentioned but may be incomplete
+**Action**:
+- [ ] Add delete confirmation modal to my-ads.html "Delete" button
+- [ ] Add logout confirmation to user dropdown
+- [ ] Match modal design to dark mode theme
+- [ ] **Effort**: 2-3 hours | **Priority**: MEDIUM
+
+#### M5: Video Preload Optimization with Intersection Observer (MISSING - P3 Performance)
+**From Audit**: "Video preloading strategy inefficient" - Claude finding #18
+**Impact**: LOW - Wastes bandwidth downloading videos user doesn't view
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Update all category pages to use Intersection Observer
+- [ ] Set `preload="none"` by default on video elements
+- [ ] When video enters viewport, change to `preload="metadata"`
+- [ ] When user hovers, play preview (existing behavior)
+- [ ] **Effort**: 2-3 hours | **Priority**: LOW
+
+#### M6: Parallelize Image Resizing (MISSING - P3 Performance)
+**From Audit**: "Image resizing happens sequentially" - Claude finding #16
+**Impact**: LOW - 10 images could take 10 seconds instead of 2
+**Current Status**: Phase 2.2 implements resizing but sequentially
+**Action**:
+- [ ] Use Promise.all() or Web Workers to parallelize image resizing
+- [ ] Batch Canvas operations to avoid excessive memory allocation
+- [ ] Add progress indicator: "Processing 3/10 images..."
+- [ ] **Effort**: 2-3 hours | **Priority**: LOW
+
+---
+
+### 🔵 STRATEGIC GAPS (P3/P4 - Post-Launch Features)
+
+#### S1: Video Quality Variants for Adaptive Streaming (MISSING - Strategic)
+**From Audit**: "Video quality variants (360p/720p/1080p)" - Claude finding #35, Priority P4
+**Impact**: HIGH - Better mobile experience, cost optimization via CDN
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] On video generation, create 3 variants (360p, 720p, 1080p)
+- [ ] Store all variants in R2 with content-type encoding
+- [ ] Implement HLS manifest (.m3u8) for adaptive bitrate streaming
+- [ ] Update frontend video player to use HLS
+- [ ] **Effort**: 2-3 days | **Priority**: STRATEGIC (post-launch)
+
+#### S2: Implement Comprehensive E2E Test Suite (MISSING - Quality)
+**From Audit**: "No automated testing" - Claude finding #24
+**Impact**: MEDIUM - Every change risks breaking functionality
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Set up Playwright for E2E tests
+- [ ] Test critical flows:
+  - [ ] User registration → email verification → login
+  - [ ] Upload flow → draft resume → publish
+  - [ ] Video generation polling → success notification
+  - [ ] My ads page → edit → delete → confirmation
+- [ ] Run tests on every PR before merge
+- [ ] Target 70%+ coverage of critical paths
+- [ ] **Effort**: 3-4 days | **Priority**: STRATEGIC
+
+#### S3: Implement Transactional Email Templates (MISSING - UX)
+**From Audit**: Derived from #31 (email verification) and password reset
+**Impact**: MEDIUM - Professional email appearance, brand consistency
+**Current Status**: NOT IN ROADMAP
+**Action**:
+- [ ] Create email templates:
+  - [ ] Welcome email (registration)
+  - [ ] Email verification
+  - [ ] Password reset confirmation
+  - [ ] Video ready notification
+  - [ ] Ad published notification
+  - [ ] Ad favorite notification
+- [ ] Use SendGrid template system or Handlebars
+- [ ] Test rendering in multiple email clients
+- [ ] **Effort**: 2-3 hours | **Priority**: STRATEGIC
+
+---
+
+## Summary: Missing Action Items by Category
+
+| Category | Count | Critical | Impact |
+|----------|-------|----------|--------|
+| Security Fixes | 3 | 2 | Password leak, auth issues |
+| Reliability | 5 | 1 | Health checks, backups, monitoring |
+| DevOps/CI-CD | 2 | 0 | GitHub Actions, no manual deployments |
+| Data Quality | 3 | 1 | Email verification, ID sync, draft bug |
+| UX/Polish | 4 | 0 | Confirmations, warnings, dark mode |
+| Performance | 3 | 0 | Icon consolidation, video preload, image batch |
+| Strategic | 3 | 0 | Video variants, E2E tests, email templates |
+
+**Total Missing Items**: 23 distinct action items  
+**Critical/Blocking Issues**: 3 (must fix before launch)  
+**High-Priority Items**: 5 (should fix before launch or first week)  
+**Recommended Phase**: Insert C1-C4 + H1-H5 into Phase 0-1, defer S1-S3 to post-launch
+
+---
 
 ### Phase 8: New Features (Post-Launch)
 

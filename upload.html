@@ -568,31 +568,55 @@
                 handleFiles(e.dataTransfer.files);
             });
 
-            // Handle click to upload - SIMPLIFIED FIX
+            // Handle click to upload - MUST stop propagation to prevent upload-area handler
             uploadArea.addEventListener('click', (e) => {
-                console.log('[Upload] Upload area clicked');
+                console.log('[Upload] Upload area clicked (target:', e.target.id, ')');
                 // Don't trigger if clicking on the browse button itself
-                if (e.target.id !== 'browse-btn' && !e.target.closest('#browse-btn')) {
-                    if (fileInput) {
-                        setTimeout(() => {
-                            fileInput.click();
-                        }, 10);
+                if (e.target.id === 'browse-btn' || e.target.closest('#browse-btn')) {
+                    console.log('[Upload] Click was on browse button, letting button handler take over');
+                    return;
+                }
+                // Trigger file input directly
+                if (fileInput) {
+                    console.log('[Upload] Triggering file input click');
+                    // Safari workaround: make visible temporarily
+                    const wasHidden = fileInput.classList.contains('hidden');
+                    if (wasHidden) {
+                        fileInput.classList.remove('hidden');
                     }
+                    fileInput.click();
+                    if (wasHidden) {
+                        // Re-hide after a brief delay to ensure dialog opened
+                        setTimeout(() => {
+                            fileInput.classList.add('hidden');
+                        }, 100);
+                    }
+                } else {
+                    console.error('[Upload] ERROR: fileInput element not found!');
                 }
             });
         }
 
-        // Handle file selection - SIMPLIFIED FIX
+        // Handle file selection - Browse button
         if (browseBtn && fileInput) {
             browseBtn.addEventListener('click', (e) => {
                 console.log('[Upload] Browse button clicked');
                 e.preventDefault();
                 e.stopPropagation();
+                console.log('[Upload] Triggering file input click from browse button');
                 
-                // Direct trigger - more reliable
-                setTimeout(() => {
-                    fileInput.click();
-                }, 10);
+                // Safari workaround: make visible temporarily
+                const wasHidden = fileInput.classList.contains('hidden');
+                if (wasHidden) {
+                    fileInput.classList.remove('hidden');
+                }
+                fileInput.click();
+                if (wasHidden) {
+                    // Re-hide after a brief delay to ensure dialog opened
+                    setTimeout(() => {
+                        fileInput.classList.add('hidden');
+                    }, 100);
+                }
             });
         }
 
@@ -605,6 +629,27 @@
                     fileInput.value = '';
                 }
             });
+            
+            // Add input event to catch cancellation
+            fileInput.addEventListener('input', (e) => {
+                console.log('[Upload] File input event triggered');
+            });
+            
+            // Log when file picker is opened (if supported)
+            fileInput.addEventListener('click', (e) => {
+                console.log('[Upload] File input clicked, dialog should open');
+            });
+            
+            // Test: ensure fileInput is accessible
+            console.log('[Upload] fileInput element details:', {
+                type: fileInput.type,
+                id: fileInput.id,
+                hidden: fileInput.hidden,
+                display: window.getComputedStyle(fileInput).display,
+                className: fileInput.className
+            });
+        } else {
+            console.error('[Upload] ERROR: fileInput element not found during change listener setup!');
         }
 
         // File validation constants

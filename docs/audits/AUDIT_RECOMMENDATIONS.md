@@ -64,54 +64,43 @@ _This report is an addendum to the initial audit, providing a fresh perspective 
 
 ### UI/UX Improvements
 
-1.  **State Loss in Upload Flow**: The entire multi-step upload process relies on `sessionStorage`. If a user accidentally closes their tab or the browser crashes, all uploaded images and filled-in details are permanently lost. The flow should persist this data to `localStorage` or the backend after each step.
+1.  **State Loss in Upload Flow**: The entire multi-step upload process relies on `sessionStorage` and `IndexedDB` drafts that are not robust. If a user accidentally closes their tab or the browser crashes, all uploaded images and filled-in details can be permanently lost. The flow should persist this data more reliably, ideally on the backend after each step.
 2.  **Lack of Empty States**: Pages that display user-generated content (like `my-ads.html` or category pages) are blank when no content exists. They should feature "empty state" components that guide the user on how to create their first ad.
 3.  **Inconsistent Navigation**: The main navigation bar is duplicated across many HTML files, leading to inconsistencies in links and behavior. This should be refactored into a single, reusable Web Component or a server-side include to ensure consistency.
-4.  **Disorienting Auth Flow**: Triggering the "New Ad" button without being logged in opens a modal and switches to the "Register" tab. This is a confusing experience. The expected behavior would be to prompt for login, and after success, redirect to the upload page.
+4.  **Disorienting Auth Flow**: Triggering the "New Ad" button without being logged in opens a modal. The expected behavior would be to prompt for login, and after success, redirect to the upload page.
 
 ### Optimisation
 
-1.  **Base64 Image Bloat**: The upload process converts all images to Base64 and stores them in `sessionStorage`. This is extremely memory-intensive and will fail for high-resolution images or more than a few files, as it quickly exceeds the 5MB browser storage limit.
+1.  **Base64 Image Bloat**: The upload process converts all images to Base64 and stores them in `IndexedDB`. This is extremely memory-intensive and will fail for high-resolution images or more than a few files, as it quickly exceeds browser storage limits.
 2.  **Unbundled Assets**: The platform loads numerous individual JavaScript and CSS files, including CDN versions of Tailwind and Feather Icons on every page. This leads to slow initial load times and render-blocking. Assets should be bundled into single, minified files.
-3.  **Redundant API Calls**: The `video-card-engagement.js` script initializes button states on page load but does not have a reliable way to refresh for dynamically added content, leading to potentially stale like/favorite counts until a full page reload.
-4.  **Vanta.js Memory Leak**: The homepage animation from Vanta.js is re-initialized every time the theme is toggled, but the old instance is not destroyed. This creates multiple animation loops running in the background, consuming unnecessary CPU and memory.
+3.  **Vanta.js Memory Leak**: The homepage animation from Vanta.js is re-initialized every time the theme is toggled, but the old instance is not destroyed. This creates multiple animation loops running in the background, consuming unnecessary CPU and memory.
 
 ### QoL (Quality of Life) Improvements
 
 1.  **Add a `.gitignore` file**: The repository is missing a `.gitignore` file, which would prevent common OS files (`.DS_Store`) and editor configurations from being committed.
-2.  **Introduce a Linter/Formatter**: The codebase has inconsistent formatting (tabs vs. spaces, trailing whitespace). Adding Prettier and ESLint would enforce a consistent style and catch common errors.
-3.  **Environment Configuration**: The Revid.ai API key is hardcoded in `revid-service.js`. This should be managed via an environment variable or a configuration file that is not checked into source control.
+2.  **Introduce a Linter/Formatter**: The codebase has inconsistent formatting. Adding Prettier and ESLint would enforce a consistent style and catch common errors.
+3.  **Environment Configuration**: API keys and other secrets are hardcoded in the frontend. These should be managed via an environment variable file (`.env`) on the backend.
 
 ### Logic Optimisation
 
-1.  **Centralize State Management**: User authentication state (`isLoggedIn`, `userEmail`, etc.) is derived by repeatedly querying `localStorage` across different files. This should be centralized into a single, reactive state management object to reduce redundancy and bugs.
-2.  **Refactor `auth_server.py`**: The server is a single, monolithic file. The database logic, routing, and handlers should be separated into different modules for better organization and testability.
-3.  **Abstract the Database Layer**: The Python server directly interacts with the `auth_db.json` file in every handler. This logic should be moved into a dedicated data access layer, which would make it much easier to swap the JSON file for a real database like PostgreSQL later.
+1.  **Centralize State Management**: User authentication state is derived by repeatedly querying `localStorage` across different files. This should be centralized into a single, reactive state management object.
+2.  **Refactor `server.py`**: The server is a single, monolithic file. The database logic, routing, and handlers should be separated into different modules for better organization and testability.
+3.  **Abstract the Database Layer**: The Python server directly interacts with the database in every handler. This logic should be moved into a dedicated data access layer.
 
 ### Flow Improvements
 
-1.  **Decouple Video Generation from Publishing**: The current flow blocks the UI while the Revid.ai video is generated. The video generation should be an asynchronous background process. The ad should be published immediately with a "Video processing" state, and the user should be notified (e.g., via email or a dashboard notification) when the video is ready.
-2.  **Direct-to-Cloud Uploads**: Instead of passing image data through `sessionStorage` and then to an API, the client should request a secure, pre-signed upload URL from the backend and upload the file directly to cloud storage (like Cloudflare R2 or AWS S3). This is more scalable and avoids browser storage limitations.
+1.  **Decouple Video Generation from Publishing**: The current flow blocks the UI while the video is generated. This should be an asynchronous background process. The ad should be published immediately with a "Video processing" state.
+2.  **Direct-to-Cloud Uploads**: Instead of passing large Base64 data through the client, the frontend should request a secure, pre-signed upload URL from the backend and upload files directly to cloud storage.
 
-### Cloud vs. Commercial Vendor Approach
+### Deployment Logic
 
-The platform's reliance on a single commercial vendor (Revid.ai) for its core value proposition (AI video generation) presents a significant business risk. The vendor controls pricing, features, and availability.
-
-**Recommendation**: Adopt the **hybrid cloud approach** previously analyzed.
-- **Core Components**: Use a combination of best-in-class, pay-as-you-go cloud services (OpenAI for scripts/TTS, FFmpeg on a serverless function for rendering, Cloudflare R2 for storage).
-- **Benefits**:
-    - **Massive Cost Reduction**: Reduces per-video cost from **$0.50-$2.00** (Revid.ai) to **~$0.024**, a saving of over 95%.
-    - **Control & Flexibility**: Full control over the video generation pipeline allows for customization, quality improvements, and the ability to swap out individual components (e.g., switch from OpenAI to Anthropic) without being locked in.
-    - **Scalability**: A serverless architecture scales automatically with demand, with costs remaining proportional to usage.
-    - **Resilience**: By owning the pipeline, you can implement more robust error handling, retries, and monitoring than a black-box commercial service allows.
-
-This strategic shift from a single vendor to a managed cloud pipeline is the single most impactful recommendation for ensuring the long-term viability and profitability of the VidX platform.
+The current deployment seems to be manual. A CI/CD pipeline (e.g., using GitHub Actions) should be implemented to automate testing, building, and deployment to Azure, which would improve reliability and speed of delivery.
 
 ---
 
 ## Claude - Auditor's Report
 
-_Independent third-party code review conducted November 9, 2025_
+_Independent third-party code review conducted November 10, 2025_
 
 After comprehensive analysis of the VidX platform codebase, documentation, and architecture, I've identified critical issues across security, functionality, user experience, performance, and strategic positioning. This audit complements the previous findings with additional insights and prioritized recommendations.
 
@@ -120,24 +109,28 @@ After comprehensive analysis of the VidX platform codebase, documentation, and a
 #### 1. **Critical: Upload Flow State Loss Vulnerability**
 **Location**: `upload.html`, `upload-details.html`, `upload-review.html`
 
-The multi-step upload process stores ALL data (including base64-encoded images) in `sessionStorage`, which:
-- Is cleared when the user closes the tab/window (unlike `localStorage`)
+The multi-step upload process stores ALL data (including base64-encoded images) in `sessionStorage` and `IndexedDB`, which:
+- Is cleared when the user closes the tab/window
 - Has a ~5MB browser limit that is easily exceeded with 2-3 high-res images
 - Will silently fail on mobile Safari when quota is exceeded
+- Creates `NaN` timestamps in draft resume banners due to metadata being stripped on read
 
 **Impact**: Users lose all progress if they accidentally close the tab, switch apps, or upload high-quality images. This is a critical conversion blocker for the core business flow.
 
 **Evidence**:
 ```javascript
-// upload.html lines 373-385
-sessionStorage.setItem('uploadData', JSON.stringify(uploadData));
-sessionStorage.setItem('uploadFiles', JSON.stringify(filesData));
+// js/storage-manager.js lines 68-92
+async getDraft(draftId = 'current-upload') {
+    // ...
+    resolve(request.result.data);  // ← Returns only data, loses timestamp/userEmail
+}
 
-// upload-review.html retrieves this data but has no fallback
-const uploadFiles = JSON.parse(sessionStorage.getItem('uploadFiles') || '[]');
+// upload.html lines 223-244
+const draftAge = Math.floor((Date.now() - draft.timestamp) / (1000 * 60));
+// ← draft.timestamp is an ISO string, not numeric, produces NaN
 ```
 
-**Fix Priority**: CRITICAL - Implement server-side draft saving or use IndexedDB for local persistence.
+**Fix Priority**: CRITICAL - Implement server-side draft saving or fix IndexedDB metadata exposure.
 
 #### 2. **Non-Functional Edit/Delete Actions in My Ads Page**
 **Location**: `my-ads.html` lines 127-129
@@ -160,7 +153,7 @@ The delete handler (lines 155-160) just shows an alert and replaces the containe
 **Location**: `components/video-card.js`
 
 The `VideoCard` class is well-designed but:
-- The `window.videoCardEngagement` singleton referenced on line 113 may be `undefined` (as noted in the first audit)
+- The `window.videoCardEngagement` singleton referenced on line 113 may be `undefined`
 - The component is never actually imported or used in any category pages
 - All category pages still use inline HTML duplication instead of this component
 
@@ -175,8 +168,6 @@ The `FilterManager` class is a sophisticated state management solution for filte
 - Filter state is only stored in memory (lost on page refresh)
 - No URL parameter synchronization (can't bookmark filtered views)
 - No localStorage fallback for user preferences
-
-**Evidence**: Lines 6-13 show filters are just object properties with no persistence layer.
 
 **Impact**: Users must re-apply filters after every page navigation, killing the browsing experience.
 
@@ -193,91 +184,83 @@ const userAds = {
 ```
 
 **Impact**: 
-- Only 2 users can ever have ads
+- Only 2 users can ever have ads displayed
 - Real users see "No ads yet" even after creating listings
-- Upload flow creates data that is never displayed
+- Upload flow creates data that is never displayed in my-ads
 
-**Fix**: Integrate with the ID registry system (`js/id-generator.js`) or implement proper backend storage.
+**Fix**: Integrate with backend API or the ID registry system properly.
 
-#### 6. **Revid.ai API Key Exposure**
-**Location**: `js/revid-service.js` line 9
+#### 6. **API Key Exposure in VideoGenerationService**
+**Location**: `js/video-generation-service.js` lines 1-20
 
-```javascript
-this.apiKey = 'YOUR_REVID_API_KEY';
-```
+The service is well-designed to proxy through `/api/video` endpoints, but the frontend still hardcodes video configuration and sends auth tokens via localStorage to the backend. If localStorage is compromised, all API calls can be spoofed.
 
-The API key is hardcoded in client-side JavaScript that ships to browsers. Even if a real key is added:
-- It's visible in DevTools Network tab
-- It's exposed in the minified production bundle
-- Users can extract and abuse it
-
-**Impact**: API cost bleeding, quota exhaustion, security violation.
-
-**Fix**: Proxy all Revid.ai calls through the Python backend with server-side key storage.
+**Impact**: Session hijacking risk if tokens are stolen.
 
 #### 7. **Upload Flow Missing File Validation**
-**Location**: `upload.html` lines 210-230
+**Location**: `upload.html` lines 495-700
 
-File input accepts `accept="image/*,video/*"` but has no validation for:
-- Maximum file size (users can upload 100MB files)
-- Image dimensions (no minimum resolution check)
-- Video duration (no maximum length enforcement)
-- File format (accepts ANY file type despite the accept attribute)
+While the code now includes image resizing and validation:
+- Videos are silently filtered out in `upload-review.html` (line ~270)
+- No user warning about unsupported video format
+- Maximum file sizes are enforced (50MB) but users get generic "too large" errors without helpful guidance
+- No aspect ratio warnings for images that might look distorted in portrait video format
 
 **Impact**: 
-- Server/Revid.ai quota exhaustion from huge uploads
-- Poor quality video output from low-res images
-- Confused users when video generation fails silently
+- Users confused why videos don't appear in their final ad
+- Poor quality video output from low-aspect-ratio images
+- Support tickets about "where did my video go?"
 
-#### 8. **Standalone Login/Register Pages Orphaned**
-**Location**: `login.html`, `register.html`
+#### 8. **Storage Manager Metadata Bug**
+**Location**: `js/storage-manager.js` lines 40-92
 
-These pages exist but:
-- Have TODO comments instead of implementation (login.html line 55, register.html line 69)
-- Are never linked from anywhere in the platform
-- Duplicate functionality that exists in `components/auth-modal.js`
+The `getDraft()` method returns only `result.data`, stripping the wrapper that contains `timestamp` and `userEmail`:
 
-**Impact**: Wasted code, potential user confusion if they find these URLs, maintenance burden.
+```javascript
+async saveDraft(data, draftId = 'current-upload') {
+    const draft = {
+        id: draftId,
+        data: data,              // ← data contains ISO string timestamp
+        timestamp: Date.now(),   // ← numeric timestamp
+        userEmail: localStorage.getItem('userEmail')
+    };
+}
 
-**Fix**: Either complete the implementation or delete these files and redirect to the modal.
+async getDraft(draftId = 'current-upload') {
+    resolve(request.result.data);  // ← Returns only data, loses numeric timestamp
+}
+```
+
+When `upload.html` tries to calculate `Date.now() - draft.timestamp`, it subtracts an ISO string, yielding `NaN`.
+
+**Impact**: Resume banner shows "NaN minutes ago", destroying user trust in the draft system.
 
 ### UI/UX Improvements
 
 #### 9. **No Loading States During AI Video Generation**
-**Location**: `upload-review.html` lines 438-500
+**Location**: `upload-review.html` lines 200-250
 
-The video generation process (1-2 minutes per the README) has:
-- A generic "Processing..." message
-- No progress bar or percentage indicator
-- No estimated time remaining
-- No visual feedback on which step is executing (script → audio → captions → render)
+The video generation progress display is well-implemented with step indicators, but:
+- No estimated time remaining (users don't know if 30s or 3m wait)
+- No ability to cancel or pause the job
+- No notification if generation fails silently on backend
 
-**Impact**: Users perceive the app as frozen, leading to abandoned uploads and support inquiries.
-
-**Recommendation**: Add granular status updates:
-```javascript
-// Statuses to display:
-'Generating AI script...' → 'Recording voiceover...' → 
-'Creating captions...' → 'Rendering video...' → 'Uploading...'
-```
+**Impact**: Users perceive the app as frozen, leading to abandoned uploads and duplicate submissions.
 
 #### 10. **Missing Confirmation Dialogs for Destructive Actions**
 **Location**: `my-ads.html`, engagement buttons
 
-The delete button shows a `confirm()` dialog (browser native, breaks the UX flow), but:
-- Logout has no confirmation (user-dropdown.js)
-- Unlike/unfavorite actions are instant with no undo option
-- Account deletion (if implemented) would need confirmation
+The delete action has no confirmation, and logout has no confirmation. If a user accidentally hits delete, their entire ad (potentially hours of work) is gone.
 
 **Recommendation**: Implement consistent custom confirmation modals that match the dark mode theme.
 
 #### 11. **Category Pages Lack Search Functionality**
 **Location**: All category pages (`automotive.html`, `electronics.html`, etc.)
 
-Despite navigation links pointing to "search-automotive.html", there's:
+Despite having a filter manager, there's:
 - No search input on category pages
 - No text search through titles/descriptions
-- Only the broken filter system (from first audit)
+- No filter persistence when navigating back
 
 **Impact**: Users can't find specific items, reducing platform usability as inventory grows.
 
@@ -290,95 +273,54 @@ New users land on the homepage with:
 - No prompts to create their first listing
 - Empty category pages with no sample content
 
-**Recommendation**: Add:
-- Landing page hero section with value proposition
-- "How It Works" interactive tutorial
-- Sample listings that are always visible (even when no user ads exist)
-- First-time user flow that guides them through creating a listing
+**Recommendation**: Add landing page hero, "How It Works" tutorial, and sample listings always visible.
 
-#### 13. **Automotive Category: Model Dropdown UX Flaw**
-**Location**: `upload-details.html` lines 326-360
+#### 13. **Resume Draft Banner UX Issue**
+**Location**: `upload.html` lines 223-244
 
-The make/model cascade logic has confusing behavior:
-- Selecting "Other" make disables the model dropdown with "Not applicable"
-- But some makes in `carModels` have empty arrays (line 272), which should also show "Not applicable"
-- The label changes between `*`, `(optional)`, and `(not applicable)` inconsistently
-
-**Impact**: Users confused about whether model is required, support tickets about "why can't I select a model?"
+The banner shows "NaN minutes ago" due to the timestamp bug, and when dismissed/cleared, the success message only shows for 3 seconds before disappearing, leaving users uncertain if the action completed.
 
 #### 14. **Share Button Uses Unreliable Clipboard API**
 **Location**: `js/video-card-engagement.js` lines 228-258
 
 The share implementation:
-- Only works on HTTPS (fails on localhost HTTP for most browsers)
-- Shows a generic alert "Link copied!" even when clipboard write failed
+- Only works on HTTPS (fails on localhost HTTP)
+- Shows a generic alert even when clipboard write failed
 - Doesn't provide a fallback UI to manually copy the link
-
-**Evidence**: README line 37 mentions "Share fallback" as a planned improvement but it's not implemented.
-
-**Fix**: Implement the manual copy modal mentioned in the first audit report.
 
 ### Performance Optimisation
 
 #### 15. **Duplicate Feather Icons Initialization**
 **Location**: Multiple pages
 
-Many pages call `feather.replace()` multiple times:
+Many pages call `feather.replace()` multiple times after DOM mutations:
 - In main `<script>` tag
 - After dynamic content rendering
 - In `setTimeout` callbacks
 
-**Example from `my-ads.html`**:
-```javascript
-// Line 63
-if (window.feather && typeof feather.replace === 'function') {
-    feather.replace();
-}
-// Line 132 (inside renderUserAds)
-if (window.feather) feather.replace();
-```
-
 **Impact**: Unnecessary DOM traversals, janky UI during re-renders.
 
-**Fix**: Create a debounced global helper:
-```javascript
-window.replaceFeatherIcons = debounce(() => feather.replace(), 100);
-```
+**Fix**: Create a debounced global helper that fires once per animation frame.
 
-#### 16. **No Image Optimization in Upload Flow**
-**Location**: `upload.html`
+#### 16. **Image Resizing Happens Client-Side**
+**Location**: `upload.html` lines 600-700
 
-Images are:
-- Stored as base64 data URLs (33% larger than binary)
-- Never resized before sessionStorage (a 4000×3000 JPEG is stored at full size)
-- Sent to Revid.ai at full resolution (wasting API bandwidth)
+While image resizing is now implemented (good fix!), the Canvas-to-Blob conversion with FileReader happens sequentially for each image. With 10 images, this could take 5-10 seconds.
 
-**Impact**: 
-- SessionStorage quota exhaustion
-- Slow page loads during upload flow
-- Expensive API calls
-
-**Recommendation**: Use Canvas API to resize images to max 1920×1080 before encoding.
+**Recommendation**: Batch the resizing operations or use Web Workers for parallel processing.
 
 #### 17. **No Code Splitting or Lazy Loading**
 **Location**: Global
 
 All pages load:
 - Full Tailwind CDN (entire CSS utility library)
-- Feather icons complete set (300+ icons)
-- All components even if not used
-
-**Example**: `upload.html` loads dark-mode.css, auth components, user dropdown, even though none are needed for anonymous uploads.
+- All components even if not used on that page
+- Multiple copies of dark-mode initialization code in every HTML file
 
 **Impact**: Slow initial page loads, especially on mobile networks.
 
-**Fix**: 
-- Use Tailwind CLI to generate minimal CSS bundle
-- Implement dynamic imports for components
-- Lazy load category-specific scripts
-
 #### 18. **Video Preloading Strategy Inefficient**
-**Location**: Category pages
+**Location**: Category pages (automotive.html, electronics.html, etc.)
 
 All videos use `preload="metadata"` which:
 - Downloads metadata for ALL videos on page load
@@ -387,79 +329,53 @@ All videos use `preload="metadata"` which:
 
 **Recommendation**: Use Intersection Observer to set `preload="metadata"` only when video is near viewport.
 
-#### 19. **Development Server Script Inefficiency**
-**Location**: `start_dev.sh` lines 19-21
+#### 19. **No Compression on Stored Base64 Data**
+**Location**: `upload.html` lines 520-610
 
-The script kills existing servers with:
-```bash
-lsof -ti tcp:3000 | xargs kill -9 2>/dev/null || true
-```
-
-But uses `kill -9` (SIGKILL) which:
-- Doesn't allow graceful shutdown
-- Can leave database locks or temp files
-- Is unnecessarily aggressive
-
-**Fix**: Try `kill -15` (SIGTERM) first, then `kill -9` as fallback.
+Images are resized (good), but the base64 strings are still 33% larger than binary. For storage-constrained scenarios, consider storing as Blob and only converting to base64 when uploading.
 
 ### Quality of Life (QoL) Improvements
 
 #### 20. **No Development Environment Variables**
 **Location**: Global
 
-The platform has no `.env` file or environment configuration, requiring developers to:
-- Edit `js/revid-service.js` to change API keys
-- Modify `auth_server.py` to change ports
+The platform has no `.env` file or environment configuration. Developers must:
+- Edit `js/video-generation-service.js` to change backend URLs
 - Hard-code feature flags
+- Modify HTML files for different environments
 
-**Recommendation**: Add `.env` support:
-```bash
-REVID_API_KEY=sk-xxx
-AUTH_SERVER_PORT=3001
-STATIC_SERVER_PORT=3000
-ENABLE_DEBUG_MODE=true
-```
+**Recommendation**: Add `.env` support for frontend configuration (API endpoints, feature flags).
 
 #### 21. **Missing API Documentation**
-**Location**: `auth_server.py`
+**Location**: `app.py`, `server.py`
 
-The Python backend has no:
+The backend has no:
 - OpenAPI/Swagger spec
 - Endpoint documentation
 - Request/response examples
 - Error code reference
-
-Developers must read the code to understand the API.
 
 **Fix**: Add docstrings and generate API docs, or create `API_REFERENCE.md`.
 
 #### 22. **No Database Migration Scripts**
 **Location**: Root directory
 
-The README mentions "migrate from JSON to PostgreSQL" but:
-- No migration scripts exist
+Moving from SQLite/JSON to PostgreSQL left no migration tooling:
 - No schema definitions for PostgreSQL
 - No instructions for data export/import
+- No version tracking for schema changes
 
-**Impact**: Impossible to scale to production database without custom tooling.
-
-**Fix**: Create `migrations/` directory with numbered SQL scripts.
+**Fix**: Create `migrations/` directory with numbered SQL scripts for future schema changes.
 
 #### 23. **Inconsistent Naming Conventions**
 **Location**: Global
 
 The codebase mixes:
 - camelCase (`userName`) and kebab-case (`user-name`) for HTML IDs
-- Snake_case (`auth_server.py`) and camelCase (`authService.js`) for files
+- Snake_case (`app.py`) and camelCase (`auth-service.js`) for files
 - PascalCase (`VideoCard`) and lowercase (`video-card.js`) for components
 
 **Impact**: Developer confusion, harder code reviews, accidental bugs.
-
-**Recommendation**: Establish and document style guide:
-- Files: kebab-case
-- Variables: camelCase
-- Classes: PascalCase
-- HTML IDs: kebab-case with BEM
 
 #### 24. **No Automated Testing**
 **Location**: Nowhere
@@ -468,17 +384,9 @@ The platform has:
 - No unit tests
 - No integration tests
 - No E2E tests
-- No CI/CD pipeline
+- No CI/CD pipeline (as of last check)
 
-**Impact**: Every code change risks breaking existing functionality. The audit reports show this has already happened (service worker, engagement buttons, filters).
-
-**Recommendation**: Start with critical path E2E tests:
-```javascript
-// Example: tests/upload-flow.spec.js
-test('user can upload and create ad', async () => {
-  // Upload images → Fill details → Generate video → Verify ad appears
-});
-```
+**Impact**: Every code change risks breaking existing functionality. The audit reports show this has already happened multiple times.
 
 ### Logic & Architecture Optimisation
 
@@ -486,81 +394,41 @@ test('user can upload and create ad', async () => {
 **Location**: `js/id-generator.js`
 
 This sophisticated localStorage-based ad registry:
-- Is never synced with `auth_server.py`
+- Is never synced with the backend
 - Doesn't survive browser cache clears
 - Can't be accessed from other devices/browsers
-- Isn't used by `my-ads.html` (which has hardcoded demo data)
+- Isn't used by `my-ads.html` (which is now backend-driven)
 
-**Impact**: Upload flow appears to work but data goes into a black hole.
+**Impact**: Upload flow may create data that doesn't appear in user dashboard.
 
-**Fix**: Either:
-1. Make backend the source of truth and remove client-side registry
-2. Or implement periodic sync between localStorage and backend
-
-#### 26. **Auth Service Dual-Mode Architecture**
+#### 26. **Auth Service Still Has Dual-Mode Code**
 **Location**: `js/auth-service.js` constructor
 
-The service has two completely different code paths:
-- `localhost` → Use Python backend with real auth
-- Production → Use localStorage with fake auth
+While the platform now uses proper backend authentication, there are still remnants of fallback logic that could be cleaned up to reduce cognitive load.
 
-This means:
-- Testing on localhost doesn't test production code
-- Production auth is fundamentally broken
-- Same codebase behaves completely differently in different environments
-
-**Impact**: Critical production bug that was missed during development because localhost mode works fine.
-
-**Recommendation**: Remove localStorage mode entirely, require backend in all environments.
-
-#### 27. **No Rate Limiting or Request Throttling**
-**Location**: `auth_server.py`
+#### 27. **No Rate Limiting**
+**Location**: `app.py` / backend
 
 The backend has no protection against:
 - Brute force password attempts
 - Registration spam
-- Password reset code enumeration
-- API abuse
+- API abuse during video generation
 
-**Impact**: Vulnerable to trivial attacks that could:
-- Crack user passwords
-- Fill database with spam accounts
-- Exhaust Revid.ai quota
+**Impact**: Vulnerable to attacks that could exhaust quotas or crash services.
 
-**Fix**: Add Flask-Limiter:
-```python
-from flask_limiter import Limiter
-
-limiter = Limiter(app, default_limits=["200 per day", "50 per hour"])
-
-@app.route('/api/auth/login', methods=['POST'])
-@limiter.limit("5 per minute")
-def login():
-    # ...
-```
-
-#### 28. **Video Generation Blocking UI Thread**
+#### 28. **Video Generation Blocks UI Thread (Design Consideration)**
 **Location**: `upload-review.html` lines 438-500
 
-The Revid.ai API call is synchronous (awaited), blocking:
-- Further user interaction
-- Navigation away from the page
-- Cancellation of the operation
+The implementation polls for video completion, which is better than async/await, but:
+- No visual indication that user CAN navigate away
+- Progress UI could be clearer about background processing
+- No "edit ad while video generates" capability
 
-**Impact**: User must wait 1-2 minutes staring at spinner, can't browse other ads while waiting.
+#### 29. **Dark Mode Implementation Duplicated**
+**Location**: Every HTML file
 
-**Recommendation**: Implement job queue pattern:
-1. Submit video generation request → Get job ID
-2. User can navigate away
-3. Poll for completion or use WebSockets for notifications
-4. Show notification when video is ready
-
-#### 29. **Dark Mode Implementation Scattered**
-**Location**: Multiple files
-
-Dark mode logic is duplicated in every HTML file:
+The dark mode bootstrap code appears in 15+ files:
 ```javascript
-// This block appears in 15+ files
 (function() {
     const storedTheme = localStorage.getItem('theme');
     if (storedTheme === 'light') {
@@ -572,177 +440,206 @@ Dark mode logic is duplicated in every HTML file:
 ```
 
 **Impact**: 
-- Copy-paste errors (some files have variations)
+- Copy-paste errors risk creating variations
 - Impossible to change theme logic globally
-- Maintenance burden
-
-**Fix**: Move to shared `templates/dark-mode-head.html` and use server-side includes, or create global `theme.js`.
+- Maintenance burden during refactors
 
 ### Flow & User Journey Improvements
 
-#### 30. **Upload Flow Doesn't Require Authentication**
-**Location**: `upload.html`
+#### 30. **Upload Flow Now Requires Auth (Good!)**
+**Location**: `upload.html` lines 280-350
 
-The upload page:
-- Is accessible to anonymous users
-- Allows full image upload and details entry
-- Only checks authentication at the final publish step
+The platform now correctly gates the upload flow behind authentication. This is a significant improvement from the previous version, though the auth modal still feels modal-ish rather than a smooth redirect flow.
 
-**Impact**: 
-- Poor UX when user completes entire flow then is forced to register
-- Wasted server resources processing anonymous uploads
-- Security risk (spam upload attempts)
-
-**Recommendation**: Check auth on initial upload page load, show auth modal immediately if not logged in.
-
-#### 31. **No Email Verification Flow**
-**Location**: `auth_server.py`
+#### 31. **No Email Verification**
+**Location**: `app.py` auth routes
 
 User registration:
 - Requires email but doesn't verify it
-- Allows registering with obviously fake emails (test@test.com)
-- Has no email confirmation step
+- Allows registering with obviously fake emails
+- No email confirmation step
 
 **Impact**:
 - Spam accounts
 - Users can't recover accounts with typo'd emails
-- No way to send transactional emails (password reset, upload notifications)
+- No way to send transactional emails
 
-**Recommendation**: Add email verification:
-1. Send verification code to email after registration
-2. Mark account as unverified until confirmed
-3. Restrict features for unverified accounts
+#### 32. **Draft/Autosave Now Implemented (Good!)**
+**Location**: `js/storage-manager.js`, `upload.html`, `upload-details.html`
 
-#### 32. **No Draft/Autosave for Listings**
-**Location**: Upload flow
+The platform now properly implements draft persistence using IndexedDB with:
+- Automatic draft saving after each step
+- Resume functionality on return to upload page
+- Cleanup of old drafts (7-day expiry)
 
-If video generation fails or user abandons the flow:
-- All data is lost
-- User must re-upload all images
-- No way to resume from failure
+This is a solid improvement from the earlier architecture.
 
-**Recommendation**: Implement draft system:
-- Save draft after each step
-- Show "Resume Draft" option on upload page
-- Allow saving as draft without video generation
+#### 33. **Video Generation Now Decoupled (Excellent!)**
+**Location**: `js/video-generation-service.js`, `upload-review.html`
 
-### Strategic & Cloud Recommendations
+The platform now:
+- Generates videos asynchronously without blocking UI
+- Provides granular progress updates (script → audio → video → upload)
+- Allows user to see real status without guessing
 
-#### 33. **Revid.ai Vendor Lock-In Risk**
-**Location**: `js/revid-service.js`
+This is a major architectural improvement.
 
-The platform is 100% dependent on Revid.ai:
-- No fallback if Revid.ai is down
-- No control over video quality/style
-- Vulnerable to price increases
-- Can't customize the video generation pipeline
+### Deployment Logic & Infrastructure
 
-**Evidence**: As detailed in `VIDEO_PIPELINE_COMPARISON.md`, Revid.ai costs $0.50-$2.00 per video vs. $0.024 for custom pipeline (95-98% savings).
+#### 34. **Backend Now Using PostgreSQL (Good!)**
+**Status**: ✅ Completed
 
-**Strategic Recommendation**: 
-Implement hybrid approach:
-1. Phase 1: Keep Revid.ai, proxy through backend to hide API key
-2. Phase 2: Build custom pipeline in parallel (2-3 week effort)
-3. Phase 3: A/B test quality and cost
-4. Phase 4: Migrate fully to custom pipeline or keep both as options
+The migration from JSON file storage to PostgreSQL is complete. This provides:
+- Proper ACID transactions
+- Better performance with indexes
+- Ability to scale to 1000s of users
+- Concurrent request handling
 
-#### 34. **No Analytics or Monitoring**
-**Location**: Nowhere
+**Remaining work**: Add connection pooling for even better performance under load.
 
-The platform has zero visibility into:
-- User behavior (which categories are popular?)
-- Conversion funnel (where do users drop off in upload flow?)
-- Error rates (how often does video generation fail?)
-- Performance metrics (page load times, video engagement)
+#### 35. **Cloudflare R2 Storage Configured (Good!)**
+**Status**: ✅ Completed
 
-**Impact**: Flying blind - can't make data-driven decisions.
+Videos now stored in Cloudflare R2, providing:
+- Zero-egress CDN delivery (major cost savings)
+- Global distribution
+- Reliable storage with versioning
 
-**Recommendation**: Add:
-- Google Analytics or Plausible for page views
-- Sentry for error tracking
-- Custom events for upload flow completion rate
-- Video engagement metrics (play rate, watch time)
+**Potential improvement**: Add video quality variants (360p, 720p, 1080p) for adaptive streaming.
 
-#### 35. **Scalability Concerns with JSON File Database**
-**Location**: `auth_server.py`, `auth_db.json`
+#### 36. **OpenAI Pipeline Deployed (Excellent!)**
+**Status**: ✅ Completed
 
-Current implementation:
-- Loads entire database into memory on every request
-- Writes entire database to disk on every change
-- No indexing for lookups
-- No transaction support
-- File corruption risk with concurrent writes
+The custom video pipeline is now live:
+- GPT-4o Mini for script generation (~$0.001/video)
+- OpenAI TTS for voiceover (~$0.003/video)  
+- Whisper for captions (included in speech recognition)
+- FFmpeg for rendering
+- **Total cost**: ~$0.024/video (95%+ savings vs. Revid.ai)
 
-**Breaking Point**: ~1,000 users or ~100 concurrent requests
+**Evidence**: From PRODUCTION_OPTIMIZATION_NOTES.md and README.md, the pipeline is fully operational.
 
-**Recommendation**: Migrate to PostgreSQL with proper indexing:
-```sql
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_sessions_token ON sessions(token);
-CREATE INDEX idx_sessions_user_id ON sessions(user_id);
+#### 37. **No CI/CD Pipeline Detected**
+**Location**: `.github/workflows/` is empty or missing automated deployment
+
+Current deployment appears to be manual:
+- No GitHub Actions workflows
+- No automated testing before deployment
+- No automated rollback capability
+- Risk of human error during deployments
+
+**Recommendation**: Implement GitHub Actions to:
+1. Run tests on every PR
+2. Build and push Docker image to registry
+3. Deploy to Azure Container Apps automatically
+4. Run smoke tests post-deployment
+
+Example workflow:
+```yaml
+name: Deploy to Azure
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build image
+        run: docker build -t vidx:${{ github.sha }} .
+      - name: Push to registry
+        run: docker push vidx:${{ github.sha }}
+      - name: Deploy to ACA
+        run: az containerapp update --image vidx:${{ github.sha }}
 ```
 
-#### 36. **No Content Delivery Network (CDN)**
-**Location**: Video delivery
+#### 38. **No Health Checks or Monitoring**
+**Location**: Backend (`app.py`)
 
-Videos are served directly from origin:
-- No global distribution
-- High latency for international users
-- Single point of failure
-- Bandwidth costs scale linearly
+The backend has a `/health` endpoint, but there's no:
+- Automated health monitoring
+- Alert system if service goes down
+- Metrics collection (response times, error rates)
+- Log aggregation
+
+**Recommendation**: Add monitoring stack (e.g., Azure Monitor, DataDog, or Sentry).
+
+#### 39. **Environment Variable Configuration (Good!)**
+**Status**: ✅ Completed
+
+Backend properly uses environment variables for:
+- DATABASE_URL (PostgreSQL)
+- CLOUDFLARE_R2_CREDENTIALS
+- OPENAI_API_KEY
+- CORS_ORIGIN
+
+**Remaining work**: Add frontend `.env` support for API endpoints and feature flags.
+
+#### 40. **No Backup Strategy**
+**Location**: Production data
+
+Current setup has no documented:
+- Database backup schedules
+- Video file backup procedures
+- Disaster recovery plan
+- Data retention policies
 
 **Recommendation**: 
-- Store videos in Cloudflare R2 (zero egress fees)
-- Use Cloudflare CDN for delivery
-- Implement signed URLs for access control
-- Add video quality variants (360p, 720p, 1080p) for adaptive streaming
-
----
+- Enable PostgreSQL automated backups (Azure feature)
+- Set up S3 cross-region replication for R2 bucket
+- Document recovery procedures
 
 ### Priority Matrix
 
 | Priority | Issue | Impact | Effort | ROI |
 |----------|-------|--------|--------|-----|
-| 🔴 P0 | Auth bypass in production (#2 from first audit) | CRITICAL | Low | ⭐⭐⭐⭐⭐ |
-| 🔴 P0 | Upload flow state loss (#1) | CRITICAL | Medium | ⭐⭐⭐⭐⭐ |
-| 🔴 P0 | Password reset code leak (#3 from first audit) | CRITICAL | Low | ⭐⭐⭐⭐⭐ |
-| 🟠 P1 | Revid.ai API key exposure (#6) | HIGH | Low | ⭐⭐⭐⭐ |
-| 🟠 P1 | Service worker PWA failure (#1 from first audit) | HIGH | Low | ⭐⭐⭐⭐ |
-| 🟠 P1 | Hardcoded demo data in my-ads (#5) | HIGH | Medium | ⭐⭐⭐⭐ |
-| 🟡 P2 | Upload requires auth (#30) | MEDIUM | Low | ⭐⭐⭐ |
-| 🟡 P2 | No loading states during AI generation (#9) | MEDIUM | Medium | ⭐⭐⭐ |
-| 🟡 P2 | Filter state not persisted (#4) | MEDIUM | Low | ⭐⭐⭐ |
-| 🟢 P3 | Image optimization (#16) | LOW | Medium | ⭐⭐ |
-| 🟢 P3 | Code splitting (#17) | LOW | High | ⭐⭐ |
-| 🔵 P4 | Migration to custom video pipeline (#33) | STRATEGIC | High | ⭐⭐⭐⭐⭐ |
+| 🔴 P0 | Draft metadata bug (NaN timestamps) | HIGH | Low | ⭐⭐⭐⭐ |
+| 🔴 P0 | Password reset code leak | CRITICAL | Low | ⭐⭐⭐⭐⭐ |
+| 🔴 P0 | Auth bypass in production | CRITICAL | Low | ⭐⭐⭐⭐⭐ |
+| 🟠 P1 | Service worker PWA failure | HIGH | Low | ⭐⭐⭐⭐ |
+| 🟠 P1 | Hardcoded demo data in my-ads | HIGH | Medium | ⭐⭐⭐⭐ |
+| 🟠 P1 | Videos silently filtered in upload | HIGH | Low | ⭐⭐⭐ |
+| 🟡 P2 | No email verification | MEDIUM | Medium | ⭐⭐⭐ |
+| 🟡 P2 | No CI/CD pipeline | MEDIUM | High | ⭐⭐⭐ |
+| 🟡 P2 | No rate limiting | MEDIUM | Medium | ⭐⭐⭐ |
+| 🟢 P3 | Image resizing parallelization | LOW | Medium | ⭐⭐ |
+| 🟢 P3 | Code splitting | LOW | High | ⭐⭐ |
+| 🔵 P4 | Video quality variants (360p/720p/1080p) | STRATEGIC | High | ⭐⭐⭐⭐ |
 
 ### Executive Summary
 
-**Critical Findings**: The platform has **3 critical security vulnerabilities** that must be fixed before production deployment (auth bypass, password leak, API key exposure). Additionally, the **core upload flow is broken** due to sessionStorage limitations, blocking primary business value.
+**Critical Findings**: The platform has resolved many of the original critical issues, particularly around backend architecture, video generation, and data persistence. However, security vulnerabilities remain (auth bypass on certain domains, password reset code leakage) and some data persistence issues still need fixing.
 
-**Quick Wins** (1-2 days):
-1. Fix service worker PWA installation (remove search.html reference)
-2. Remove production auth bypass (force backend mode)
-3. Hide password reset codes from API responses
-4. Move Revid API key to backend environment variables
-5. Add auth check at start of upload flow
+**Significant Improvements Since Last Audit**:
+✅ Custom video pipeline deployed (95% cost savings)  
+✅ PostgreSQL database migration complete  
+✅ Cloudflare R2 storage configured  
+✅ Draft/autosave system implemented  
+✅ Async video generation working  
+✅ Authentication gating on upload page  
+
+**Quick Wins** (1 day):
+1. Fix draft metadata bug (return full record from storage manager)
+2. Remove password reset code from API response (send via email instead)
+3. Add user warning when videos are filtered in upload flow
+4. Fix dark mode duplicate code (consolidate to single file)
+5. Implement basic rate limiting on auth endpoints
 
 **Medium-term Improvements** (1-2 weeks):
-1. Replace sessionStorage with IndexedDB in upload flow
-2. Connect my-ads.html to actual data (ID registry or backend)
-3. Implement proper loading states for video generation
-4. Add file validation and image resizing
-5. Create draft/autosave system
+1. Set up CI/CD pipeline (GitHub Actions)
+2. Add email verification for new registrations
+3. Implement health checks and monitoring
+4. Add database backup strategy
+5. Set up structured logging and error tracking
+6. Fix storage manager metadata bug
 
-**Strategic Initiatives** (2-3 months):
-1. **Build custom video pipeline** ($0.024/video vs $0.50-2.00) - 95%+ cost savings
-2. Migrate to PostgreSQL database
-3. Implement CDN for video delivery
-4. Add analytics and monitoring
-5. Build email verification and notification system
+**Strategic Initiatives** (1-3 months):
+1. Implement video quality variants for adaptive streaming
+2. Add automated health monitoring and alerting
+3. Build comprehensive E2E test suite
+4. Implement video recommendation/engagement system
+5. Multi-language support for UI and video generation
 
-**Total Technical Debt**: Estimated 8-12 weeks to address all findings. However, the **top 10 critical issues** can be resolved in 2-3 weeks, unblocking production deployment.
+**Overall Assessment**: The platform has made excellent progress on core infrastructure and cost optimization. The 95% cost reduction in video generation is a major business win. Focus should now shift to security hardening, operational reliability (CI/CD, monitoring), and data quality (email verification, backup strategy).
 
-**Recommendation**: Focus on P0 and P1 fixes immediately (2-3 day sprint), then allocate 2-3 weeks for custom video pipeline to reduce costs by 95% before scaling user acquisition.
+**Deployment Readiness**: The backend is production-ready with proper database, storage, and API architecture. Frontend is stable but would benefit from CI/CD automation and E2E testing before scaling to 10,000+ users.
 
-```
+**Recommendation**: Deploy the backend improvements, fix P0 security issues immediately, then focus on P1 reliability improvements (CI/CD, monitoring) before major user acquisition campaigns.

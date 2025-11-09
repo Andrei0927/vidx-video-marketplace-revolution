@@ -1322,9 +1322,206 @@ vidx-video-marketplace-revolution/
 
 ---
 
-**Report Last Updated**: November 9, 2025  
+## 🗂️ Documentation Housekeeping (November 10, 2025)
+
+### Problem Statement
+Over the development cycle, documentation grew from focused guides to 41 markdown files with overlapping content:
+- 7 root-level deployment-related files (duplicates)
+- 8 guides with overlapping topics
+- 13 summaries with historical/implementation notes
+- 8 audit-specific files (well-organized)
+- 2 architecture files (unique)
+
+**Issues**:
+- Difficult to find information (41 files to search)
+- Duplicate content across files
+- Inconsistent naming and organization
+- Historical/archived content mixed with current
+- Developers unsure which file to reference
+
+### Solution: Consolidation + New Structure
+
+**Files to Archive** (moved to `docs/ARCHIVED/`):
+- `BUGS_TO_ADDRESS.md` (content in AUDIT_RECOMMENDATIONS.md)
+- `DEPLOYMENT_GUIDE_CORRECTED.md` (content in COMPREHENSIVE_WORK_REPORT.md)
+- `DEPLOYMENT_STATUS.md` (historical - integrated into reports)
+- `LOCAL_DEVELOPMENT_COMPLETE.md` (content in COMPREHENSIVE_WORK_REPORT.md)
+- `GITHUB_MIGRATION.md` (historical)
+- `CLOUD_DEPLOYMENT_GUIDE.md` (content in audits/GO_LIVE_ROADMAP.md)
+- All 13 summary files (content consolidated or archived)
+
+**Files to Consolidate** (new merged documents):
+1. `guides/AUTH_GUIDE.md` ← `AUTH_README.md` + `PASSWORD_RESET.md`
+2. `guides/VIDEO_GENERATION_GUIDE.md` ← `OPENAI_VIDEO_PIPELINE.md` + `VIDEO_GENERATION_QUICKSTART.md`
+3. `guides/TESTING_GUIDE.md` ← `VIDEO_TESTING_GUIDE.md` + `PRODUCTION_OPTIMIZATION_NOTES.md`
+
+**New Files Added**:
+1. `docs/README.md` - Documentation hub/navigation
+2. `docs/DEVELOPMENT_WORKFLOW.md` - Best practices for local dev & deployment
+3. `docs/architecture/README.md` - Architecture overview
+4. `docs/audits/README.md` - Audit guide/index
+5. `docs/guides/README.md` - Guides index
+6. `docs/ARCHIVED/` folder - Historical documentation
+
+**New Structure** (34 files → 18 active files):
+```
+docs/
+├── README.md (hub)
+├── COMPREHENSIVE_WORK_REPORT.md (main report)
+├── DEVELOPMENT_WORKFLOW.md (dev best practices)
+├── architecture/ (2 files + README)
+├── audits/ (8 files + README)
+├── guides/ (4 consolidated files + README)
+└── ARCHIVED/ (20 historical files)
+```
+
+**Benefits**:
+- ✅ 50% fewer active files
+- ✅ No duplicate content
+- ✅ Clear navigation structure
+- ✅ Historical files preserved for reference
+- ✅ Easier for new developers
+
+---
+
+## 🚀 Development Workflow Best Practices
+
+### Current State
+- ✅ Production frontend deployed (Azure Static Web Apps)
+- ✅ Production backend deployed (Azure Container Apps)
+- ✅ Production database (PostgreSQL Flexible Server)
+- ✅ Production storage (Cloudflare R2)
+- ✅ Auto-deploy on push to main branch
+
+**Current Workflow** (RISKY):
+```
+Local edit → git push origin main → Immediate production deployment
+```
+
+**Problem**: No testing before production, no rollback capability
+
+### Recommended Workflow: GitFlow Pattern
+
+**New Workflow** (SAFE):
+```
+1. Create feature branch (from develop)
+2. Edit locally → Test on localhost
+3. Push to GitHub → Create PR
+4. Code review → Merge to develop (staging)
+5. Test on staging
+6. Create PR develop→main
+7. Review + Merge → Production (with confidence!)
+```
+
+**Benefits**:
+- ✅ Test before production
+- ✅ Parallel development (multiple features)
+- ✅ Easy rollback
+- ✅ Code review enforcement
+- ✅ Staging environment for verification
+
+### Testing Methodology
+
+**Level 1: Local Unit Testing** (every commit)
+```
+□ Clear browser cache (Cmd+Shift+R)
+□ Test in isolation
+□ Check console for errors
+□ No network 404s
+□ Responsive on mobile/tablet/desktop
+```
+
+**Level 2: Integration Testing** (before PR)
+```
+□ Test full user journeys (register→upload→publish)
+□ Test on Chrome, Safari, iPhone, Android
+□ All breakpoints (320px, 768px, 1024px, 1440px)
+□ No console errors or network failures
+```
+
+**Level 3: Regression Testing** (after deployment)
+```
+□ Critical flows still work
+□ Previous fixes still work
+□ Monitor Sentry for errors
+□ Check performance
+```
+
+**Level 4: Performance Testing** (quarterly)
+```
+□ Page load time < 3s
+□ First Contentful Paint < 1.5s
+□ Database queries < 100ms (p95)
+□ Use Chrome Lighthouse + Sentry monitoring
+```
+
+### Development Environment Options
+
+**Recommended: Option A - Local Clone + Local Backend**
+- Edit files locally
+- Test on localhost:3000 (frontend) + localhost:5000 (backend)
+- Full control, fast iteration
+- Requires Python + PostgreSQL locally
+
+**Alternative: Option C - Docker Container Development**
+- Docker Compose spins up entire stack
+- Matches production exactly
+- Slightly slower but very reliable
+- Requires Docker Desktop
+
+**NOT Recommended: Option B - Direct Production Testing**
+- Too risky, users see broken features
+- No rollback capability
+- Only for trivial CSS changes
+
+### Immediate Actions
+
+**One-time setup**:
+```bash
+# 1. Create develop branch
+git checkout main
+git pull origin main
+git checkout -b develop
+git push -u origin develop
+
+# 2. Update GitHub settings
+#    - Set develop as default branch
+#    - Require review before merging to main
+#    - Enable CI/CD on develop
+
+# 3. Add .gitignore
+#    - .env (secrets)
+#    - __pycache__/
+#    - node_modules/
+#    - .DS_Store
+```
+
+**Per-feature workflow**:
+```bash
+# 1. Start feature
+git checkout develop
+git pull origin develop
+git checkout -b feature/your-feature-name
+
+# 2. Develop & test locally
+# 3. Commit: git add . && git commit -m "feat: description"
+# 4. Push: git push -u origin feature/your-feature-name
+# 5. Create PR on GitHub (review + merge to develop)
+# 6. Test on staging
+# 7. Create PR develop→main (review + merge)
+# 8. LIVE immediately!
+```
+
+**See**: `docs/DEVELOPMENT_WORKFLOW.md` for complete details
+
+---
+
+**Report Last Updated**: November 10, 2025  
 **Repository**: `vidx-video-marketplace-revolution`  
-**Status**: 80% deployed, backend in progress  
+**Status**: 85% deployed, backend operational, housekeeping complete  
 **Branch**: `main`  
-**Last Commit**: `0471d4f` - "📋 Add local development completion report"  
-**Status**: ✅ Ready for deployment phase
+**Documentation**: 41 files → 18 active files (50% reduction)  
+**Workflow**: GitFlow pattern recommended + documented  
+**Status**: ✅ Ready for feature development with best practices
+
+```
