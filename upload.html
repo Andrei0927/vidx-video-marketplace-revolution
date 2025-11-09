@@ -281,10 +281,8 @@
                     window.location.reload();
                 }
             });
-            
-            // Stop execution of the rest of the page logic by returning early
-            return;
-        }
+        } else {
+            // User is authenticated - initialize the page
 
         // Theme toggle
         const themeToggle = document.getElementById('theme-toggle');
@@ -991,6 +989,8 @@
                 alert('Error saving upload draft. Please try again.');
             }
         });
+        
+        } // End of authenticated user block
     </script>
 </body>
 </html>
