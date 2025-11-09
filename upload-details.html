@@ -37,6 +37,7 @@
         };
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/js/storage-manager.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <style>
         /* Improve form field visibility in dark mode */
@@ -435,58 +436,92 @@
             });
         }
 
-        // Load upload data from previous step
-        try {
-            const uploadData = JSON.parse(sessionStorage.getItem('uploadData') || '{}');
-            console.log('Loaded upload data:', uploadData);
-            
-            // Show upload info
-            if (uploadData.fileCount) {
-                const infoDiv = document.createElement('div');
-                infoDiv.className = 'bg-green-50 dark:bg-dark-200 border border-green-200 dark:border-dark-300 rounded-lg p-4 mb-6';
-                infoDiv.innerHTML = `
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i data-feather="check-circle" class="h-5 w-5 text-green-600 dark:text-green-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-green-800 dark:text-green-300">Files uploaded successfully</h3>
-                            <div class="mt-2 text-sm text-green-700 dark:text-green-400">
-                                <p>${uploadData.fileCount} file(s) ready for AI video generation</p>
-                                <p class="text-xs mt-1">Music: ${uploadData.music || 'Upbeat & Energetic'}</p>
+        // Load upload data from previous step (IndexedDB)
+        async function loadUploadData() {
+            try {
+                const uploadData = await window.storageManager.getDraft();
+                console.log('[UploadDetails] Loaded upload data from IndexedDB:', uploadData);
+                
+                // Show upload info
+                if (uploadData && uploadData.fileCount) {
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'bg-green-50 dark:bg-dark-200 border border-green-200 dark:border-dark-300 rounded-lg p-4 mb-6';
+                    infoDiv.innerHTML = `
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i data-feather="check-circle" class="h-5 w-5 text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-green-800 dark:text-green-300">Files uploaded successfully</h3>
+                                <div class="mt-2 text-sm text-green-700 dark:text-green-400">
+                                    <p>${uploadData.fileCount} file(s) ready for AI video generation</p>
+                                    <p class="text-xs mt-1">Music: ${uploadData.music || 'Upbeat & Energetic'}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                document.querySelector('form').insertBefore(infoDiv, document.querySelector('form').firstChild);
-                feather.replace();
+                    `;
+                    document.querySelector('form').insertBefore(infoDiv, document.querySelector('form').firstChild);
+                    feather.replace();
+                } else {
+                    console.warn('[UploadDetails] No upload data found, redirecting to upload page');
+                    // No upload data - redirect to start
+                    window.location.href = 'upload.html';
+                }
+            } catch (err) {
+                console.error('[UploadDetails] Could not load upload data:', err);
+                // Redirect to upload page on error
+                window.location.href = 'upload.html';
             }
-        } catch (err) {
-            console.warn('Could not load upload data:', err);
         }
 
-        // Form submission
+        // Load data on page load
+        loadUploadData();
+
+        // Form submission - save to IndexedDB
         const detailsForm = document.getElementById('details-form');
-        detailsForm.addEventListener('submit', (e) => {
+        detailsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Collect form data
-            const formData = new FormData(detailsForm);
-            const detailsData = Object.fromEntries(formData.entries());
+            // Disable submit button
+            const submitBtn = detailsForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i data-feather="loader" class="h-4 w-4 inline animate-spin mr-2"></i>Saving...';
+            feather.replace();
             
-            // Merge with upload data
-            const uploadData = JSON.parse(sessionStorage.getItem('uploadData') || '{}');
-            const completeData = {
-                ...uploadData,
-                ...detailsData,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Store for next step
-            sessionStorage.setItem('adDetails', JSON.stringify(completeData));
-            
-            // Navigate to review page
-            window.location.href = 'upload-review.html';
+            try {
+                // Collect form data
+                const formData = new FormData(detailsForm);
+                const detailsData = Object.fromEntries(formData.entries());
+                
+                // Load existing upload data from IndexedDB
+                const uploadData = await window.storageManager.getDraft();
+                
+                // Merge with new details
+                const completeData = {
+                    ...uploadData,
+                    ...detailsData,
+                    step: 'details', // Track progress
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Save back to IndexedDB
+                console.log('[UploadDetails] Saving complete data to IndexedDB');
+                await window.storageManager.saveDraft(completeData);
+                
+                // Navigate to review page
+                window.location.href = 'upload-review.html';
+                
+            } catch (error) {
+                console.error('[UploadDetails] Error saving details:', error);
+                
+                // Restore button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                feather.replace();
+                
+                alert('Error saving ad details. Please try again.');
+            }
         });
     </script>
 </body>

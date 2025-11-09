@@ -37,6 +37,7 @@
         };
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/js/storage-manager.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
@@ -219,28 +220,43 @@
             });
         }
 
-        // Load data from previous steps
+        // Load data from previous steps (IndexedDB)
         let adData = null;
         let uploadFiles = null;
 
-        try {
-            adData = JSON.parse(sessionStorage.getItem('adDetails') || '{}');
-            uploadFiles = JSON.parse(sessionStorage.getItem('uploadFiles') || '[]');
-            displayReview();
-        } catch (err) {
-            console.error('Error loading data:', err);
-            document.getElementById('review-content').innerHTML = `
-                <div class="text-center py-8">
-                    <i data-feather="alert-circle" class="h-16 w-16 text-red-500 mx-auto mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No ad data found</h3>
-                    <p class="text-gray-500 dark:text-dark-400 mb-4">Please start from the beginning</p>
-                    <a href="upload.html" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                        Start Upload
-                    </a>
-                </div>
-            `;
-            feather.replace();
+        async function loadDraftData() {
+            try {
+                const draft = await window.storageManager.getDraft();
+                
+                if (!draft || !draft.title) {
+                    throw new Error('No draft data found');
+                }
+                
+                adData = draft;
+                uploadFiles = draft.files || [];
+                
+                console.log('[UploadReview] Loaded draft data:', adData);
+                console.log('[UploadReview] Files count:', uploadFiles.length);
+                
+                displayReview();
+            } catch (err) {
+                console.error('[UploadReview] Error loading data:', err);
+                document.getElementById('review-content').innerHTML = `
+                    <div class="text-center py-8">
+                        <i data-feather="alert-circle" class="h-16 w-16 text-red-500 mx-auto mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No ad data found</h3>
+                        <p class="text-gray-500 dark:text-dark-400 mb-4">Please start from the beginning</p>
+                        <a href="upload.html" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            Start Upload
+                        </a>
+                    </div>
+                `;
+                feather.replace();
+            }
         }
+
+        // Load data on page load
+        loadDraftData();
 
         function displayReview() {
             if (!adData || !adData.title) {
@@ -473,7 +489,7 @@
             feather.replace();
         }
 
-        function showSuccess() {
+        async function showSuccess() {
             const publishingProgress = document.getElementById('publishing-progress');
             publishingProgress.innerHTML = `
                 <div class="bg-green-50 dark:bg-dark-200 border border-green-200 dark:border-dark-300 rounded-lg p-6 text-center">
@@ -485,10 +501,13 @@
             `;
             feather.replace();
 
-            // Clear session storage
-            sessionStorage.removeItem('uploadData');
-            sessionStorage.removeItem('uploadFiles');
-            sessionStorage.removeItem('adDetails');
+            // Clear draft from IndexedDB
+            try {
+                await window.storageManager.clearDraft();
+                console.log('[UploadReview] Draft cleared from IndexedDB');
+            } catch (error) {
+                console.error('[UploadReview] Error clearing draft:', error);
+            }
 
             // Redirect to category page after 2 seconds
             setTimeout(() => {

@@ -37,6 +37,7 @@
         };
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/js/storage-manager.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <style>
         .file-upload {
@@ -351,18 +352,249 @@
             handleFiles(fileInput.files);
         });
 
-        // Handle files
-        function handleFiles(files) {
+        // File validation constants
+        const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+        const MIN_IMAGE_WIDTH = 800;
+        const MIN_IMAGE_HEIGHT = 600;
+        const MAX_IMAGE_WIDTH = 1920;
+        const MAX_IMAGE_HEIGHT = 1080;
+        const VALID_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        const VALID_VIDEO_TYPES = ['video/mp4', 'video/webm'];
+
+        /**
+         * Validate a single file
+         * @param {File} file - File to validate
+         * @returns {Promise<{valid: boolean, errors: Array, file: File}>}
+         */
+        async function validateFile(file) {
+            const errors = [];
+            
+            // Check file size
+            if (file.size > MAX_FILE_SIZE) {
+                errors.push(`${file.name} is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Maximum size is 50MB.`);
+            }
+            
+            // Check file type
+            const allValidTypes = [...VALID_IMAGE_TYPES, ...VALID_VIDEO_TYPES];
+            if (!allValidTypes.includes(file.type)) {
+                errors.push(`${file.name} has invalid format. Use JPEG, PNG, WebP, MP4, or WebM.`);
+            }
+            
+            // For images, check dimensions
+            if (VALID_IMAGE_TYPES.includes(file.type)) {
+                try {
+                    const dimensions = await getImageDimensions(file);
+                    if (dimensions.width < MIN_IMAGE_WIDTH || dimensions.height < MIN_IMAGE_HEIGHT) {
+                        errors.push(`${file.name} is too small (${dimensions.width}×${dimensions.height}). Minimum size is ${MIN_IMAGE_WIDTH}×${MIN_IMAGE_HEIGHT} pixels.`);
+                    }
+                } catch (error) {
+                    errors.push(`Failed to read dimensions of ${file.name}`);
+                }
+            }
+            
+            return { valid: errors.length === 0, errors, file };
+        }
+
+        /**
+         * Get image dimensions from file
+         * @param {File} file - Image file
+         * @returns {Promise<{width: number, height: number}>}
+         */
+        function getImageDimensions(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    resolve({ width: img.width, height: img.height });
+                    URL.revokeObjectURL(img.src);
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(img.src);
+                    reject(new Error('Failed to load image'));
+                };
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        /**
+         * Resize image to max dimensions using Canvas API
+         * @param {File} file - Image file to resize
+         * @param {number} maxWidth - Maximum width
+         * @param {number} maxHeight - Maximum height
+         * @returns {Promise<File>} Resized image file
+         */
+        async function resizeImage(file, maxWidth = MAX_IMAGE_WIDTH, maxHeight = MAX_IMAGE_HEIGHT) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const img = new Image();
+                    
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Calculate new dimensions maintaining aspect ratio
+                        if (width > maxWidth || height > maxHeight) {
+                            const ratio = Math.min(maxWidth / width, maxHeight / height);
+                            width = Math.round(width * ratio);
+                            height = Math.round(height * ratio);
+                            
+                            console.log(`[Upload] Resizing ${file.name} from ${img.width}×${img.height} to ${width}×${height}`);
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to JPEG with 90% quality
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                reject(new Error('Failed to create blob'));
+                                return;
+                            }
+                            
+                            const resizedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            
+                            const savings = ((1 - resizedFile.size / file.size) * 100).toFixed(0);
+                            console.log(`[Upload] Resized ${file.name}: ${(file.size / 1024).toFixed(0)}KB → ${(resizedFile.size / 1024).toFixed(0)}KB (${savings}% reduction)`);
+                            
+                            resolve(resizedFile);
+                        }, 'image/jpeg', 0.9);
+                    };
+                    
+                    img.onerror = () => {
+                        reject(new Error('Failed to load image'));
+                    };
+                    
+                    img.src = e.target.result;
+                };
+                
+                reader.onerror = () => {
+                    reject(new Error('Failed to read file'));
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Handle files with validation and resizing
+        async function handleFiles(files) {
             if (files.length === 0) return;
 
-            // Add new files to existing ones
-            uploadedFiles = [...uploadedFiles, ...Array.from(files)];
+            const fileArray = Array.from(files);
+            const validationResults = [];
+            const errors = [];
 
-            // Update previews
-            updatePreviews();
+            // Show processing indicator
+            const processingMsg = document.createElement('div');
+            processingMsg.className = 'mt-4 p-4 bg-blue-50 dark:bg-dark-200 border border-blue-200 dark:border-dark-300 rounded-lg';
+            processingMsg.innerHTML = `
+                <div class="flex items-center">
+                    <i data-feather="loader" class="h-5 w-5 text-blue-600 dark:text-blue-400 animate-spin mr-3"></i>
+                    <span class="text-sm text-blue-800 dark:text-blue-300">Processing files...</span>
+                </div>
+            `;
+            uploadArea.parentElement.insertBefore(processingMsg, previewSection);
+            feather.replace();
+
+            // Validate all files
+            for (const file of fileArray) {
+                const result = await validateFile(file);
+                validationResults.push(result);
+                
+                if (!result.valid) {
+                    errors.push(...result.errors);
+                }
+            }
+
+            // Process valid files (resize images, keep videos as-is)
+            const processedFiles = [];
             
-            previewSection.classList.remove('hidden');
-            nextBtn.disabled = false;
+            for (const result of validationResults) {
+                if (result.valid) {
+                    try {
+                        if (VALID_IMAGE_TYPES.includes(result.file.type)) {
+                            // Resize image if needed
+                            const resized = await resizeImage(result.file);
+                            processedFiles.push(resized);
+                        } else {
+                            // Keep video as-is
+                            processedFiles.push(result.file);
+                        }
+                    } catch (error) {
+                        console.error('Error processing file:', error);
+                        errors.push(`Failed to process ${result.file.name}`);
+                    }
+                }
+            }
+
+            // Remove processing message
+            processingMsg.remove();
+
+            // Show errors if any
+            if (errors.length > 0) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'mt-4 p-4 bg-red-50 dark:bg-dark-200 border border-red-200 dark:border-red-900 rounded-lg';
+                errorMsg.innerHTML = `
+                    <div class="flex">
+                        <i data-feather="alert-circle" class="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mr-3"></i>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium text-red-800 dark:text-red-300">File Validation Errors</h4>
+                            <ul class="mt-2 text-sm text-red-700 dark:text-red-400 list-disc list-inside space-y-1">
+                                ${errors.map(err => `<li>${err}</li>`).join('')}
+                            </ul>
+                            <button class="mt-3 text-sm text-red-700 dark:text-red-400 underline hover:no-underline">
+                                Dismiss
+                            </button>
+                        </div>
+                    </div>
+                `;
+                uploadArea.parentElement.insertBefore(errorMsg, previewSection);
+                feather.replace();
+                
+                // Add dismiss handler
+                errorMsg.querySelector('button').addEventListener('click', () => {
+                    errorMsg.remove();
+                });
+            }
+
+            // Add processed files to uploaded files
+            if (processedFiles.length > 0) {
+                uploadedFiles = [...uploadedFiles, ...processedFiles];
+
+                // Update previews
+                updatePreviews();
+                
+                previewSection.classList.remove('hidden');
+                nextBtn.disabled = false;
+
+                // Show success message
+                if (processedFiles.length > 0) {
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'mt-4 p-4 bg-green-50 dark:bg-dark-200 border border-green-200 dark:border-green-900 rounded-lg';
+                    successMsg.innerHTML = `
+                        <div class="flex items-center">
+                            <i data-feather="check-circle" class="h-5 w-5 text-green-600 dark:text-green-400 mr-3"></i>
+                            <span class="text-sm text-green-800 dark:text-green-300">
+                                Added ${processedFiles.length} file${processedFiles.length !== 1 ? 's' : ''} successfully
+                            </span>
+                        </div>
+                    `;
+                    uploadArea.parentElement.insertBefore(successMsg, previewSection);
+                    feather.replace();
+                    
+                    // Auto-dismiss after 3 seconds
+                    setTimeout(() => {
+                        successMsg.remove();
+                    }, 3000);
+                }
+            }
         }
 
         function updatePreviews() {
@@ -460,70 +692,74 @@
             }
         });
 
-        // Next button handler - navigate to details page
-        nextBtn.addEventListener('click', () => {
-            console.log('Next button clicked, files:', uploadedFiles.length);
+        // Next button handler - save to IndexedDB and navigate to details page
+        nextBtn.addEventListener('click', async () => {
+            console.log('[Upload] Next button clicked, files:', uploadedFiles.length);
             
             // Disable button and show loading state
             nextBtn.disabled = true;
             const originalText = nextBtn.innerHTML;
-            nextBtn.innerHTML = '<i data-feather="loader" class="h-4 w-4 inline animate-spin mr-2"></i>Processing...';
+            nextBtn.innerHTML = '<i data-feather="loader" class="h-4 w-4 inline animate-spin mr-2"></i>Saving...';
             feather.replace();
             
-            // Store upload data in sessionStorage for next step
-            const uploadData = {
-                fileCount: uploadedFiles.length,
-                fileNames: uploadedFiles.map(f => f.name),
-                music: document.getElementById('ai-music').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            sessionStorage.setItem('uploadData', JSON.stringify(uploadData));
-            console.log('Upload data saved to sessionStorage');
-            
-            // Store actual file data as base64 (for demo purposes)
-            // In production, you'd upload to server here
-            const filePromises = uploadedFiles.map(file => {
-                return new Promise((resolve, reject) => {
-                    try {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            resolve({
-                                name: file.name,
-                                type: file.type,
-                                size: file.size,
-                                data: e.target.result
-                            });
-                        };
-                        reader.onerror = (e) => {
-                            console.error('FileReader error:', e);
-                            reject(e);
-                        };
-                        reader.readAsDataURL(file);
-                    } catch (error) {
-                        console.error('Error reading file:', error);
-                        reject(error);
-                    }
+            try {
+                // Prepare upload data
+                const uploadData = {
+                    fileCount: uploadedFiles.length,
+                    fileNames: uploadedFiles.map(f => f.name),
+                    music: document.getElementById('ai-music').value,
+                    timestamp: new Date().toISOString(),
+                    step: 'upload' // Track which step we're on
+                };
+                
+                // Convert files to base64 for storage
+                const filePromises = uploadedFiles.map(file => {
+                    return new Promise((resolve, reject) => {
+                        try {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                resolve({
+                                    name: file.name,
+                                    type: file.type,
+                                    size: file.size,
+                                    data: e.target.result
+                                });
+                            };
+                            reader.onerror = (e) => {
+                                console.error('[Upload] FileReader error:', e);
+                                reject(e);
+                            };
+                            reader.readAsDataURL(file);
+                        } catch (error) {
+                            console.error('[Upload] Error reading file:', error);
+                            reject(error);
+                        }
+                    });
                 });
-            });
 
-            Promise.all(filePromises)
-                .then(filesData => {
-                    console.log('Files processed, navigating to details page');
-                    sessionStorage.setItem('uploadFiles', JSON.stringify(filesData));
-                    // Navigate to upload details page
-                    window.location.href = 'upload-details.html';
-                })
-                .catch(error => {
-                    console.error('Error processing files:', error);
-                    // Restore button state
-                    nextBtn.disabled = false;
-                    nextBtn.innerHTML = originalText;
-                    feather.replace();
-                    // Fallback: navigate without file data if there's an error
-                    alert('Error processing files, but continuing to details page');
-                    window.location.href = 'upload-details.html';
-                });
+                const filesData = await Promise.all(filePromises);
+                uploadData.files = filesData;
+                
+                // Save to IndexedDB
+                console.log('[Upload] Saving draft to IndexedDB...');
+                await window.storageManager.saveDraft(uploadData);
+                
+                console.log('[Upload] Draft saved, navigating to details page');
+                
+                // Navigate to upload details page
+                window.location.href = 'upload-details.html';
+                
+            } catch (error) {
+                console.error('[Upload] Error saving draft:', error);
+                
+                // Restore button state
+                nextBtn.disabled = false;
+                nextBtn.innerHTML = originalText;
+                feather.replace();
+                
+                // Show error message
+                alert('Error saving upload draft. Please try again.');
+            }
         });
     </script>
 </body>
