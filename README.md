@@ -8,7 +8,7 @@ pinned: false
 tags:
   - marketplace
   - ai-video
-  - revid-ai
+  - openai
   - authentication
 ---
 
@@ -40,7 +40,7 @@ A modern video-first marketplace where AI creates professional video ads automat
 ### 🎬 Upload Flow
 1. **Upload Images** → Select background music
 2. **Add Details** → Product info, category, pricing
-3. **AI Generation** → Revid.ai creates professional video (1-2 min)
+3. **AI Generation** → OpenAI creates professional video (60-90 sec)
 4. **Publish** → Video ad goes live on marketplace
 
 ## 🚀 Quick Start
@@ -53,25 +53,25 @@ cd vidx-video-marketplace-revolution
 
 ### 2. Start Development Servers
 ```bash
-chmod +x start_dev.sh
-./start_dev.sh
+chmod +x scripts/start_dev.sh
+./scripts/start_dev.sh
 ```
 
 This starts:
 - Static server on http://localhost:3000
 - Auth API server on http://localhost:3001
 
-### 3. Configure Revid.ai API
+### 3. Configure OpenAI API
 
 **Get API Key**:
-1. Sign up at [revid.ai](https://www.revid.ai/)
-2. Purchase credits
-3. Copy API key from dashboard
+1. Sign up at [OpenAI Platform](https://platform.openai.com/)
+2. Add credits to your account ($5 minimum)
+3. Generate API key from dashboard
 
-**Add to Project**:
-```javascript
-// js/revid-service.js (line 9)
-this.apiKey = 'your-actual-revid-api-key-here';
+**Add to Backend**:
+```bash
+# .env file (backend only - NEVER in frontend!)
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx
 ```
 
 ### 4. Test the App
@@ -81,10 +81,21 @@ this.apiKey = 'your-actual-revid-api-key-here';
 
 ## 📚 Documentation
 
-- **[REVID_QUICKSTART.md](./REVID_QUICKSTART.md)** - Quick start for Revid API
-- **[REVID_INTEGRATION.md](./REVID_INTEGRATION.md)** - Complete API documentation
-- **[DEV_GUIDE.md](./DEV_GUIDE.md)** - Development guide & project structure
-- **[AUTH_README.md](./AUTH_README.md)** - Authentication system docs
+### Core Guides
+- **[VIDEO_GENERATION_QUICKSTART.md](./docs/guides/VIDEO_GENERATION_QUICKSTART.md)** - Quick start for video generation
+- **[OPENAI_VIDEO_PIPELINE.md](./docs/guides/OPENAI_VIDEO_PIPELINE.md)** - Complete pipeline documentation
+- **[DEV_GUIDE.md](./docs/guides/DEV_GUIDE.md)** - Development guide & project structure
+- **[AUTH_README.md](./docs/guides/AUTH_README.md)** - Authentication system docs
+- **[PASSWORD_RESET.md](./docs/guides/PASSWORD_RESET.md)** - Password reset implementation
+
+### Architecture
+- **[API_ARCHITECTURE.md](./docs/architecture/API_ARCHITECTURE.md)** - API design and flow
+- **[CATEGORY_ARCHITECTURE.md](./docs/architecture/CATEGORY_ARCHITECTURE.md)** - Category system design
+
+### Audits & Roadmap
+- **[AUDIT_RECOMMENDATIONS.md](./docs/audits/AUDIT_RECOMMENDATIONS.md)** - Platform audit findings
+- **[GO_LIVE_ROADMAP.md](./docs/audits/GO_LIVE_ROADMAP.md)** - Production deployment roadmap
+- **[VIDEO_PIPELINE_COMPARISON.md](./docs/audits/VIDEO_PIPELINE_COMPARISON.md)** - Video solution comparison
 
 ## 🛠️ Tech Stack
 
@@ -100,9 +111,11 @@ this.apiKey = 'your-actual-revid-api-key-here';
 - **REST API** - CORS-enabled authentication endpoints
 
 ### AI Integration
-- **Revid.ai** - Video generation
-- **TTS** - Professional voiceover
-- **Auto Captions** - Modern animated captions
+- ### AI Services
+- **OpenAI GPT-4o Mini** - Script generation
+- **OpenAI TTS HD** - Professional voiceover
+- **OpenAI Whisper** - Caption generation
+- **FFmpeg** - Video rendering
 
 ## 📂 Project Structure
 
@@ -114,15 +127,12 @@ vidx-video-marketplace-revolution/
 ├── upload.html            # Step 1: Upload images
 ├── upload-details.html    # Step 2: Add details
 ├── upload-review.html     # Step 3: Generate & publish
-├── login.html             # Auth pages
-├── register.html
-├── profile.html
-├── my-ads.html
+├── login.html, register.html, profile.html, my-ads.html
 │
 ├── js/
-│   ├── auth-service.js    # Auth API wrapper
-│   ├── revid-service.js   # Revid AI integration ⭐
-│   └── dark-mode.js       # Theme management
+│   ├── auth-service.js              # Auth API wrapper
+│   ├── video-generation-service.js  # OpenAI video pipeline ⭐
+│   └── dark-mode.js                 # Theme management
 │
 ├── components/
 │   ├── auth-modal.js      # Login/register modal
@@ -131,15 +141,21 @@ vidx-video-marketplace-revolution/
 ├── css/
 │   └── dark-mode.css      # Dark mode styles
 │
-├── auth_server.py         # Authentication API
-├── auth_db.json          # User database
-├── start_dev.sh          # Development startup script
+├── scripts/
+│   ├── auth_server.py     # Authentication API
+│   ├── server.py          # Static file server
+│   ├── migrate_db.py      # Database migration
+│   └── start_dev.sh       # Development startup script ⭐
+│
+├── data/
+│   ├── auth_db.json       # User database
+│   └── db.json            # Main database
 │
 └── docs/
-    ├── REVID_QUICKSTART.md
-    ├── REVID_INTEGRATION.md
-    ├── DEV_GUIDE.md
-    └── AUTH_README.md
+    ├── guides/            # User guides and tutorials
+    ├── architecture/      # System architecture docs
+    ├── audits/           # Audits and roadmaps
+    └── summaries/        # Implementation summaries
 ```
 
 ## 🎯 Features Breakdown
@@ -165,8 +181,8 @@ vidx-video-marketplace-revolution/
    
 3. **upload-review.html**
    - Preview all details
-   - AI video generation via Revid API
-   - Real-time progress tracking
+   - AI video generation via OpenAI pipeline
+   - Real-time progress tracking (script → audio → captions → render)
    - Error handling
 
 ### Authentication
@@ -192,11 +208,13 @@ GET  /me          - Get current user
 GET  /verify      - Verify session token
 ```
 
-### Revid AI (Proxied)
+### Video Generation (`/api/video/`)
 ```
-POST /script/generate  - Generate AI script
-POST /video/generate   - Create video
-GET  /video/status/:id - Check video status
+POST /generate-script     - Generate AI script from description
+POST /upload-url          - Get presigned URL for file upload
+POST /generate            - Start video generation job
+GET  /status/:jobId       - Check generation status
+POST /cancel/:jobId       - Cancel generation job
 ```
 
 ## 🎨 Design Features
@@ -242,7 +260,7 @@ Password: test123
 Check for:
 - Auth logs: "=== LOGIN SUCCESS ==="
 - Upload logs: "Files processed, navigating..."
-- Revid logs: "Generated script:", "Video completed:"
+- Video logs: "Script generated", "Video job started:", "Progress: 60%"
 
 ## 🚀 Deployment
 
@@ -275,21 +293,23 @@ For production, migrate from JSON to PostgreSQL:
 - CORS enabled
 
 ### Production Recommendations
-- Move API key to backend
+- Keep API keys in backend only
 - Use bcrypt for passwords
-- Add rate limiting
+- Add rate limiting (10 videos/hour per user)
 - Enable HTTPS only
 - Add CSRF protection
 - Use environment variables
+- Set up content moderation
 
-See `REVID_INTEGRATION.md` for detailed security setup.
+See `OPENAI_VIDEO_PIPELINE.md` for detailed security setup.
 
 ## ⚠️ Known Limitations
 
-### API Key Required
-- Revid.ai API key needed for video generation
-- Credits required (paid service)
-- Placeholder key won't work
+### API Configuration
+- OpenAI API key required for video generation
+- Cloudflare R2 needed for video storage
+- All API calls proxied through backend
+- Use placeholder keys in development
 
 ### Database
 - Currently JSON files

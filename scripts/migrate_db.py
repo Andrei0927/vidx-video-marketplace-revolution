@@ -6,6 +6,14 @@ Migration script to convert db.json to auth_db.json with hashed passwords
 import json
 import hashlib
 import secrets
+import os
+
+# Get paths relative to script location
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
+OLD_DB_PATH = os.path.join(DATA_DIR, 'db.json')
+NEW_DB_PATH = os.path.join(DATA_DIR, 'auth_db.json')
 
 def hash_password(password):
     """Hash a password using SHA-256 with salt"""
@@ -16,10 +24,10 @@ def hash_password(password):
 def migrate():
     # Load old database
     try:
-        with open('db.json', 'r') as f:
+        with open(OLD_DB_PATH, 'r') as f:
             old_db = json.load(f)
     except FileNotFoundError:
-        print("❌ db.json not found")
+        print(f"❌ {OLD_DB_PATH} not found")
         return
     
     # Create new database structure
@@ -73,11 +81,11 @@ def migrate():
         print(f"  ✅ Migrated profile for user ID: {profile['userId']}")
     
     # Save new database
-    with open('auth_db.json', 'w') as f:
+    with open(NEW_DB_PATH, 'w') as f:
         json.dump(new_db, f, indent=2)
     
     print("\n✅ Migration complete!")
-    print(f"📁 New database saved to: auth_db.json")
+    print(f"📁 New database saved to: {NEW_DB_PATH}")
     print(f"👤 Users migrated: {len(new_db['users'])}")
     print(f"🔐 Sessions migrated: {len(new_db['sessions'])}")
     print(f"📋 Profiles migrated: {len(new_db['profiles'])}")

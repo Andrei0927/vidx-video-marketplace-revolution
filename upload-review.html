@@ -168,7 +168,7 @@
 
     <script type="module" src="components/user-dropdown.js"></script>
     <script type="module">
-        import revidService from './js/revid-service.js';
+        import videoGenerationService from './js/video-generation-service.js';
         
         feather.replace();
 
@@ -317,7 +317,7 @@
                                     <p><strong>Music:</strong> ${formatMusicLabel(adData.music)}</p>
                                     <p><strong>Voice:</strong> Professional AI voice (our signature sound)</p>
                                     <p><strong>Format:</strong> Mobile-optimized slideshow with captions</p>
-                                    <p class="mt-2">When you publish, Revid.ai will create a professional video with AI-generated voiceover and captions based on your description.</p>
+                                    <p class="mt-2">When you publish, our AI pipeline will create a professional video using OpenAI technology: GPT-4o Mini generates the script, TTS creates voiceover, Whisper adds captions, and FFmpeg renders the final video.</p>
                                 </div>
                             </div>
                         </div>
@@ -353,7 +353,7 @@
                 // Step 1: Generate AI script (20%)
                 updateProgress('Generating AI script from description...', 20, 'step-1');
                 
-                const scriptResult = await revidService.generateScript({
+                const scriptResult = await videoGenerationService.generateScript({
                     description: adData.description,
                     title: adData.title,
                     category: adData.category,
@@ -375,7 +375,7 @@
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 updateProgress('Processing images for video...', 40, 'step-2');
                 
-                // Convert base64 files back to File objects for Revid API
+                // Convert base64 files back to File objects for video generation
                 const imageFiles = uploadFiles
                     .filter(f => f.type.startsWith('image/'))
                     .map(f => {
@@ -391,11 +391,11 @@
 
                 completeStep('step-2');
 
-                // Step 3: Generate video with Revid.ai (60%)
+                // Step 3: Generate video with OpenAI pipeline (60%)
                 await new Promise(resolve => setTimeout(resolve, 500));
                 updateProgress('Creating video with AI voiceover and captions...', 60, 'step-3');
                 
-                const videoJob = await revidService.generateVideo({
+                const videoJob = await videoGenerationService.generateVideo({
                     images: imageFiles,
                     script: scriptResult.script,
                     music: adData.music || 'upbeat',
@@ -409,7 +409,7 @@
                 updateProgress('Processing video (this may take 1-2 minutes)...', 70, 'step-4');
                 
                 let currentProgress = 70;
-                const videoResult = await revidService.waitForVideo(
+                const videoResult = await videoGenerationService.waitForVideo(
                     videoJob.jobId,
                     (status) => {
                         // Update progress as video generates
@@ -503,7 +503,7 @@
                     <i data-feather="alert-circle" class="h-16 w-16 text-red-600 dark:text-red-400 mx-auto mb-4"></i>
                     <h3 class="text-2xl font-bold text-red-900 dark:text-red-300 mb-2">Publishing Failed</h3>
                     <p class="text-red-700 dark:text-red-400 mb-4">${errorMessage}</p>
-                    <p class="text-sm text-gray-600 dark:text-dark-400 mb-6">This is likely due to missing API credits. The video generation requires an active Revid.ai API key with credits.</p>
+                    <p class="text-sm text-gray-600 dark:text-dark-400 mb-6">This is likely due to missing API configuration. The video generation requires OpenAI API key configured in the backend.</p>
                     <button onclick="location.reload()" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
                         Try Again
                     </button>

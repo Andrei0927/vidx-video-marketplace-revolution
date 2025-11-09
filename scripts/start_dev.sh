@@ -3,6 +3,9 @@
 # VidX Development Server Starter
 # Starts both the static file server and authentication server
 
+# Change to project root directory (parent of scripts folder)
+cd "$(dirname "$0")/.." || exit 1
+
 echo "🚀 Starting VidX Development Environment..."
 echo ""
 
@@ -28,7 +31,7 @@ sleep 1
 
 # Start authentication server on port 3001
 echo -e "${BLUE}🔐 Starting authentication server on http://localhost:3001${NC}"
-python3 auth_server.py &
+python3 scripts/auth_server.py &
 AUTH_PID=$!
 
 # Wait a moment for servers to start

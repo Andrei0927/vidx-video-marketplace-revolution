@@ -1,4 +1,0 @@
-127.0.0.1 - - [05/Nov/2025 22:08:56] "GET /users?email=demo@example.com HTTP/1.1" 200 -
-127.0.0.1 - - [05/Nov/2025 22:09:08] "POST /users HTTP/1.1" 201 -
-127.0.0.1 - - [05/Nov/2025 22:09:17] "POST /sessions HTTP/1.1" 201 -
-127.0.0.1 - - [05/Nov/2025 22:09:27] "DELETE /sessions?token=abc123 HTTP/1.1" 200 -

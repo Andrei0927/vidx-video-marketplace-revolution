@@ -33,7 +33,8 @@ def generate_token():
     return secrets.token_urlsafe(32)
 
 class AuthHandler(BaseHTTPRequestHandler):
-    DB_FILE = 'auth_db.json'
+    # Database path relative to project root
+    DB_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'auth_db.json')
     
     def _load_db(self):
         """Load database from JSON file"""

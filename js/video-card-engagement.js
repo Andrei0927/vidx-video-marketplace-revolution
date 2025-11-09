@@ -1,7 +1,7 @@
 /**
  * Video Card Engagement Component
  * Handles Like, Favorite, and Share functionality for all video cards across the platform
- * Works with both static cards and dynamically loaded cards (from Revid API)
+ * Works with both static cards and dynamically loaded cards (from API or video generation)
  */
 
 class VideoCardEngagement {
@@ -386,7 +386,7 @@ class VideoCardEngagement {
     // ============= PUBLIC API FOR DYNAMIC CONTENT =============
 
     /**
-     * Call this after dynamically loading new video cards (e.g., from Revid API)
+     * Call this after dynamically loading new video cards (e.g., from API or video generation)
      * to reinitialize button states for the new content
      */
     refreshButtonStates() {
