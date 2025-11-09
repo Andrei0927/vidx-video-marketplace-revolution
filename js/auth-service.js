@@ -8,8 +8,8 @@ class AuthService {
         this.baseUrl = 'http://localhost:3001/api/auth';
       } 
       else {
-        // For production/remote deployments, use relative API path (assumes backend is proxied)
-        this.baseUrl = '/api/auth';
+        // For production, use Azure Container Apps backend
+        this.baseUrl = 'https://video-marketplace-api.victoriousforest-01a281fd.northeurope.azurecontainerapps.io/api/auth';
       }
     } else {
       this.baseUrl = baseUrl;
