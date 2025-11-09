@@ -1,5 +1,19 @@
 # ☁️ VidX Cloud Deployment Guide
 
+> **⚠️ IMPORTANT: This guide has been superseded by `DEPLOYMENT_GUIDE_CORRECTED.md`**
+>
+> **Issue**: This guide incorrectly recommends **Railway + Vercel**, which were **never actually recommended** in our detailed cost analysis.
+>
+> **Correct Recommendation** (from `VIDEO_PIPELINE_COMPARISON.md`):
+> - **Azure Container Instances** + **Cloudflare R2** ($0.024/video)
+> - NOT Railway + Vercel
+>
+> **Please use**: `docs/DEPLOYMENT_GUIDE_CORRECTED.md` for accurate deployment instructions that match our cost analysis.
+>
+> This file is kept for historical reference only.
+>
+> ---
+
 **Last Updated**: November 9, 2025  
 **Estimated Time**: 3-4 hours  
 **Difficulty**: Intermediate  
