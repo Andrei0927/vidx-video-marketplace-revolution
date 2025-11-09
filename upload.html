@@ -37,6 +37,16 @@
         };
     </script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        // Helper function to replace feather icons
+        window.replaceFeatherIcons = function() {
+            if (typeof feather !== 'undefined' && feather.replace) {
+                feather.replace();
+            } else {
+                console.warn('[Feather] Icons library not loaded yet');
+            }
+        };
+    </script>
     <script src="/js/storage-manager.js"></script>
     <link rel="stylesheet" href="/css/dark-mode.css">
     <style>
@@ -234,6 +244,15 @@
 
     <script type="module" src="components/user-dropdown.js"></script>
     <script>
+        // Initialize feather icons when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof feather !== 'undefined' && feather.replace) {
+                feather.replace();
+                console.log('[Feather] Icons initialized');
+            }
+        });
+
+        // Fallback - try to replace icons immediately as well
         window.replaceFeatherIcons();
 
         // Check authentication - users must be logged in to upload

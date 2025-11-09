@@ -292,4 +292,8 @@ window.storageManager.init().catch(err => {
     // Fallback to sessionStorage will be handled by calling code
 });
 
-export default StorageManager;
+// Export for module usage (optional)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = StorageManager;
+}
+
