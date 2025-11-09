@@ -427,10 +427,15 @@ class AuthModal extends HTMLElement {
       console.log('Session:', session);
       
       // Store session and user info
+      // Use fullName from backend, fall back to email if empty
+      const displayName = user?.fullName && user.fullName.trim() !== '' 
+        ? user.fullName 
+        : user?.email || '';
+      
       localStorage.setItem('sessionToken', session);
       localStorage.setItem('userId', user?.id || '');
       localStorage.setItem('userEmail', user?.email || '');
-      localStorage.setItem('userName', user?.name || '');
+      localStorage.setItem('userName', displayName);
       localStorage.setItem('userAvatar', profile?.avatar || '');
       
       console.log('Stored in localStorage:', {
@@ -525,10 +530,15 @@ class AuthModal extends HTMLElement {
       console.log('Token:', token);
       
       // Store session and user info
+      // Use fullName from backend, fall back to email if empty
+      const displayName = user?.fullName && user.fullName.trim() !== '' 
+        ? user.fullName 
+        : user?.email || '';
+      
       localStorage.setItem('sessionToken', token);
       localStorage.setItem('userId', user?.id || '');
       localStorage.setItem('userEmail', user?.email || '');
-      localStorage.setItem('userName', user?.name || '');
+      localStorage.setItem('userName', displayName);
       localStorage.setItem('userAvatar', profile?.avatar || '');
       
       console.log('Stored in localStorage:', {
