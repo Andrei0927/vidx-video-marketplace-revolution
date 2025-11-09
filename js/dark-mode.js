@@ -59,9 +59,17 @@ const darkModeConfig = {
         }
     },
 
+    vantaInstance: null,
+
     updateVantaBackground(isDark) {
         if (window.VANTA && document.getElementById('vanta-bg')) {
-            VANTA.NET({
+            // Destroy old instance to prevent memory leak
+            if (this.vantaInstance) {
+                this.vantaInstance.destroy();
+            }
+            
+            // Create new instance with current theme colors
+            this.vantaInstance = VANTA.NET({
                 el: "#vanta-bg",
                 mouseControls: true,
                 touchControls: true,

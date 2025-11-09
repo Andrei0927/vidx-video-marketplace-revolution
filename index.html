@@ -168,14 +168,14 @@
                             <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Cars, bikes, parts</p>
                         </a>
                 <!-- Electronics -->
-                <a href="search-electronics.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <a href="electronics.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                     <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
                         <i data-feather="monitor" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
                     <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Electronics</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Phones, laptops</p>
                 </a>                <!-- Fashion -->
-                <a href="search-fashion.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <a href="fashion.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                     <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
                         <i data-feather="shopping-bag" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
@@ -184,7 +184,7 @@
                 </a>
 
                 <!-- Home & Garden -->
-                <a href="search-home.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <a href="home-garden.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                     <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
                         <i data-feather="home" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
@@ -193,7 +193,7 @@
                 </a>
 
                 <!-- Sports -->
-                <a href="search-sports.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <a href="sports.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                     <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
                         <i data-feather="activity" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
@@ -202,7 +202,7 @@
                 </a>
 
                 <!-- Real Estate -->
-                <a href="search-real-estate.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <a href="real-estate.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                     <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
                         <i data-feather="map-pin" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
@@ -211,7 +211,7 @@
                 </a>
 
                 <!-- Jobs -->
-                <a href="search-jobs.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <a href="jobs.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                     <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
                         <i data-feather="briefcase" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
@@ -220,7 +220,7 @@
                 </a>
 
                 <!-- Services -->
-                <a href="search-services.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <a href="services.html" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                     <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
                         <i data-feather="tool" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
@@ -279,7 +279,7 @@
                                 Discover products through engaging video presentations.
                             </p>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -348,6 +348,7 @@
 
         // Detect iOS devices (Vanta.js THREE.js doesn't work well on iOS)
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        let vantaInstance = null;
 
         const updateVantaBackground = (isDark) => {
             // Skip Vanta on iOS - use gradient instead
@@ -363,7 +364,13 @@
 
             // Desktop: Use Vanta.js animation
             if (typeof VANTA !== 'undefined' && VANTA.NET) {
-                VANTA.NET({
+                // Destroy old instance to prevent memory leak
+                if (vantaInstance) {
+                    vantaInstance.destroy();
+                }
+                
+                // Create new instance with current theme colors
+                vantaInstance = VANTA.NET({
                     el: "#vanta-bg",
                     mouseControls: true,
                     touchControls: true,

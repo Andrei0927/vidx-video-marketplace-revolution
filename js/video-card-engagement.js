@@ -429,6 +429,8 @@ function initializeEngagement() {
     // Small delay to ensure icons are fully rendered
     setTimeout(() => {
         videoCardEngagement = new VideoCardEngagement();
+        // Export singleton instance after creation
+        window.videoCardEngagement = videoCardEngagement;
     }, 100);
 }
 
@@ -438,6 +440,5 @@ if (document.readyState === 'loading') {
     initializeEngagement();
 }
 
-// Export for use in other scripts
+// Export class for manual instantiation if needed
 window.VideoCardEngagement = VideoCardEngagement;
-window.videoCardEngagement = videoCardEngagement;

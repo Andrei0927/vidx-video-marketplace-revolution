@@ -1,9 +1,8 @@
-const CACHE_NAME = 'vidx-v1';
+const CACHE_NAME = 'vidx-v2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/automotive.html',
-  '/search.html',
   '/details.html',
   '/style.css',
   '/css/dark-mode.css',

@@ -237,8 +237,8 @@ class AuthService {
   }
 
   generateSessionToken() {
-    // Generate a random session token
-    return 'session_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    // Generate a cryptographically secure random session token
+    return 'session_' + crypto.randomUUID();
   }
 
   // ========================================
