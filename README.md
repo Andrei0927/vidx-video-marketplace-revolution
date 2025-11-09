@@ -46,10 +46,20 @@ A modern video-first marketplace where AI creates professional video ads automat
 ## 🚀 Quick Start
 
 ### 1. Clone & Setup
+
+**Primary Repository (GitHub):**
+```bash
+git clone https://github.com/Andrei0927/vidx-video-marketplace-revolution.git
+cd vidx-video-marketplace-revolution
+```
+
+**Alternative (HuggingFace Backup):**
 ```bash
 git clone https://huggingface.co/spaces/andrei-09/vidx-video-marketplace-revolution
 cd vidx-video-marketplace-revolution
 ```
+
+> 📚 **Migration Note**: This project was migrated to GitHub on November 9, 2025. See [GITHUB_MIGRATION.md](./docs/GITHUB_MIGRATION.md) for details.
 
 ### 2. Start Development Servers
 ```bash
@@ -84,6 +94,7 @@ OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx
 ### 🚀 Deployment (NEW!)
 - **[DEPLOYMENT_GUIDE_CORRECTED.md](./docs/DEPLOYMENT_GUIDE_CORRECTED.md)** - Production deployment guide (Azure + R2) ⭐
 - **[DEPLOYMENT_STATUS.md](./docs/DEPLOYMENT_STATUS.md)** - Interactive deployment tracker
+- **[GITHUB_MIGRATION.md](./docs/GITHUB_MIGRATION.md)** - GitHub migration documentation
 - **[VIDEO_PIPELINE_COMPARISON.md](./docs/audits/VIDEO_PIPELINE_COMPARISON.md)** - Cost analysis & stack comparison
 
 ### Core Guides
