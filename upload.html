@@ -524,28 +524,42 @@
                 handleFiles(e.dataTransfer.files);
             });
 
-            // Handle click to upload
-            uploadArea.addEventListener('click', () => {
+            // Handle click to upload - SIMPLIFIED FIX
+            uploadArea.addEventListener('click', (e) => {
                 console.log('[Upload] Upload area clicked');
-                if (fileInput) {
-                    fileInput.click();
+                // Don't trigger if clicking on the browse button itself
+                if (e.target.id !== 'browse-btn' && !e.target.closest('#browse-btn')) {
+                    if (fileInput) {
+                        setTimeout(() => {
+                            fileInput.click();
+                        }, 10);
+                    }
                 }
             });
         }
 
-        // Handle file selection
+        // Handle file selection - SIMPLIFIED FIX
         if (browseBtn && fileInput) {
             browseBtn.addEventListener('click', (e) => {
                 console.log('[Upload] Browse button clicked');
+                e.preventDefault();
                 e.stopPropagation();
-                fileInput.click();
+                
+                // Direct trigger - more reliable
+                setTimeout(() => {
+                    fileInput.click();
+                }, 10);
             });
         }
 
         if (fileInput) {
-            fileInput.addEventListener('change', () => {
+            fileInput.addEventListener('change', (e) => {
                 console.log('[Upload] Files selected:', fileInput.files.length);
-                handleFiles(fileInput.files);
+                if (fileInput.files && fileInput.files.length > 0) {
+                    handleFiles(fileInput.files);
+                    // Reset input to allow re-selecting same files
+                    fileInput.value = '';
+                }
             });
         }
 
