@@ -17,14 +17,15 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY scripts/ ./scripts/
-COPY data/ ./data/
+COPY app.py .
+COPY database/ ./database/
 
 # Expose port
 EXPOSE 8080
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
 
-# Run the authentication server
-CMD ["python", "scripts/auth_server.py"]
+# Run the Flask application
+CMD ["python", "app.py"]
