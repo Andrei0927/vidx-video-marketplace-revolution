@@ -1140,11 +1140,11 @@ def get_upload_url():
 - [x] **Day 1 Morning**: Fix service worker (5 min) ✅ COMPLETED
 - [x] **Day 1 Morning**: Fix broken navigation links (20 min) ✅ COMPLETED
 - [x] **Day 1 Morning**: Fix invalid HTML in index.html (5 min) ✅ COMPLETED
-- [ ] **Day 1 Afternoon**: Remove production auth bypass (30 min)
-- [ ] **Day 1 Afternoon**: Hide password reset codes (15 min)
+- [x] **Day 1 Afternoon**: Remove production auth bypass (30 min) ✅ COMPLETED
+- [x] **Day 1 Afternoon**: Hide password reset codes (15 min) ✅ COMPLETED
 - [x] **Day 1 Afternoon**: Upgrade session tokens to crypto.randomUUID() (5 min) ✅ COMPLETED
 - [x] **Day 1 Afternoon**: Fix engagement module singleton (10 min) ✅ COMPLETED
-- [ ] **Day 1 End**: Add upload flow auth check (15 min)
+- [x] **Day 1 End**: Add upload flow auth check (15 min) ✅ COMPLETED
 - [ ] **Day 2**: Implement IndexedDB storage manager (4-6 hours)
 - [ ] **Day 3**: Add image resizing and validation (3-4 hours)
 - [ ] **Day 3**: Add draft resume UI (1-2 hours)
