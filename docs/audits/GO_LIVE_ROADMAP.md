@@ -2,7 +2,7 @@
 
 **Document Date**: December 2024  
 **Last Updated**: December 2024  
-**Target Go-Live**: Pending Azure quota approval  
+**Target Go-Live**: Pending Azure Container Apps deployment  
 **Objective**: Deploy production-ready VidX platform with critical bugs fixed
 
 ---
@@ -33,15 +33,23 @@
   - SKU: Basic
   - Region: North Europe
 
-### 🚫 Blocked: Backend Deployment
-- **Issue**: Azure subscription has 0 quota for App Service VMs (both Free and Basic tiers)
-- **Attempts**:
-  1. ❌ Container build → ACR Tasks not permitted
-  2. ❌ Local Docker → Docker not installed, installation failed
-  3. ❌ Web App B1 tier → Quota limit: 0 Basic VMs available
-  4. ❌ Web App F1 tier → Quota limit: 0 Free VMs available
-  
-- **Resolution Required**: **Azure Quota Increase Request** (see Phase 0 below)
+### ⏸️ In Progress: Backend Deployment
+- **Service**: Azure Container Apps (serverless containers)
+- **Status**: Environment creation in progress
+- **Providers Registered**: Microsoft.Web, Microsoft.App, Microsoft.OperationalInsights
+- **Advantages over App Service**:
+  - ✅ No VM quota required
+  - ✅ Pay only for actual usage (scales to zero)
+  - ✅ Consumption-based pricing
+  - ✅ Automatic HTTPS
+  - ✅ Built-in container support
+
+### 🔄 Deployment Attempts Timeline
+1. ❌ Azure Container Registry build → ACR Tasks not permitted
+2. ❌ Local Docker build → Docker not installed
+3. ❌ Azure Web App (B1 tier) → Quota limit: 0 Basic VMs available
+4. ❌ Azure Web App (F1 tier) → Quota limit: 0 Free VMs available
+5. ⏸️ **Azure Container Apps** → **IN PROGRESS** (no quota required)
 
 ### 💰 Current Monthly Cost
 - Frontend: $0 (Free tier)
@@ -49,56 +57,62 @@
 - Storage: $15 (R2 1TB)
 - Backend: $0 (not deployed yet)
 - **Total**: ~$28/month (without backend)
-- **Production Total**: ~$41/month (with B1 backend at $13/month)
+- **Production Total**: ~$45-50/month (with Container Apps at ~$10-15/month)
 
 ---
 
 ## 📋 Overview
 
-This roadmap now includes **Phase 0** for Azure quota approval before proceeding with deployment. Original phases (Local Development vs Live Deployment) preserved below.
+This roadmap now includes **Phase 0** for Azure Container Apps deployment (no quota approval needed). Original phases (Local Development vs Live Deployment) preserved below.
 
 ---
 
-## Phase 0: Azure Quota Approval (REQUIRED) 🔒
-**Timeline**: 1-2 hours (usually instant approval for small requests)  
-**Status**: ❌ BLOCKED - Must complete before backend deployment
+## Phase 0: Azure Container Apps Deployment (UPDATED) 🔒
+**Timeline**: 30-60 minutes  
+**Status**: ⏸️ IN PROGRESS - Environment creation
 
-### 0.1 Request App Service VM Quota Increase
-**Problem**: Current Azure subscription has 0 quota for both Free (F1) and Basic (B1) tier VMs.
+### 0.1 Deploy Backend with Azure Container Apps
+**Solution**: Using Azure Container Apps instead of App Service to avoid quota limitations.
 
-**Steps to Request Quota**:
+**Current Progress**:
+1. ✅ Registered Microsoft.Web provider
+2. ✅ Registered Microsoft.App provider
+3. ⏸️ Registering Microsoft.OperationalInsights provider
+4. ⏸️ Creating Container Apps environment
+5. ⏳ Deploy container app
+6. ⏳ Configure environment variables
 
-1. **Open Azure Portal**: https://portal.azure.com
+**Deployment Commands**:
+```bash
+# Step 1: Complete environment creation (in progress)
+az containerapp env create \
+  --name video-marketplace-env \
+  --resource-group video-marketplace-prod \
+  --location northeurope
 
-2. **Navigate to Quotas**:
-   - Click "Help + support" in left sidebar
-   - Click "New support request"
-   - OR search for "Quotas" in top search bar
+# Step 2: Deploy backend container app
+az containerapp create \
+  --name video-marketplace-api \
+  --resource-group video-marketplace-prod \
+  --environment video-marketplace-env \
+  --image mcr.microsoft.com/azuredocs/containerapps-helloworld:latest \
+  --target-port 8080 \
+  --ingress external \
+  --query properties.configuration.ingress.fqdn
 
-3. **Create Support Request**:
-   - **Issue type**: Service and subscription limits (quotas)
-   - **Subscription**: Select your subscription
-   - **Quota type**: App Service
-   - **Region**: North Europe (Ireland)
-   - **Problem type**: Increase in quota limit
+# Step 3: Update with custom image (after building)
+az containerapp update \
+  --name video-marketplace-api \
+  --resource-group video-marketplace-prod \
+  --image videomarketplaceregistry.azurecr.io/backend:latest
+```
 
-4. **Specify Quota Details**:
-   - **VM Series**: Basic Small (B1) - for production
-   - **New vCPU limit**: 1 (minimum required)
-   - **Business justification**: 
-     ```
-     Deploying a marketplace web application backend API. 
-     Requires 1 Basic B1 VM for Python Flask application.
-     Current limit: 0, Requested limit: 1
-     ```
-
-5. **Alternative: Request Free Tier** (for testing only):
-   - **VM Series**: Free/Shared (F1)
-   - **New limit**: 1
-   - **Note**: F1 has 60 min/day compute limit, not suitable for production
-
-6. **Submit Request**:
-   - Review details
+**Why Container Apps vs App Service**:
+- ❌ App Service: Requires VM quota (0 available in subscription)
+- ✅ Container Apps: Serverless, no quota required
+- ✅ Container Apps: Pay per request (can scale to zero)
+- ✅ Container Apps: Better for containerized workloads
+- ✅ Container Apps: Automatic HTTPS with custom domains
    - Click "Create"
    - Wait for approval (usually 1-2 hours, can be instant)
 
