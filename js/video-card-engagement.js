@@ -303,28 +303,191 @@ class VideoCardEngagement {
                 await navigator.share(shareData);
                 console.log('Shared successfully');
             } else {
-                // Fallback: Copy to clipboard
-                await navigator.clipboard.writeText(shareData.url);
-
-                // Show feedback
-                const originalIcon = btn.innerHTML;
-                btn.innerHTML = '<i data-feather="check" class="h-5 w-5 text-green-500"></i>';
-                if (window.feather) {
-                    feather.replace();
+                // Try clipboard API first
+                try {
+                    await navigator.clipboard.writeText(shareData.url);
+                    this.showCopyFeedback(btn);
+                    console.log('Link copied to clipboard');
+                } catch (clipboardErr) {
+                    // Clipboard API failed (HTTP, iOS, permissions) - show fallback modal
+                    console.log('Clipboard API failed, showing fallback modal:', clipboardErr);
+                    this.showShareModal(shareData.url, adTitle, adPrice);
                 }
-
-                setTimeout(() => {
-                    btn.innerHTML = originalIcon;
-                    if (window.feather) {
-                        feather.replace();
-                    }
-                }, 2000);
-
-                console.log('Link copied to clipboard');
             }
         } catch (err) {
             console.error('Error sharing:', err);
+            // If native share fails, try clipboard
+            try {
+                await navigator.clipboard.writeText(shareData.url);
+                this.showCopyFeedback(btn);
+            } catch (clipboardErr) {
+                // Show fallback modal as last resort
+                this.showShareModal(shareData.url, adTitle, adPrice);
+            }
         }
+    }
+
+    showCopyFeedback(btn) {
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = '<i data-feather="check" class="h-5 w-5 text-green-500"></i>';
+        if (window.feather) {
+            feather.replace();
+        }
+
+        setTimeout(() => {
+            btn.innerHTML = originalIcon;
+            if (window.feather) {
+                feather.replace();
+            }
+        }, 2000);
+    }
+
+    showShareModal(url, title, price) {
+        // Create modal overlay
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn';
+        modal.style.animation = 'fadeIn 0.2s ease-out';
+        
+        modal.innerHTML = `
+            <div class="bg-white dark:bg-dark-100 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl transform scale-95 animate-scaleIn" style="animation: scaleIn 0.2s ease-out forwards;">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-dark-600">Share this listing</h3>
+                    <button id="close-share-modal" class="text-gray-400 hover:text-gray-600 dark:hover:text-dark-500 transition-colors">
+                        <i data-feather="x" class="h-6 w-6"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 dark:text-dark-400 mb-2">
+                        ${title} - ${price}
+                    </p>
+                    <div class="relative">
+                        <input type="text" readonly value="${url}" 
+                               id="share-url-input"
+                               class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-dark-300 rounded-lg bg-gray-50 dark:bg-dark-200 text-gray-900 dark:text-dark-600 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 select-all">
+                        <button id="copy-icon-btn" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors">
+                            <i data-feather="copy" class="h-5 w-5"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button id="copy-share-url" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center justify-center gap-2">
+                        <i data-feather="clipboard" class="h-4 w-4"></i>
+                        Copy Link
+                    </button>
+                    <button id="close-share-modal-btn" class="px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-200 transition-colors text-gray-700 dark:text-dark-500 font-medium">
+                        Close
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add CSS animations if not already present
+        if (!document.getElementById('share-modal-animations')) {
+            const style = document.createElement('style');
+            style.id = 'share-modal-animations';
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes scaleIn {
+                    from { transform: scale(0.95); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                }
+                .select-all { user-select: all; }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(modal);
+        
+        // Replace feather icons
+        if (window.feather) {
+            feather.replace();
+        }
+        
+        // Focus and select the input
+        const input = document.getElementById('share-url-input');
+        setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 100);
+        
+        // Copy button handler (using document.execCommand as fallback)
+        const copyBtn = document.getElementById('copy-share-url');
+        const copyIconBtn = document.getElementById('copy-icon-btn');
+        
+        const handleCopy = () => {
+            input.select();
+            input.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                // Try modern clipboard API first
+                navigator.clipboard.writeText(url).then(() => {
+                    this.showCopySuccess(copyBtn);
+                }).catch(() => {
+                    // Fallback to execCommand
+                    const success = document.execCommand('copy');
+                    if (success) {
+                        this.showCopySuccess(copyBtn);
+                    }
+                });
+            } catch (err) {
+                // Last resort: execCommand
+                const success = document.execCommand('copy');
+                if (success) {
+                    this.showCopySuccess(copyBtn);
+                }
+            }
+        };
+        
+        copyBtn.addEventListener('click', handleCopy);
+        copyIconBtn.addEventListener('click', handleCopy);
+        
+        // Close button handlers
+        const closeModal = () => {
+            modal.style.animation = 'fadeIn 0.2s ease-out reverse';
+            setTimeout(() => modal.remove(), 200);
+        };
+        
+        document.getElementById('close-share-modal').addEventListener('click', closeModal);
+        document.getElementById('close-share-modal-btn').addEventListener('click', closeModal);
+        
+        // Click outside to close
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        
+        // Escape key to close
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+    }
+    
+    showCopySuccess(btn) {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i data-feather="check" class="h-4 w-4"></i> Copied!';
+        btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        btn.classList.add('bg-green-600', 'hover:bg-green-700');
+        
+        if (window.feather) {
+            feather.replace();
+        }
+        
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            if (window.feather) {
+                feather.replace();
+            }
+        }, 2000);
     }
 
     // ============= INITIALIZATION =============

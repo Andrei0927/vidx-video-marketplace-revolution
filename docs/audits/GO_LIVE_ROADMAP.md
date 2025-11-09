@@ -1182,6 +1182,56 @@ def get_upload_url():
 - [ ] **Month 3**: Add WebSocket support for real-time updates
 - [ ] **Month 3**: Migrate to PostgreSQL if scaling beyond 1K users
 
+### Phase 8: New Features (Post-Launch)
+
+#### 8.1 Messaging System (Week 4-6)
+- [ ] **Backend**: Create messages database schema (user_id, ad_id, sender, receiver, message, timestamp)
+- [ ] **Backend**: Add messaging API endpoints (send, get_conversations, get_messages, mark_read)
+- [ ] **Frontend**: Build messages page UI with conversation list and chat interface
+- [ ] **Frontend**: Update "Contact Seller" button to show modal with "Message" or "Call" options
+- [ ] **Mobile**: Link bottom nav Messages icon to messages page
+- [ ] **Desktop**: Add Messages option to user dropdown menu
+- [ ] **Real-time**: Implement WebSocket for live message updates
+- **Time**: 2-3 weeks
+- **Priority**: High (core marketplace feature)
+
+#### 8.2 User Types & Reviews System (Week 7-9)
+- [ ] **Database**: Add `user_type` field to users table ('individual' or 'professional')
+- [ ] **Database**: Create reviews table (reviewer_id, reviewed_user_id, rating, comment, ad_id, timestamp)
+- [ ] **Backend**: Add review API endpoints (create, get_user_reviews, get_average_rating)
+- [ ] **Frontend**: Add user type selector during registration
+- [ ] **Frontend**: Build user profile page showing ads + reviews (for professionals only)
+- [ ] **Frontend**: Add star rating + review form to user profile page
+- [ ] **Frontend**: Add professional seller badge to video cards and details page
+- [ ] **Frontend**: Make username clickable on details page (links to profile)
+- [ ] **Business Logic**: Hide reviews for individual sellers (prevent review bombing)
+- **Time**: 2-3 weeks
+- **Priority**: Medium (enhances trust for professional sellers)
+
+#### 8.3 Notification System (Week 10-11)
+- [ ] **Database**: Create notifications table (user_id, type, ad_id, message, read, timestamp)
+- [ ] **Backend**: Add notification API endpoints (get_notifications, mark_read, clear_all)
+- [ ] **Backend**: Implement notification triggers (price change, new message, ad favorited)
+- [ ] **Frontend**: Add notification bell icon to navbar with unread count badge
+- [ ] **Frontend**: Build notifications dropdown panel
+- [ ] **Frontend**: Add notification preferences page (email/push toggles)
+- [ ] **Real-time**: WebSocket push for instant notifications
+- [ ] **Email**: Send digest emails for unread notifications (daily/weekly)
+- **Time**: 1-2 weeks
+- **Priority**: Medium (improves user engagement)
+
+#### 8.4 Phone Number Verification (Week 12)
+- [ ] **Database**: Add `phone_numbers` table (user_id, phone, verified, is_primary, created_at)
+- [ ] **Backend**: Add phone verification API (send_code via Twilio, verify_code)
+- [ ] **Backend**: Update ad posting to include phone number selection
+- [ ] **Frontend**: Add phone management section to profile page
+- [ ] **Frontend**: Add phone verification flow (enter number → receive SMS → enter code)
+- [ ] **Frontend**: Add phone number selector in upload flow
+- [ ] **Frontend**: Display "Verified" badge for phone-verified users
+- [ ] **Integration**: Twilio API for SMS verification
+- **Time**: 1 week
+- **Priority**: Low (nice-to-have for trust signals)
+
 ---
 
 ## Risk Mitigation 🛡️
