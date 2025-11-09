@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vidx-v2';
+const CACHE_NAME = 'vidx-v3';
 const urlsToCache = [
   '/',
   '/index.html',
