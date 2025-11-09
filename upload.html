@@ -484,39 +484,70 @@
         const previewContainer = document.getElementById('preview-container');
         const nextBtn = document.getElementById('next-btn');
 
+        // Debug: Log elements
+        console.log('[Upload] Elements initialized:', {
+            uploadArea: !!uploadArea,
+            fileInput: !!fileInput,
+            browseBtn: !!browseBtn,
+            previewSection: !!previewSection,
+            previewContainer: !!previewContainer,
+            nextBtn: !!nextBtn
+        });
+
+        // Check if required elements exist
+        if (!uploadArea || !fileInput || !browseBtn || !nextBtn) {
+            console.error('[Upload] ERROR: Required elements not found!', {
+                uploadArea: !!uploadArea,
+                fileInput: !!fileInput,
+                browseBtn: !!browseBtn,
+                nextBtn: !!nextBtn
+            });
+        }
+
         // Store uploaded files
         let uploadedFiles = [];
 
         // Handle drag and drop
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
 
-        // Handle click to upload
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
+            // Handle click to upload
+            uploadArea.addEventListener('click', () => {
+                console.log('[Upload] Upload area clicked');
+                if (fileInput) {
+                    fileInput.click();
+                }
+            });
+        }
 
         // Handle file selection
-        browseBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            fileInput.click();
-        });
+        if (browseBtn && fileInput) {
+            browseBtn.addEventListener('click', (e) => {
+                console.log('[Upload] Browse button clicked');
+                e.stopPropagation();
+                fileInput.click();
+            });
+        }
 
-        fileInput.addEventListener('change', () => {
-            handleFiles(fileInput.files);
-        });
+        if (fileInput) {
+            fileInput.addEventListener('change', () => {
+                console.log('[Upload] Files selected:', fileInput.files.length);
+                handleFiles(fileInput.files);
+            });
+        }
 
         // File validation constants
         const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
