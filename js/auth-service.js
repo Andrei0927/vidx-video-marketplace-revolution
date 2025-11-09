@@ -20,9 +20,11 @@ class AuthService {
 
   async register(userData) {
     try {
+      const url = `${this.baseUrl}/register`;
+      console.log('[AuthService] Registering at:', url);
 
       // Call new auth API
-      const response = await fetch(`${this.baseUrl}/register`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -34,9 +36,18 @@ class AuthService {
         })
       });
 
+      console.log('[AuthService] Registration response:', response.status, response.statusText);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Registration failed');
+        let errorMessage = 'Registration failed';
+        try {
+          const error = await response.json();
+          errorMessage = error.error || errorMessage;
+        } catch (e) {
+          // Response wasn't JSON, use status text
+          errorMessage = `${response.status} ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();

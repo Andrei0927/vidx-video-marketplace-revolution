@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vidx-v3';
+const CACHE_NAME = 'vidx-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -8,8 +8,8 @@ const urlsToCache = [
   '/css/dark-mode.css',
   '/components/auth-modal.js',
   '/components/user-dropdown.js',
-  '/js/auth-service.js',
   '/js/dark-mode.js'
+  // Note: /js/auth-service.js removed to avoid caching API configuration
 ];
 
 // Install event - cache assets
@@ -54,6 +54,12 @@ self.addEventListener('fetch', event => {
 
   // Skip caching for video files (too large)
   if (event.request.url.includes('.m4v') || event.request.url.includes('.mp4')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Skip caching for auth-service.js to always get latest API configuration
+  if (event.request.url.includes('/js/auth-service.js')) {
     event.respondWith(fetch(event.request));
     return;
   }

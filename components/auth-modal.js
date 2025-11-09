@@ -8,9 +8,11 @@ class AuthModal extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.isLoading = false;
     
-    // Load auth service
-    import('../js/auth-service.js').then(module => {
+    // Load auth service with cache busting
+    const cacheBust = new Date().getTime();
+    import(`../js/auth-service.js?v=${cacheBust}`).then(module => {
       authService = module.default;
+      console.log('[AuthModal] Auth service loaded successfully');
     }).catch(error => {
       console.error('Failed to load auth service:', error);
     });
