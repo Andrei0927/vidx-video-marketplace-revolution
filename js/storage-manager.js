@@ -91,7 +91,7 @@ class StorageManager {
     /**
      * Get upload draft from IndexedDB
      * @param {string} draftId - Draft ID to retrieve
-     * @returns {Promise<Object|null>} Draft data or null if not found
+     * @returns {Promise<Object|null>} Draft data with metadata (timestamp, userEmail) or null if not found
      */
     async getDraft(draftId = 'current-upload') {
         if (!this.db) {
@@ -106,7 +106,13 @@ class StorageManager {
             request.onsuccess = () => {
                 if (request.result) {
                     console.log('[StorageManager] Draft retrieved:', draftId);
-                    resolve(request.result.data);
+                    // Return merged object: data properties + metadata (timestamp, userEmail, id)
+                    // This ensures upload.html can access both draft.timestamp and draft.files, etc.
+                    resolve({
+                        ...request.result.data,           // Spread image/video files and other data
+                        timestamp: request.result.timestamp,  // Add timestamp for resume banner
+                        userEmail: request.result.userEmail   // Add email for logging
+                    });
                 } else {
                     console.log('[StorageManager] No draft found:', draftId);
                     resolve(null);
