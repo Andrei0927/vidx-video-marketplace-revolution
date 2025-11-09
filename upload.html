@@ -282,8 +282,8 @@
                 }
             });
             
-            // Stop execution of the rest of the page logic
-            throw new Error('Authentication required');
+            // Stop execution of the rest of the page logic by returning early
+            return;
         }
 
         // Theme toggle
