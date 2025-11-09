@@ -568,6 +568,53 @@
                 handleFiles(e.dataTransfer.files);
             });
 
+            // Debounce flag to prevent repeated file picker dialogs
+            let filePickerActive = false;
+
+            // Helper function to open file picker with proper user activation
+            function openFilePicker() {
+                // Prevent repeated dialog attempts (browsers require user activation)
+                if (filePickerActive) {
+                    console.log('[Upload] File picker already active, ignoring duplicate click');
+                    return;
+                }
+                
+                filePickerActive = true;
+                console.log('[Upload] Opening file picker');
+                
+                if (!fileInput) {
+                    console.error('[Upload] ERROR: fileInput element not found!');
+                    filePickerActive = false;
+                    return;
+                }
+                
+                try {
+                    // Safari workaround: make visible temporarily
+                    const wasHidden = fileInput.classList.contains('hidden');
+                    if (wasHidden) {
+                        fileInput.classList.remove('hidden');
+                    }
+                    
+                    // Click to open dialog (must be in user activation context)
+                    fileInput.click();
+                    console.log('[Upload] File picker dialog triggered');
+                    
+                    // Re-hide after ensuring dialog opened
+                    if (wasHidden) {
+                        setTimeout(() => {
+                            fileInput.classList.add('hidden');
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('[Upload] Error opening file picker:', error);
+                } finally {
+                    // Allow next file picker attempt after delay
+                    setTimeout(() => {
+                        filePickerActive = false;
+                    }, 500);
+                }
+            }
+
             // Handle click to upload - MUST stop propagation to prevent upload-area handler
             uploadArea.addEventListener('click', (e) => {
                 console.log('[Upload] Upload area clicked (target:', e.target.id, ')');
@@ -576,24 +623,7 @@
                     console.log('[Upload] Click was on browse button, letting button handler take over');
                     return;
                 }
-                // Trigger file input directly
-                if (fileInput) {
-                    console.log('[Upload] Triggering file input click');
-                    // Safari workaround: make visible temporarily
-                    const wasHidden = fileInput.classList.contains('hidden');
-                    if (wasHidden) {
-                        fileInput.classList.remove('hidden');
-                    }
-                    fileInput.click();
-                    if (wasHidden) {
-                        // Re-hide after a brief delay to ensure dialog opened
-                        setTimeout(() => {
-                            fileInput.classList.add('hidden');
-                        }, 100);
-                    }
-                } else {
-                    console.error('[Upload] ERROR: fileInput element not found!');
-                }
+                openFilePicker();
             });
         }
 
@@ -603,20 +633,7 @@
                 console.log('[Upload] Browse button clicked');
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('[Upload] Triggering file input click from browse button');
-                
-                // Safari workaround: make visible temporarily
-                const wasHidden = fileInput.classList.contains('hidden');
-                if (wasHidden) {
-                    fileInput.classList.remove('hidden');
-                }
-                fileInput.click();
-                if (wasHidden) {
-                    // Re-hide after a brief delay to ensure dialog opened
-                    setTimeout(() => {
-                        fileInput.classList.add('hidden');
-                    }, 100);
-                }
+                openFilePicker();
             });
         }
 
