@@ -29,6 +29,14 @@ server.log
 .env.local
 .env.*.local
 
+# Credentials (DO NOT COMMIT!)
+CREDENTIALS.txt
+CREDENTIALS.md
+credentials.*
+secrets.*
+*.credentials
+*.secrets
+
 # IDE
 .vscode/
 .idea/
