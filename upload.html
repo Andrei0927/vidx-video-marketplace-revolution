@@ -259,29 +259,55 @@
         // Check authentication - users must be logged in to upload
         const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
         
+        console.log('[Upload] Auth check:', {
+            hasSessionToken: !!sessionToken,
+            hasUserName: !!localStorage.getItem('userName'),
+            sessionToken: sessionToken ? sessionToken.substring(0, 10) + '...' : 'null'
+        });
+        
         if (!sessionToken || !localStorage.getItem('userName')) {
             // User not logged in - show auth modal
             console.log('[Upload] User not authenticated, showing login modal');
+            console.log('[Upload] Checking if auth-modal custom element is defined...');
+            
+            // Wait for custom element to be defined
+            if (customElements.get('auth-modal')) {
+                console.log('[Upload] auth-modal is already defined');
+            } else {
+                console.log('[Upload] auth-modal not defined yet, waiting...');
+            }
             
             // Create and show auth modal
-            const authModal = document.createElement('auth-modal');
-            authModal.setAttribute('default-tab', 'login');
-            document.body.appendChild(authModal);
-            
-            // Handle modal close
-            authModal.addEventListener('close', () => {
-                // Check if user is now logged in
-                const newSessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
-                if (!newSessionToken) {
-                    // User closed modal without logging in - redirect to home
-                    console.log('[Upload] User cancelled login, redirecting to home');
-                    window.location.href = 'index.html';
-                } else {
-                    // User logged in successfully - reload page to show upload form
-                    console.log('[Upload] User logged in successfully');
-                    window.location.reload();
-                }
-            });
+            try {
+                const authModal = document.createElement('auth-modal');
+                console.log('[Upload] Created auth-modal element:', authModal);
+                authModal.setAttribute('default-tab', 'login');
+                document.body.appendChild(authModal);
+                console.log('[Upload] Auth modal appended to body');
+                
+                // Handle modal close
+                authModal.addEventListener('close', () => {
+                    // Check if user is now logged in
+                    const newSessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+                    console.log('[Upload] Modal closed, checking auth state:', {
+                        hasSessionToken: !!newSessionToken,
+                        hasUserName: !!localStorage.getItem('userName')
+                    });
+                    
+                    if (!newSessionToken) {
+                        // User closed modal without logging in - redirect to home
+                        console.log('[Upload] User cancelled login, redirecting to home');
+                        window.location.href = 'index.html';
+                    } else {
+                        // User logged in successfully - reload page to show upload form
+                        console.log('[Upload] User logged in successfully, reloading page');
+                        window.location.reload();
+                    }
+                });
+            } catch (error) {
+                console.error('[Upload] ERROR creating auth modal:', error);
+                alert('Error loading login form. Please refresh the page and try again.');
+            }
         } else {
             // User is authenticated - initialize the page
 
