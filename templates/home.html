@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}VidX - Discover Products Through Video{% endblock %}
+
+{% block extra_head %}
+<!-- Vanta.js for animated background -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+{% endblock %}
+
+{% block extra_styles %}
+.category-card:hover .category-icon {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+.video-card {
+    transition: all 0.3s ease;
+}
+.video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative overflow-hidden">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-dark-600 sm:text-5xl md:text-6xl">
+                <span class="block">Discover products</span>
+                <span class="block text-indigo-600 dark:text-indigo-400">through video</span>
+            </h1>
+            <p class="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-dark-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                Browse, swipe, and find your next purchase in our video-first marketplace.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div id="categories" class="py-12 bg-white dark:bg-dark-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-dark-600 sm:text-4xl">
+                Popular Categories
+            </h2>
+            <p class="mt-4 max-w-2xl text-xl text-gray-500 dark:text-dark-500 mx-auto">
+                Find what you're looking for in our wide selection
+            </p>
+        </div>
+
+        <div class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+            <!-- Automotive -->
+            <a href="{{ url_for('categories.category_page', category='automotive') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="truck" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Automotive</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Cars, bikes, parts</p>
+            </a>
+
+            <!-- Electronics -->
+            <a href="{{ url_for('categories.category_page', category='electronics') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="monitor" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Electronics</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Phones, laptops</p>
+            </a>
+
+            <!-- Fashion -->
+            <a href="{{ url_for('categories.category_page', category='fashion') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="shopping-bag" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Fashion</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Clothing, shoes</p>
+            </a>
+
+            <!-- Home & Garden -->
+            <a href="{{ url_for('categories.category_page', category='home-garden') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="home" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Home & Garden</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Furniture, decor</p>
+            </a>
+
+            <!-- Sports -->
+            <a href="{{ url_for('categories.category_page', category='sports') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="activity" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Sports</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Equipment, gear</p>
+            </a>
+
+            <!-- Real Estate -->
+            <a href="{{ url_for('categories.category_page', category='real-estate') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="map-pin" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Real Estate</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Houses, apartments</p>
+            </a>
+
+            <!-- Jobs -->
+            <a href="{{ url_for('categories.category_page', category='jobs') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="briefcase" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Jobs</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Career opportunities</p>
+            </a>
+
+            <!-- Services -->
+            <a href="{{ url_for('categories.category_page', category='services') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
+                <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
+                    <i data-feather="tool" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-dark-600 text-center">Services</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500 text-center">Professional help</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="py-12 bg-gray-50 dark:bg-dark-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="lg:text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-dark-600 sm:text-4xl">
+                How VidX Works
+            </h2>
+            <p class="mt-4 max-w-2xl text-xl text-gray-500 dark:text-dark-500 lg:mx-auto">
+                A new way to buy and sell through video
+            </p>
+        </div>
+
+        <div class="mt-10">
+            <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
+                <div class="relative">
+                    <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 dark:bg-indigo-600 text-white dark:text-dark-600">
+                        1
+                    </div>
+                    <div class="ml-16">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-dark-600">Choose a Category</h3>
+                        <p class="mt-2 text-base text-gray-500 dark:text-dark-500">
+                            Browse our extensive categories to find what you're looking for.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                        2
+                    </div>
+                    <div class="ml-16">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-dark-600">Refine with Filters</h3>
+                        <p class="mt-2 text-base text-gray-500 dark:text-dark-500">
+                            Narrow down your search with our intuitive filtering system.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                        3
+                    </div>
+                    <div class="ml-16">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-dark-600">Swipe Through Videos</h3>
+                        <p class="mt-2 text-base text-gray-500 dark:text-dark-500">
+                            Discover products through engaging video presentations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-white dark:bg-dark-100">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-sm font-semibold text-gray-400 dark:text-dark-400 tracking-wider uppercase">Company</h3>
+                <ul class="mt-4 space-y-4">
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900 dark:text-dark-500 dark:hover:text-dark-600">About</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900 dark:text-dark-500 dark:hover:text-dark-600">Careers</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900 dark:text-dark-500 dark:hover:text-dark-600">Blog</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Legal</h3>
+                <ul class="mt-4 space-y-4">
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Privacy</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Terms</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Cookie Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Resources</h3>
+                <ul class="mt-4 space-y-4">
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Help Center</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Community</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Safety</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Connect</h3>
+                <ul class="mt-4 space-y-4">
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Facebook</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Instagram</a></li>
+                    <li><a href="#" class="text-base text-gray-500 hover:text-gray-900">Twitter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="mt-12 border-t border-gray-200 pt-8">
+            <p class="text-base text-gray-400 text-center">
+                &copy; 2025 VidX. All rights reserved.
+            </p>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Vanta.js animated background
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    let vantaInstance = null;
+
+    const updateVantaBackground = (isDark) => {
+        // Skip Vanta on iOS - use gradient instead
+        if (isIOS) {
+            document.body.style.background = isDark 
+                ? 'linear-gradient(135deg, #18191A 0%, #242526 50%, #18191A 100%)'
+                : 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f8fafc 100%)';
+            return;
+        }
+
+        // Desktop: Use Vanta.js animation
+        if (typeof VANTA !== 'undefined' && VANTA.NET) {
+            if (vantaInstance) {
+                vantaInstance.destroy();
+            }
+            
+            vantaInstance = VANTA.NET({
+                el: "body",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: isDark ? 0x6366f1 : 0x818cf8,
+                backgroundColor: isDark ? 0x18191A : 0xf8fafc,
+                points: 12.00,
+                maxDistance: 20.00,
+                spacing: 15.00
+            });
+        }
+    };
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        updateVantaBackground(isDark);
+    });
+
+    // Update on theme change
+    const themeObserver = new MutationObserver(() => {
+        const isDark = document.documentElement.classList.contains('dark');
+        updateVantaBackground(isDark);
+    });
+
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+</script>
+{% endblock %}

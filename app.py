@@ -1,12 +1,20 @@
 """
-VidX Authentication & API Server - Production Version
-Flask backend with PostgreSQL database
+VidX Marketplace - Full-Stack Flask Application
+Serves both HTML pages (templates) and API endpoints
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-import psycopg2
-from psycopg2.extras import RealDictCursor
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    DB_AVAILABLE = True
+except ImportError:
+    print("PostgreSQL driver not installed. Database features disabled.")
+    DB_AVAILABLE = False
+    psycopg2 = None
+    RealDictCursor = None
+
 import os
 import secrets
 import hashlib
@@ -15,9 +23,50 @@ from functools import wraps
 
 app = Flask(__name__)
 
+# Secret key for sessions
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+
 # Configure CORS - allow frontend domain
 CORS_ORIGIN = os.getenv('CORS_ORIGIN', 'http://localhost:8080')
 CORS(app, origins=[CORS_ORIGIN, 'http://localhost:8080', 'http://127.0.0.1:8080'])
+
+# Register web route blueprints
+def register_web_routes():
+    """Register all web page routes (HTML templates)"""
+    try:
+        from routes.home import bp as home_bp
+        from routes.categories import bp as categories_bp
+        from routes.search import bp as search_bp
+        from routes.products import bp as products_bp
+        from routes.upload import bp as upload_bp
+        from routes.user import bp as user_bp
+        
+        app.register_blueprint(home_bp)
+        app.register_blueprint(categories_bp)
+        app.register_blueprint(search_bp)
+        app.register_blueprint(products_bp)
+        app.register_blueprint(upload_bp)
+        app.register_blueprint(user_bp)
+    except ImportError as e:
+        print(f"Web routes not yet created: {e}")
+
+# Register API route blueprints
+def register_api_routes():
+    """Register all API routes (JSON endpoints)"""
+    try:
+        from api.auth import bp as api_auth_bp
+        from api.listings import bp as api_listings_bp
+        
+        app.register_blueprint(api_auth_bp)
+        app.register_blueprint(api_listings_bp)
+        print("API routes registered successfully")
+    except ImportError as e:
+        print(f"API routes not yet created: {e}")
+
+# Register web and API routes
+register_web_routes()
+register_api_routes()
 
 # Database configuration
 DATABASE_URL = os.getenv('DATABASE_URL')

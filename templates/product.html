@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.title }} - €{{ product.price }} - VidX{% endblock %}
+
+{% block extra_head %}
+<!-- Open Graph Meta Tags for sharing -->
+<meta property="og:title" content="{{ product.title }} - €{{ product.price }}">
+<meta property="og:description" content="{{ product.description[:150] }}...">
+<meta property="og:image" content="{{ product.thumbnail }}">
+<meta property="og:type" content="product">
+{% endblock %}
+
+{% block extra_styles %}
+.spec-badge {
+    @apply flex items-center text-gray-700 dark:text-dark-500;
+}
+
+.detail-row {
+    @apply flex justify-between text-sm py-2 border-b border-gray-100 dark:border-dark-200 last:border-0;
+}
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <nav class="flex items-center space-x-2 text-sm">
+            <a href="{{ url_for('home.index') }}" class="text-gray-500 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400">
+                Home
+            </a>
+            <i data-feather="chevron-right" class="h-4 w-4 text-gray-400"></i>
+            {% if product.category %}
+            <a href="{{ url_for('categories.category_page', category=product.category) }}" class="text-gray-500 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400">
+                {{ product.category_name }}
+            </a>
+            <i data-feather="chevron-right" class="h-4 w-4 text-gray-400"></i>
+            {% endif %}
+            <span class="text-gray-900 dark:text-dark-600 font-medium">{{ product.title }}</span>
+        </nav>
+    </div>
+</div>
+
+<!-- Product Details Container -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Video/Media Section -->
+        <div class="lg:sticky lg:top-20 lg:self-start">
+            <div class="bg-black rounded-lg overflow-hidden" style="aspect-ratio: 9/16;">
+                {% if product.video_url %}
+                <video class="w-full h-full object-contain" controls autoplay loop playsinline>
+                    <source src="{{ product.video_url }}" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+                {% elif product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="{{ product.title }}" class="w-full h-full object-contain">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center">
+                    <i data-feather="video-off" class="h-24 w-24 text-gray-600"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Engagement Stats -->
+            <div class="mt-4 flex items-center justify-around bg-white dark:bg-dark-100 rounded-lg p-4">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-dark-600">{{ product.views|default(0) }}</div>
+                    <div class="text-sm text-gray-500 dark:text-dark-500">Views</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-dark-600">{{ product.favorites|default(0) }}</div>
+                    <div class="text-sm text-gray-500 dark:text-dark-500">Favorites</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900 dark:text-dark-600">{{ product.shares|default(0) }}</div>
+                    <div class="text-sm text-gray-500 dark:text-dark-500">Shares</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div>
+            <!-- Seller Info -->
+            <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6 mb-6">
+                <div class="flex items-center mb-4">
+                    <img src="{{ product.seller_avatar|default('https://api.dicebear.com/7.x/avataaars/svg?seed=' + product.seller_name) }}" 
+                         alt="{{ product.seller_name }}" 
+                         class="h-12 w-12 rounded-full">
+                    <div class="ml-3">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600">{{ product.seller_name }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-dark-400">Posted {{ product.posted_date|default('recently') }}</p>
+                    </div>
+                </div>
+
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-2">{{ product.title }}</h1>
+                <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">€{{ product.price }}</p>
+
+                <!-- Key Specs (if available) -->
+                {% if product.specs %}
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    {% if product.specs.year %}
+                    <div class="spec-badge">
+                        <i data-feather="calendar" class="h-5 w-5 mr-2"></i>
+                        <span>{{ product.specs.year }}</span>
+                    </div>
+                    {% endif %}
+                    {% if product.specs.mileage %}
+                    <div class="spec-badge">
+                        <i data-feather="activity" class="h-5 w-5 mr-2"></i>
+                        <span>{{ product.specs.mileage }}</span>
+                    </div>
+                    {% endif %}
+                    {% if product.specs.transmission %}
+                    <div class="spec-badge">
+                        <i data-feather="settings" class="h-5 w-5 mr-2"></i>
+                        <span>{{ product.specs.transmission }}</span>
+                    </div>
+                    {% endif %}
+                    {% if product.specs.fuel %}
+                    <div class="spec-badge">
+                        <i data-feather="zap" class="h-5 w-5 mr-2"></i>
+                        <span>{{ product.specs.fuel }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-3">
+                    <button class="flex-1 bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition flex items-center justify-center">
+                        <i data-feather="message-circle" class="h-5 w-5 mr-2"></i>
+                        Contact Seller
+                    </button>
+                    <button id="favorite-btn" data-product-id="{{ product.id }}" class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition group">
+                        <i data-feather="heart" class="h-5 w-5 text-gray-700 dark:text-dark-500 group-hover:text-pink-500"></i>
+                    </button>
+                    <button id="share-btn" data-product-id="{{ product.id }}" data-title="{{ product.title }}" data-price="{{ product.price }}" class="p-3 border border-gray-300 dark:border-dark-200 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 transition group">
+                        <i data-feather="share-2" class="h-5 w-5 text-gray-700 dark:text-dark-500 group-hover:text-green-500"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-3">Description</h2>
+                <p class="text-gray-700 dark:text-dark-500 whitespace-pre-line">{{ product.description }}</p>
+            </div>
+
+            <!-- Additional Details -->
+            {% if product.details %}
+            <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-4">
+                    {% if product.category == 'automotive' %}
+                        Vehicle Details
+                    {% elif product.category == 'electronics' %}
+                        Product Specifications
+                    {% elif product.category == 'real-estate' %}
+                        Property Details
+                    {% else %}
+                        Additional Details
+                    {% endif %}
+                </h2>
+                <div class="space-y-0">
+                    {% for key, value in product.details.items() %}
+                    <div class="detail-row">
+                        <span class="text-gray-500 dark:text-dark-400">{{ key }}:</span>
+                        <span class="text-gray-900 dark:text-dark-600 font-medium">{{ value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Location -->
+            {% if product.location %}
+            <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-3">Location</h2>
+                <div class="flex items-center text-gray-700 dark:text-dark-500">
+                    <i data-feather="map-pin" class="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400"></i>
+                    <span>{{ product.location }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Similar Products -->
+    {% if similar_products %}
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-6">Similar Listings</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for similar in similar_products %}
+            <a href="{{ url_for('products.product_detail', product_id=similar.id) }}" class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 overflow-hidden hover:shadow-lg dark:hover:shadow-dark-300/50 transition">
+                <div class="aspect-video bg-gray-200 dark:bg-dark-200">
+                    <img src="{{ similar.thumbnail }}" alt="{{ similar.title }}" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 mb-1 truncate">{{ similar.title }}</h3>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400">€{{ similar.price }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Product Page Scripts -->
+<script>
+    // Favorite button handler
+    const favoriteBtn = document.getElementById('favorite-btn');
+    if (favoriteBtn) {
+        const productId = favoriteBtn.dataset.productId;
+        
+        // Check if already favorited
+        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        if (favorites.includes(productId)) {
+            favoriteBtn.classList.add('bg-pink-50', 'dark:bg-pink-900/20');
+            favoriteBtn.querySelector('i').classList.add('text-pink-500');
+        }
+        
+        favoriteBtn.addEventListener('click', () => {
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const index = favorites.indexOf(productId);
+            
+            if (index > -1) {
+                // Remove from favorites
+                favorites.splice(index, 1);
+                favoriteBtn.classList.remove('bg-pink-50', 'dark:bg-pink-900/20');
+                favoriteBtn.querySelector('i').classList.remove('text-pink-500');
+            } else {
+                // Add to favorites
+                favorites.push(productId);
+                favoriteBtn.classList.add('bg-pink-50', 'dark:bg-pink-900/20');
+                favoriteBtn.querySelector('i').classList.add('text-pink-500');
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        });
+    }
+    
+    // Share button handler
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            const title = shareBtn.dataset.title;
+            const price = shareBtn.dataset.price;
+            const url = window.location.href;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `${title} - €${price}`,
+                        text: `Check out this listing on VidX!`,
+                        url: url
+                    });
+                } catch (err) {
+                    console.log('Share canceled');
+                }
+            } else {
+                // Fallback: copy link to clipboard
+                navigator.clipboard.writeText(url);
+                alert('Link copied to clipboard!');
+            }
+        });
+    }
+</script>
+{% endblock %}

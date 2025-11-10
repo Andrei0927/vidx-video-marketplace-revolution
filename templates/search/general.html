@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Search - VidX{% endblock %}
+
+{% block content %}
+<!-- Search Header -->
+<div class="bg-white dark:bg-dark-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600 mb-4">Search All Categories</h1>
+        
+        <!-- Search Form -->
+        <form action="{{ url_for('search.search_page') }}" method="GET" class="flex gap-2">
+            <div class="flex-1">
+                <input type="text" 
+                       name="q" 
+                       value="{{ query }}"
+                       placeholder="Search anything..." 
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                <i data-feather="search" class="h-5 w-5"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Category Filter Tabs -->
+<div class="bg-gray-50 dark:bg-dark-50 border-b border-gray-200 dark:border-dark-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex gap-4 overflow-x-auto py-4">
+            <a href="{{ url_for('search.search_page', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-indigo-600 text-white whitespace-nowrap">
+                All
+            </a>
+            <a href="{{ url_for('search.search_page', category='automotive', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Automotive
+            </a>
+            <a href="{{ url_for('search.search_page', category='electronics', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Electronics
+            </a>
+            <a href="{{ url_for('search.search_page', category='fashion', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Fashion
+            </a>
+            <a href="{{ url_for('search.search_page', category='home-garden', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Home & Garden
+            </a>
+            <a href="{{ url_for('search.search_page', category='sports', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Sports
+            </a>
+            <a href="{{ url_for('search.search_page', category='real-estate', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Real Estate
+            </a>
+            <a href="{{ url_for('search.search_page', category='jobs', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Jobs
+            </a>
+            <a href="{{ url_for('search.search_page', category='services', q=query) }}" 
+               class="px-4 py-2 rounded-lg bg-white dark:bg-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-300 whitespace-nowrap">
+                Services
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Results -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% if query %}
+    <p class="text-gray-600 dark:text-dark-500 mb-6">
+        Searching for: <span class="font-semibold">"{{ query }}"</span>
+    </p>
+    {% endif %}
+    
+    {% if results %}
+    <!-- Video Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for item in results %}
+        <a href="{{ url_for('products.product_detail', id=item.id) }}" class="group">
+            <div class="bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden hover:shadow-xl transition">
+                <!-- Video Thumbnail -->
+                <div class="relative aspect-video bg-gray-200 dark:bg-dark-300">
+                    <video class="w-full h-full object-cover" poster="{{ item.thumbnail }}">
+                        <source src="{{ item.video_url }}" type="video/mp4">
+                    </video>
+                    <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                        {{ item.duration }}
+                    </div>
+                </div>
+                <!-- Item Info -->
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                        {{ item.title }}
+                    </h3>
+                    <p class="text-sm text-gray-500 dark:text-dark-500 mt-1">{{ item.category }}</p>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mt-2">€{{ item.price }}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-12">
+        <i data-feather="search" class="h-16 w-16 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">
+            {% if query %}No results found{% else %}Start searching{% endif %}
+        </h3>
+        <p class="text-gray-500 dark:text-dark-500">
+            {% if query %}Try adjusting your search{% else %}Enter a search term above{% endif %}
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    feather.replace();
+</script>
+{% endblock %}

@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {%- if search_query -%}
+        Search: {{ search_query }}
+        {%- if category %} in {{ category_info.name }}{% endif %} - VidX
+    {%- elif category -%}
+        Search {{ category_info.name }} - VidX
+    {%- else -%}
+        Search - VidX
+    {%- endif -%}
+{% endblock %}
+
+{% block extra_styles %}
+.filter-section {
+    display: none;
+}
+.filter-section.active {
+    display: block;
+}
+.filter-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+.filter-toggle:hover {
+    background-color: rgba(99, 102, 241, 0.05);
+}
+.filter-grid {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.filter-compact-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+    .filter-compact-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .filter-compact-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+.filter-card-compact {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.875rem;
+    transition: all 0.15s ease;
+}
+
+.dark .filter-card-compact {
+    background: #242526;
+    border-color: #3A3B3C;
+}
+
+.filter-card-compact:hover {
+    border-color: #a5b4fc;
+    box-shadow: 0 1px 3px rgba(99, 102, 241, 0.08);
+}
+
+.filter-label-sm {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.dark .filter-label-sm {
+    color: #9ca3af;
+}
+
+.filter-input-sm {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: #f9fafb;
+    color: #111827;
+    transition: all 0.15s;
+}
+
+.dark .filter-input-sm {
+    background: #18191A;
+    border-color: #4E4F50;
+    color: #E4E6EB;
+}
+
+.filter-input-sm:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.05);
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.video-card {
+    background: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+}
+
+.video-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.dark .video-card {
+    background: #242526;
+}
+{% endblock %}
+
+{% block content %}
+<!-- Search Header -->
+<div class="bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-600">
+                    {% if search_query %}
+                        Search Results for "{{ search_query }}"
+                    {% elif category %}
+                        Search {{ category_info.name }}
+                    {% else %}
+                        Search All Categories
+                    {% endif %}
+                </h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-dark-500">
+                    {{ results|length }} result{{ 's' if results|length != 1 else '' }} found
+                </p>
+            </div>
+            <a href="{{ url_for('home.index') }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center">
+                <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
+                <span class="hidden sm:inline">Back to Home</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Category Quick Links (if searching all categories) -->
+{% if not category %}
+<div class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-16 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center space-x-2 py-3 overflow-x-auto">
+            <a href="{{ url_for('search.search_page') }}?q={{ search_query }}" 
+               class="px-3 py-1.5 text-sm font-medium rounded-md transition whitespace-nowrap
+                      text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200">
+                All Categories
+            </a>
+            {% for cat_key, cat_info in all_categories.items() %}
+            <a href="{{ url_for('search.search_category', category=cat_key) }}?q={{ search_query }}" 
+               class="px-3 py-1.5 text-sm font-medium rounded-md transition whitespace-nowrap
+                      text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200">
+                {{ cat_info.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- Category filter when in specific category search -->
+<div class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-16 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center space-x-2 py-3 overflow-x-auto">
+            {% for cat_key, cat_info in all_categories.items() %}
+            <a href="{{ url_for('search.search_category', category=cat_key) }}?q={{ search_query }}" 
+               class="px-3 py-1.5 text-sm font-medium rounded-md transition whitespace-nowrap
+                      {% if cat_key == category %}
+                      text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200
+                      {% else %}
+                      text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200
+                      {% endif %}">
+                {{ cat_info.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Filters Section -->
+<div class="bg-gray-50 dark:bg-dark-50 border-b border-gray-200 dark:border-dark-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="filter-compact-grid">
+            <!-- Action Buttons (Mobile: Top, Desktop: Bottom) -->
+            <div id="filter-action-buttons" class="filter-full flex items-center justify-between gap-3">
+                <button id="apply-filters" class="flex-1 bg-indigo-600 dark:bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                    Apply Filters
+                </button>
+                <button id="reset-filters" class="flex-1 border border-gray-300 dark:border-dark-300 text-gray-700 dark:text-dark-500 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-200 transition font-medium">
+                    Reset All
+                </button>
+            </div>
+
+            <!-- Price Range -->
+            <div class="filter-card-compact">
+                <label class="filter-label-sm">Price Range (EUR)</label>
+                <div class="filter-range-row">
+                    <input type="number" id="price-min" class="filter-input-sm" placeholder="Min" min="0">
+                    <span class="filter-range-separator">—</span>
+                    <input type="number" id="price-max" class="filter-input-sm" placeholder="Max" min="0">
+                </div>
+            </div>
+
+            <!-- Condition -->
+            <div class="filter-card-compact">
+                <label class="filter-label-sm">Condition</label>
+                <select id="condition" class="filter-input-sm">
+                    <option value="">Any</option>
+                    <option value="new">New</option>
+                    <option value="like-new">Like New</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                </select>
+            </div>
+
+            <!-- Location -->
+            <div class="filter-card-compact">
+                <label class="filter-label-sm">Location</label>
+                <input type="text" id="location" class="filter-input-sm" placeholder="Enter location">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Grid -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% if results %}
+    <div class="video-grid" id="results-grid">
+        {% for item in results %}
+        <div class="video-card">
+            <a href="{{ url_for('products.product_detail', product_id=item.id) }}">
+                <div class="aspect-video bg-gray-200 dark:bg-dark-200">
+                    <!-- Video thumbnail or player here -->
+                    <img src="{{ item.thumbnail }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 mb-1">{{ item.title }}</h3>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400">€{{ item.price }}</p>
+                    <p class="text-sm text-gray-500 dark:text-dark-500 mt-1">{{ item.location }}</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- No Results -->
+    <div class="text-center py-16">
+        <div class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
+            <i data-feather="search" class="h-8 w-8"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-dark-600 mb-2">No results found</h3>
+        <p class="text-gray-500 dark:text-dark-400 mb-6">
+            {% if search_query %}
+                We couldn't find any listings matching "{{ search_query }}"
+                {% if category %} in {{ category_info.name }}{% endif %}.
+            {% else %}
+                Try adjusting your filters or search in a different category.
+            {% endif %}
+        </p>
+        <div class="flex items-center justify-center gap-4">
+            <a href="{{ url_for('search.search_page') }}" class="px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+                Clear Search
+            </a>
+            <a href="{{ url_for('home.index') }}" class="px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600">
+                Browse Categories
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Filter handlers
+    document.getElementById('apply-filters')?.addEventListener('click', () => {
+        // TODO: Apply filters and refresh results
+        console.log('Applying filters...');
+    });
+
+    document.getElementById('reset-filters')?.addEventListener('click', () => {
+        // Reset all filter inputs
+        document.getElementById('price-min').value = '';
+        document.getElementById('price-max').value = '';
+        document.getElementById('condition').value = '';
+        document.getElementById('location').value = '';
+        
+        // TODO: Refresh results
+        console.log('Filters reset');
+    });
+</script>
+{% endblock %}

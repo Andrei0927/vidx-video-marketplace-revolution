@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Search Electronics - VidX{% endblock %}
+
+{% block content %}
+<!-- Search Header -->
+<div class="bg-white dark:bg-dark-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center space-x-3 mb-4">
+            <i data-feather="monitor" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600">Electronics</h1>
+        </div>
+        
+        <!-- Search Form -->
+        <form action="{{ url_for('search.search_page', category='electronics') }}" method="GET" class="flex gap-2">
+            <div class="flex-1">
+                <input type="text" 
+                       name="q" 
+                       value="{{ query }}"
+                       placeholder="Search phones, laptops, tablets..." 
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                <i data-feather="search" class="h-5 w-5"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="bg-gray-50 dark:bg-dark-50 border-b border-gray-200 dark:border-dark-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Category -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Category</label>
+                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">All Electronics</option>
+                    <option value="phones">Phones</option>
+                    <option value="laptops">Laptops</option>
+                    <option value="tablets">Tablets</option>
+                    <option value="cameras">Cameras</option>
+                    <option value="audio">Audio</option>
+                    <option value="accessories">Accessories</option>
+                </select>
+            </div>
+            
+            <!-- Brand -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Brand</label>
+                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">All Brands</option>
+                    <option value="apple">Apple</option>
+                    <option value="samsung">Samsung</option>
+                    <option value="sony">Sony</option>
+                    <option value="dell">Dell</option>
+                    <option value="hp">HP</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <!-- Condition -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Condition</label>
+                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Condition</option>
+                    <option value="new">New</option>
+                    <option value="like-new">Like New</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                </select>
+            </div>
+            
+            <!-- Price -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Price Range</label>
+                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Price</option>
+                    <option value="0-100">€0 - €100</option>
+                    <option value="100-300">€100 - €300</option>
+                    <option value="300-500">€300 - €500</option>
+                    <option value="500-1000">€500 - €1,000</option>
+                    <option value="1000+">€1,000+</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% if query %}
+    <p class="text-gray-600 dark:text-dark-500 mb-6">
+        Searching for: <span class="font-semibold">"{{ query }}"</span>
+    </p>
+    {% endif %}
+    
+    {% if results %}
+    <!-- Video Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for item in results %}
+        <a href="{{ url_for('products.product_detail', id=item.id) }}" class="group">
+            <div class="bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden hover:shadow-xl transition">
+                <!-- Video Thumbnail -->
+                <div class="relative aspect-video bg-gray-200 dark:bg-dark-300">
+                    <video class="w-full h-full object-cover" poster="{{ item.thumbnail }}">
+                        <source src="{{ item.video_url }}" type="video/mp4">
+                    </video>
+                    <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                        {{ item.duration }}
+                    </div>
+                </div>
+                <!-- Item Info -->
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                        {{ item.title }}
+                    </h3>
+                    <p class="text-sm text-gray-500 dark:text-dark-500 mt-1">{{ item.brand }} • {{ item.condition }}</p>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mt-2">€{{ item.price }}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-12">
+        <i data-feather="search" class="h-16 w-16 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No results found</h3>
+        <p class="text-gray-500 dark:text-dark-500">Try adjusting your search or filters</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    feather.replace();
+</script>
+{% endblock %}

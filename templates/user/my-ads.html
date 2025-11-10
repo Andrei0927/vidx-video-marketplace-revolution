@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}My Ads - VidX{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600">My Ads</h1>
+        <a href="{{ url_for('upload.upload_step1') }}" class="bg-indigo-600 dark:bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 flex items-center">
+            <i data-feather="plus" class="h-5 w-5 mr-2"></i>
+            New Ad
+        </a>
+    </div>
+
+    <!-- Tabs -->
+    <div class="border-b border-gray-200 dark:border-dark-200 mb-6">
+        <nav class="-mb-px flex space-x-8">
+            <button data-tab="active" class="tab-btn border-indigo-500 text-indigo-600 dark:text-indigo-400 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Active (3)
+            </button>
+            <button data-tab="pending" class="tab-btn border-transparent text-gray-500 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-500 hover:border-gray-300 dark:hover:border-dark-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Pending (1)
+            </button>
+            <button data-tab="sold" class="tab-btn border-transparent text-gray-500 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-500 hover:border-gray-300 dark:hover:border-dark-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Sold (5)
+            </button>
+            <button data-tab="archived" class="tab-btn border-transparent text-gray-500 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-500 hover:border-gray-300 dark:hover:border-dark-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Archived (2)
+            </button>
+        </nav>
+    </div>
+
+    <!-- Active Ads -->
+    <div id="active-tab" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Demo Ad Card -->
+            <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 overflow-hidden">
+                <div class="aspect-video bg-gray-200 dark:bg-dark-200">
+                    <img src="https://via.placeholder.com/400x300" alt="Product" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
+                            Active
+                        </span>
+                        <div class="flex items-center text-sm text-gray-500 dark:text-dark-400">
+                            <i data-feather="eye" class="h-4 w-4 mr-1"></i>
+                            <span>128</span>
+                        </div>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 mb-1">Sample Product Title</h3>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2">€299</p>
+                    <p class="text-sm text-gray-500 dark:text-dark-400 mb-4">Posted 2 days ago</p>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 px-3 py-2 border border-gray-300 dark:border-dark-200 rounded-md text-sm font-medium text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200">
+                            Edit
+                        </button>
+                        <button class="flex-1 px-3 py-2 border border-gray-300 dark:border-dark-200 rounded-md text-sm font-medium text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200">
+                            View
+                        </button>
+                        <button class="px-3 py-2 border border-red-300 dark:border-red-800 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
+                            <i data-feather="trash-2" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State (shown when no ads) -->
+            <!-- <div class="col-span-full text-center py-16">
+                <i data-feather="package" class="h-24 w-24 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No active ads</h3>
+                <p class="text-gray-500 dark:text-dark-400 mb-6">Get started by creating your first listing</p>
+                <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600">
+                    <i data-feather="plus" class="h-5 w-5 mr-2"></i>
+                    Create Listing
+                </a>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Pending Ads -->
+    <div id="pending-tab" class="tab-content hidden">
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
+            <div class="flex">
+                <i data-feather="clock" class="h-5 w-5 text-yellow-600 dark:text-yellow-400 mr-3 mt-0.5"></i>
+                <div>
+                    <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Pending Review</h3>
+                    <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">Your ads are being reviewed and will be published soon</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-16">
+            <p class="text-gray-500 dark:text-dark-400">No pending ads</p>
+        </div>
+    </div>
+
+    <!-- Sold Ads -->
+    <div id="sold-tab" class="tab-content hidden">
+        <div class="text-center py-16">
+            <i data-feather="check-circle" class="h-24 w-24 text-green-500 mx-auto mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No sold items yet</h3>
+            <p class="text-gray-500 dark:text-dark-400">When you mark an item as sold, it will appear here</p>
+        </div>
+    </div>
+
+    <!-- Archived Ads -->
+    <div id="archived-tab" class="tab-content hidden">
+        <div class="text-center py-16">
+            <i data-feather="archive" class="h-24 w-24 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No archived ads</h3>
+            <p class="text-gray-500 dark:text-dark-400">Archived ads will appear here</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabName = btn.dataset.tab;
+            
+            // Update button styles
+            tabBtns.forEach(b => {
+                b.classList.remove('border-indigo-500', 'text-indigo-600', 'dark:text-indigo-400');
+                b.classList.add('border-transparent', 'text-gray-500', 'dark:text-dark-400');
+            });
+            btn.classList.add('border-indigo-500', 'text-indigo-600', 'dark:text-indigo-400');
+            btn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-dark-400');
+            
+            // Show correct tab content
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        });
+    });
+</script>
+{% endblock %}

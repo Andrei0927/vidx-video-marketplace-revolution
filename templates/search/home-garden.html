@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Search Home & Garden - VidX{% endblock %}
+{% block content %}
+<div class="bg-white dark:bg-dark-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center space-x-3 mb-4">
+            <i data-feather="home" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600">Home & Garden</h1>
+        </div>
+        <form action="{{ url_for('search.search_page', category='home-garden') }}" method="GET" class="flex gap-2">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search furniture, appliances, decor..." class="flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-dark-200">
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg"><i data-feather="search"></i></button>
+        </form>
+    </div>
+</div>
+<div class="bg-gray-50 dark:bg-dark-50 border-b">
+    <div class="max-w-7xl mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>All Categories</option><option>Furniture</option><option>Appliances</option><option>Decor</option><option>Garden</option></select>
+        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>Condition</option><option>New</option><option>Like New</option><option>Used</option></select>
+        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>Price</option><option>€0-50</option><option>€50-200</option><option>€200-500</option><option>€500+</option></select>
+        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>Location</option></select>
+    </div>
+</div>
+<div class="max-w-7xl mx-auto px-4 py-8">
+    {% if results %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for item in results %}
+        <a href="{{ url_for('products.product_detail', id=item.id) }}">
+            <div class="bg-white dark:bg-dark-200 rounded-lg shadow overflow-hidden hover:shadow-xl transition">
+                <div class="aspect-video bg-gray-200"><video poster="{{ item.thumbnail }}"><source src="{{ item.video_url }}"></video></div>
+                <div class="p-4"><h3 class="font-semibold">{{ item.title }}</h3><p class="text-lg font-bold text-indigo-600 mt-2">€{{ item.price }}</p></div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12"><i data-feather="search" class="h-16 w-16 text-gray-400 mx-auto mb-4"></i><h3 class="text-lg font-medium mb-2">No results found</h3></div>
+    {% endif %}
+</div>
+<script>feather.replace();</script>
+{% endblock %}

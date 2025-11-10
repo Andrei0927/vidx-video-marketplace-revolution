@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Upload New Ad - Step 2: Details - VidX{% endblock %}
+
+{% block content %}
+<!-- Upload Form Container -->
+<div class="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-dark-100 shadow dark:shadow-dark-200 rounded-lg overflow-hidden">
+        <!-- Progress Stepper -->
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-dark-200">
+            <div class="flex items-center justify-between">
+                <!-- Step 1 - Complete -->
+                <div class="flex items-center flex-1">
+                    <div class="flex-shrink-0 bg-green-500 rounded-full h-8 w-8 flex items-center justify-center">
+                        <i data-feather="check" class="h-5 w-5 text-white"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-dark-400">Upload Media</h3>
+                    </div>
+                </div>
+                
+                <!-- Step 2 - Active -->
+                <div class="flex items-center flex-1">
+                    <div class="flex-shrink-0 bg-indigo-600 dark:bg-indigo-500 rounded-full h-8 w-8 flex items-center justify-center">
+                        <span class="text-white font-medium">2</span>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600">Add Details</h3>
+                        <p class="text-sm text-gray-500 dark:text-dark-400">Provide item information</p>
+                    </div>
+                </div>
+                
+                <!-- Step 3 - Inactive -->
+                <div class="flex items-center flex-1">
+                    <div class="flex-shrink-0 bg-gray-200 dark:bg-dark-200 rounded-full h-8 w-8 flex items-center justify-center">
+                        <span class="text-gray-600 dark:text-dark-400 font-medium">3</span>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-dark-400">Publish</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Fields -->
+        <form id="details-form" class="px-6 py-8 space-y-6">
+            <!-- Title -->
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-dark-500">
+                    Title <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="title" name="title" required
+                       class="mt-1 block w-full border border-gray-300 dark:border-dark-200 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                       placeholder="e.g., iPhone 15 Pro Max 256GB">
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700 dark:text-dark-500">
+                    Category <span class="text-red-500">*</span>
+                </label>
+                <select id="category" name="category" required
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Select a category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="automotive">Automotive</option>
+                    <option value="home-garden">Home & Garden</option>
+                    <option value="sports">Sports & Outdoors</option>
+                    <option value="real-estate">Real Estate</option>
+                    <option value="jobs">Jobs</option>
+                    <option value="services">Services</option>
+                </select>
+            </div>
+
+            <!-- Price -->
+            <div>
+                <label for="price" class="block text-sm font-medium text-gray-700 dark:text-dark-500">
+                    Price (EUR) <span class="text-red-500">*</span>
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 dark:text-dark-400 sm:text-sm">€</span>
+                    </div>
+                    <input type="number" id="price" name="price" required min="0" step="0.01"
+                           class="block w-full pl-7 pr-12 border border-gray-300 dark:border-dark-200 rounded-md py-2 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                           placeholder="0.00">
+                </div>
+            </div>
+
+            <!-- Condition -->
+            <div>
+                <label for="condition" class="block text-sm font-medium text-gray-700 dark:text-dark-500">
+                    Condition <span class="text-red-500">*</span>
+                </label>
+                <select id="condition" name="condition" required
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Select condition</option>
+                    <option value="new">New</option>
+                    <option value="like-new">Like New</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                </select>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 dark:text-dark-500">
+                    Description <span class="text-red-500">*</span>
+                </label>
+                <textarea id="description" name="description" rows="6" required
+                          class="mt-1 block w-full border border-gray-300 dark:border-dark-200 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          placeholder="Describe your item in detail..."></textarea>
+            </div>
+
+            <!-- Location -->
+            <div>
+                <label for="location" class="block text-sm font-medium text-gray-700 dark:text-dark-500">
+                    Location <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="location" name="location" required
+                       class="mt-1 block w-full border border-gray-300 dark:border-dark-200 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                       placeholder="e.g., Cluj-Napoca, Romania">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-between pt-6 border-t border-gray-200 dark:border-dark-200">
+                <a href="{{ url_for('upload.upload_step1') }}" class="px-4 py-2 border border-gray-300 dark:border-dark-200 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-dark-500 bg-white dark:bg-dark-100 hover:bg-gray-50 dark:hover:bg-dark-200">
+                    Back
+                </a>
+                <button type="submit" class="px-6 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md shadow-sm text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600">
+                    Continue to Review
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Form submission handler
+    const form = document.getElementById('details-form');
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Collect form data
+        const formData = {
+            title: document.getElementById('title').value,
+            category: document.getElementById('category').value,
+            price: document.getElementById('price').value,
+            condition: document.getElementById('condition').value,
+            description: document.getElementById('description').value,
+            location: document.getElementById('location').value
+        };
+        
+        // Save to session storage
+        sessionStorage.setItem('adDetails', JSON.stringify(formData));
+        sessionStorage.setItem('uploadStep', '3');
+        
+        // Navigate to review step
+        window.location.href = "{{ url_for('upload.upload_step3') }}";
+    });
+    
+    // Load saved data if returning to this step
+    const savedData = sessionStorage.getItem('adDetails');
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        document.getElementById('title').value = data.title || '';
+        document.getElementById('category').value = data.category || '';
+        document.getElementById('price').value = data.price || '';
+        document.getElementById('condition').value = data.condition || '';
+        document.getElementById('description').value = data.description || '';
+        document.getElementById('location').value = data.location || '';
+    }
+</script>
+{% endblock %}

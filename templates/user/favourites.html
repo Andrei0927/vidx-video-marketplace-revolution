@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}My Favourites - VidX{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600">My Favourites</h1>
+        <p class="mt-2 text-gray-500 dark:text-dark-400">Items you've saved for later</p>
+    </div>
+
+    <!-- Favourites Grid -->
+    <div id="favourites-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Favourite items will be loaded here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-16">
+        <i data-feather="heart" class="h-24 w-24 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-2">No favourites yet</h3>
+        <p class="text-gray-500 dark:text-dark-400 mb-6 max-w-md mx-auto">
+            Start browsing and tap the heart icon on listings you like to save them here
+        </p>
+        <a href="{{ url_for('home.index') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+            <i data-feather="search" class="h-5 w-5 mr-2"></i>
+            Browse Listings
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Load favourites from localStorage
+    const favourites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const grid = document.getElementById('favourites-grid');
+    const emptyState = document.getElementById('empty-state');
+    
+    if (favourites.length === 0) {
+        grid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        window.replaceFeatherIcons();
+    } else {
+        // TODO: Fetch actual product data for these IDs from API
+        // For now, show placeholder cards
+        favourites.forEach((productId, index) => {
+            const card = document.createElement('div');
+            card.className = 'bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 overflow-hidden hover:shadow-lg dark:hover:shadow-dark-300/50 transition group';
+            card.innerHTML = `
+                <div class="relative">
+                    <div class="aspect-video bg-gray-200 dark:bg-dark-200">
+                        <img src="https://via.placeholder.com/400x300?text=Product+${index+1}" alt="Product" class="w-full h-full object-cover">
+                    </div>
+                    <button class="remove-favourite absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${productId}">
+                        <i data-feather="x" class="h-4 w-4"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 mb-1 truncate">Sample Product ${index+1}</h3>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2">€${(Math.random() * 500 + 50).toFixed(2)}</p>
+                    <p class="text-sm text-gray-500 dark:text-dark-400 mb-3">Cluj-Napoca, Romania</p>
+                    <a href="{{ url_for('products.product_detail', product_id='') }}${productId}" class="block w-full text-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+                        View Details
+                    </a>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        
+        // Replace feather icons
+        window.replaceFeatherIcons();
+        
+        // Add remove handlers
+        document.querySelectorAll('.remove-favourite').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const productId = btn.dataset.id;
+                
+                // Remove from favourites
+                const index = favourites.indexOf(productId);
+                if (index > -1) {
+                    favourites.splice(index, 1);
+                    localStorage.setItem('favorites', JSON.stringify(favourites));
+                    
+                    // Remove card
+                    btn.closest('.group').remove();
+                    
+                    // Show empty state if no more favourites
+                    if (favourites.length === 0) {
+                        grid.classList.add('hidden');
+                        emptyState.classList.remove('hidden');
+                        window.replaceFeatherIcons();
+                    }
+                }
+            });
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category_info.name }} - VidX{% endblock %}
+
+{% block extra_styles %}
+.scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: #6366f1 #f1f1f1;
+}
+.scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+.scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: #6366f1;
+    border-radius: 10px;
+}
+
+.filter-option {
+    transition: all 0.2s ease;
+}
+.filter-option:hover {
+    background-color: rgba(99, 102, 241, 0.08);
+}
+.filter-option.active {
+    background-color: #6366f1;
+    color: #fff;
+}
+
+.video-grid {
+    display: grid;
+    gap: 1.5rem;
+    padding: 0 1rem;
+}
+
+@media (max-width: 1023px) {
+    body {
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    .video-grid {
+        display: block;
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+        padding: 0;
+        margin: 0;
+        gap: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .video-card {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        min-height: 100vh;
+        min-height: 100dvh;
+        height: 100vh;
+        height: 100dvh;
+        width: 100vw;
+        max-width: 100vw;
+        margin-bottom: 0 !important;
+        border-radius: 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .video-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        justify-items: center;
+        gap: 2.5rem;
+        padding: 0 2rem 2.5rem;
+        max-width: 1200px;
+        margin: 6rem auto 0;
+    }
+}
+
+.video-card {
+    position: relative;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    aspect-ratio: 9 / 16;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+    .video-card {
+        margin-bottom: 0;
+        width: min(100%, 360px);
+        max-width: 360px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .video-card {
+        max-width: 400px;
+    }
+}
+
+.video-card video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+    pointer-events: none;
+}
+
+.video-card video::-webkit-media-controls,
+.video-card video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+.volume-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 9999px;
+    padding: 0.5rem;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.volume-indicator.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.video-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+    z-index: 5;
+    pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+    .video-overlay {
+        padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+@media (min-width: 1024px) {
+    .video-overlay {
+        padding-bottom: 1.5rem;
+    }
+}
+
+.video-overlay > * {
+    pointer-events: auto;
+}
+
+#vertical-home-btn,
+#vertical-filter-btn {
+    width: 36px;
+    height: 48px;
+}
+
+@media (min-width: 640px) {
+    #vertical-home-btn,
+    #vertical-filter-btn {
+        width: 44px;
+        height: 100px;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem 0.5rem;
+    }
+
+    #vertical-home-btn::after {
+        content: 'HOME';
+        font-size: 0.625rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+
+    #vertical-filter-btn::after {
+        content: 'FILTER';
+        font-size: 0.625rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+}
+{% endblock %}
+
+{% block content %}
+<!-- Desktop Category Header (Desktop Only) -->
+<div class="hidden lg:block bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-lg">
+                    <i data-feather="{{ category_info.icon }}" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+            </div>
+            <div class="ml-4">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-600">{{ category_info.name }}</h1>
+                <p class="text-gray-500 dark:text-dark-500">{{ category_info.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Desktop Category Quick Links -->
+<div class="hidden lg:block bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-16 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center space-x-2 py-3">
+            {% for cat_key, cat_info in all_categories.items() %}
+            <a href="{{ url_for('categories.category_page', category=cat_key) }}" 
+               class="px-3 py-1.5 text-sm font-medium rounded-md transition
+                      {% if cat_key == category %}
+                      text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200
+                      {% else %}
+                      text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200
+                      {% endif %}">
+                {{ cat_info.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Legacy Filters (Hidden - Desktop Only) -->
+<div class="hidden lg:block">
+    <div class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-0 z-[100]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex space-x-4 overflow-x-auto pb-2 scroll-container">
+                <!-- Brand Filter -->
+                <div class="relative">
+                    <button id="brand-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
+                        <span>Brand</span>
+                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
+                    </button>
+                    <div id="brand-filter-menu" class="absolute z-[9999] mt-2 w-72 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200" style="display: none;">
+                        <div class="p-2">
+                            <div class="px-3 py-2 sticky top-0 bg-white dark:bg-dark-100">
+                                <input type="text" id="brand-search" placeholder="Search brand" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md">
+                            </div>
+                            <div class="max-h-96 overflow-y-auto" id="brand-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="relative">
+                    <button id="category-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
+                        <span>Category</span>
+                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
+                    </button>
+                    <div id="category-filter-menu" class="absolute z-[9999] mt-2 w-72 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200" style="display: none;">
+                        <div class="p-2 max-h-96 overflow-y-auto" id="category-list"></div>
+                    </div>
+                </div>
+
+                <!-- Condition Filter -->
+                <div class="relative">
+                    <button id="condition-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
+                        <span>Condition</span>
+                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
+                    </button>
+                    <div id="condition-filter-menu" class="absolute z-[9999] mt-2 w-64 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200" style="display: none;">
+                        <div class="p-2" id="condition-list"></div>
+                    </div>
+                </div>
+
+                <!-- Price Filter -->
+                <div class="relative">
+                    <button id="price-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
+                        <span>Price</span>
+                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
+                    </button>
+                    <div id="price-filter-menu" class="absolute z-[9999] mt-2 w-64 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200" style="display: none;">
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <label for="price-min" class="block text-sm text-gray-500 dark:text-dark-400">Min Price (EUR)</label>
+                                <input type="number" id="price-min" class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md" placeholder="0">
+                            </div>
+                            <div>
+                                <label for="price-max" class="block text-sm text-gray-500 dark:text-dark-400">Max Price (EUR)</label>
+                                <input type="number" id="price-max" class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md" placeholder="5000">
+                            </div>
+                            <div class="flex justify-between">
+                                <button id="price-reset" class="px-4 py-2 text-sm rounded-md border border-gray-200 dark:border-dark-200 text-gray-700 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">Reset</button>
+                                <button id="price-apply" class="px-4 py-2 text-sm rounded-md bg-indigo-600 dark:bg-indigo-500 text-white hover:bg-indigo-700 dark:hover:bg-indigo-600">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="relative">
+                    <button id="location-filter-btn" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
+                        <span>Location</span>
+                        <i data-feather="chevron-down" class="ml-2 h-4 w-4"></i>
+                    </button>
+                    <div id="location-filter-menu" class="absolute z-[9999] mt-2 w-72 bg-white dark:bg-dark-100 rounded-md shadow-lg dark:shadow-dark-200" style="display: none;">
+                        <div class="p-2">
+                            <div class="px-3 py-2 sticky top-0 bg-white dark:bg-dark-100">
+                                <input type="text" id="location-search" placeholder="Search location" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-200 bg-white dark:bg-dark-100 text-gray-900 dark:text-dark-600 rounded-md">
+                            </div>
+                            <div class="max-h-80 overflow-y-auto" id="location-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reset Button -->
+                <button id="reset-filters" class="filter-option flex items-center px-4 py-2 border border-gray-200 dark:border-dark-200 rounded-full text-sm font-medium text-gray-700 dark:text-dark-500 hover:border-indigo-300 dark:hover:border-indigo-400">
+                    <span>Reset</span>
+                    <i data-feather="x" class="ml-2 h-4 w-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Grid -->
+<div class="video-grid" id="video-grid"></div>
+
+<!-- No Results Message -->
+<div id="no-results" class="hidden text-center py-16 px-4">
+    <div class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
+        <i data-feather="search" class="h-8 w-8"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-900 dark:text-dark-600">No {{ category_info.name|lower }} match your filters</h3>
+    <p class="mt-2 text-gray-500 dark:text-dark-400">Try adjusting your filters or reset them to see all listings.</p>
+    <button id="no-results-reset" class="mt-6 px-4 py-2 rounded-md bg-indigo-600 dark:bg-indigo-500 text-white hover:bg-indigo-700 dark:hover:bg-indigo-600">Reset Filters</button>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Category Page Script -->
+<script type="module" src="{{ url_for('static', filename='js/' + category + '-page.js') }}"></script>
+
+<!-- Video Card Engagement -->
+<script src="{{ url_for('static', filename='js/video-card-engagement.js') }}"></script>
+
+<!-- iOS Safari Collapsible Navigation -->
+<script>
+    const isIOSSafari = /iPhone|iPad|iPod/.test(navigator.userAgent) && 
+                       /Safari/.test(navigator.userAgent) && 
+                       !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+    
+    if (isIOSSafari) {
+        const navBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
+        
+        navBar.style.border = 'none';
+        navBar.style.right = '40px';
+        navBar.style.transform = 'translateX(calc(100% + 40px))';
+        navBar.style.transition = 'transform 0.3s ease';
+        
+        const toggleBtn = document.createElement('button');
+        toggleBtn.id = 'nav-toggle';
+        toggleBtn.className = 'fixed z-50 bg-white dark:bg-dark-100 flex items-center justify-center transition-all duration-300';
+        toggleBtn.style.cssText = 'right: 0; bottom: 0; width: 40px; height: calc(64px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); border: none;';
+        toggleBtn.innerHTML = '<i data-feather="chevron-left" class="h-5 w-5 text-gray-700 dark:text-dark-600"></i>';
+        
+        let navExpanded = false;
+        
+        toggleBtn.addEventListener('click', () => {
+            navExpanded = !navExpanded;
+            
+            if (navExpanded) {
+                navBar.style.transform = 'translateX(0)';
+                toggleBtn.querySelector('i').setAttribute('data-feather', 'chevron-right');
+            } else {
+                navBar.style.transform = 'translateX(calc(100% + 40px))';
+                toggleBtn.querySelector('i').setAttribute('data-feather', 'chevron-left');
+            }
+            
+            window.replaceFeatherIcons();
+        });
+        
+        document.body.appendChild(toggleBtn);
+        window.replaceFeatherIcons();
+    }
+
+    // Empty State Handler
+    function checkForEmptyState() {
+        const videoGrid = document.getElementById('video-grid');
+        if (!videoGrid) return;
+        
+        const videoCards = videoGrid.querySelectorAll('.video-card');
+        
+        if (videoCards.length === 0) {
+            videoGrid.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center">
+                    <i data-feather="inbox" class="h-24 w-24 text-gray-400 dark:text-dark-400 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-2">
+                        No listings yet
+                    </h3>
+                    <p class="text-gray-600 dark:text-dark-400 mb-6 max-w-md">
+                        Be the first to post in {{ category_info.name }}! Upload your item and reach thousands of potential buyers.
+                    </p>
+                    <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                        <i data-feather="plus-circle" class="h-5 w-5 mr-2"></i>
+                        Create First Listing
+                    </a>
+                </div>
+            `;
+            window.replaceFeatherIcons();
+        }
+    }
+
+    checkForEmptyState();
+</script>
+{% endblock %}
