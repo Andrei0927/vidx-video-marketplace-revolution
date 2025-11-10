@@ -16,7 +16,34 @@ tags:
 
 A revolutionary video-first marketplace platform where sellers showcase products through short-form videos, similar to TikTok's engaging format.
 
-## � Live Production Site
+## 🚀 Quick Start
+
+### Local Development (Start Here!)
+
+```bash
+# First time setup
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Start development server
+./dev.sh
+```
+
+Visit **http://127.0.0.1:5000**
+
+### Deploy to Production
+
+```bash
+# One command deployment
+./scripts/deploy.sh
+```
+
+**📖 Full documentation**: See [DEVELOPMENT.md](DEVELOPMENT.md)
+
+---
+
+## 🌐 Live Production Site
 
 **URL**: https://vidx-marketplace.azurewebsites.net
 
