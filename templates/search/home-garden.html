@@ -1,41 +1,249 @@
 {% extends "base.html" %}
+
 {% block title %}Search Home & Garden - VidX{% endblock %}
+
 {% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex items-center text-sm text-gray-500 dark:text-dark-500">
+            <a href="{{ url_for('main.index') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center">
+                <i data-feather="home" class="h-4 w-4 mr-1"></i>
+                Home
+            </a>
+            <i data-feather="chevron-right" class="h-4 w-4 mx-2"></i>
+            <span class="text-gray-900 dark:text-dark-600 font-medium">Home & Garden</span>
+        </div>
+    </div>
+</div>
+
+<!-- Search Header -->
 <div class="bg-white dark:bg-dark-100 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex items-center space-x-3 mb-4">
             <i data-feather="home" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-600">Home & Garden</h1>
         </div>
+        
+        <!-- Search Form -->
         <form action="{{ url_for('search.search_page', category='home-garden') }}" method="GET" class="flex gap-2">
-            <input type="text" name="q" value="{{ query }}" placeholder="Search furniture, appliances, decor..." class="flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-dark-200">
-            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg"><i data-feather="search"></i></button>
+            <div class="flex-1">
+                <input type="text" 
+                       name="q" 
+                       value="{{ query }}"
+                       placeholder="Search furniture, appliances, decor, plants..." 
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                <i data-feather="search" class="h-5 w-5"></i>
+            </button>
         </form>
     </div>
 </div>
-<div class="bg-gray-50 dark:bg-dark-50 border-b">
-    <div class="max-w-7xl mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>All Categories</option><option>Furniture</option><option>Appliances</option><option>Decor</option><option>Garden</option></select>
-        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>Condition</option><option>New</option><option>Like New</option><option>Used</option></select>
-        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>Price</option><option>€0-50</option><option>€50-200</option><option>€200-500</option><option>€500+</option></select>
-        <select class="px-3 py-2 border rounded-lg bg-white dark:bg-dark-200"><option>Location</option></select>
+
+<!-- Filters -->
+<div class="bg-gray-50 dark:bg-dark-50 border-b border-gray-200 dark:border-dark-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Category -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Category</label>
+                <select name="subcategory" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">All Categories</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="appliances">Appliances</option>
+                    <option value="decor">Decor & Accessories</option>
+                    <option value="garden">Garden & Outdoor</option>
+                    <option value="tools">Tools & DIY</option>
+                    <option value="lighting">Lighting</option>
+                    <option value="textiles">Textiles & Bedding</option>
+                    <option value="kitchen">Kitchen & Dining</option>
+                    <option value="bathroom">Bathroom</option>
+                    <option value="storage">Storage & Organization</option>
+                </select>
+            </div>
+            
+            <!-- Room -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Room</label>
+                <select name="room" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Room</option>
+                    <option value="living-room">Living Room</option>
+                    <option value="bedroom">Bedroom</option>
+                    <option value="kitchen">Kitchen</option>
+                    <option value="bathroom">Bathroom</option>
+                    <option value="dining-room">Dining Room</option>
+                    <option value="office">Home Office</option>
+                    <option value="outdoor">Outdoor/Garden</option>
+                    <option value="kids">Kids Room</option>
+                </select>
+            </div>
+            
+            <!-- Condition -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Condition</label>
+                <select name="condition" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Condition</option>
+                    <option value="new">Brand New</option>
+                    <option value="like-new">Like New</option>
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="refurbished">Refurbished</option>
+                </select>
+            </div>
+            
+            <!-- Material -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Material</label>
+                <select name="material" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Material</option>
+                    <option value="wood">Wood</option>
+                    <option value="metal">Metal</option>
+                    <option value="glass">Glass</option>
+                    <option value="plastic">Plastic</option>
+                    <option value="fabric">Fabric</option>
+                    <option value="leather">Leather</option>
+                    <option value="stone">Stone/Marble</option>
+                    <option value="mixed">Mixed Materials</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Second Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            <!-- Price Range -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Price Range</label>
+                <div class="flex gap-2">
+                    <input type="number" name="price_min" placeholder="Min €" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <span class="self-center text-gray-500">-</span>
+                    <input type="number" name="price_max" placeholder="Max €" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                </div>
+            </div>
+            
+            <!-- Style -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Style</label>
+                <select name="style" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Style</option>
+                    <option value="modern">Modern/Contemporary</option>
+                    <option value="traditional">Traditional</option>
+                    <option value="rustic">Rustic/Farmhouse</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="scandinavian">Scandinavian</option>
+                    <option value="vintage">Vintage/Retro</option>
+                    <option value="minimalist">Minimalist</option>
+                    <option value="bohemian">Bohemian</option>
+                </select>
+            </div>
+            
+            <!-- Color -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Color</label>
+                <select name="color" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Color</option>
+                    <option value="white">White/Cream</option>
+                    <option value="black">Black</option>
+                    <option value="gray">Gray</option>
+                    <option value="brown">Brown/Beige</option>
+                    <option value="blue">Blue</option>
+                    <option value="green">Green</option>
+                    <option value="red">Red</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="multicolor">Multicolor</option>
+                    <option value="natural">Natural Wood</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Filter Actions -->
+        <div class="mt-4 flex gap-2">
+            <button type="button" id="apply-filters" class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                Apply Filters
+            </button>
+            <button type="button" id="clear-filters" class="bg-gray-200 dark:bg-dark-300 text-gray-700 dark:text-dark-500 px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-dark-400 transition font-medium">
+                Clear All
+            </button>
+        </div>
     </div>
 </div>
-<div class="max-w-7xl mx-auto px-4 py-8">
+
+<!-- Results -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% if query %}
+    <p class="text-gray-600 dark:text-dark-500 mb-6">
+        Searching for: <span class="font-semibold">"{{ query }}"</span>
+    </p>
+    {% endif %}
+    
     {% if results %}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {% for item in results %}
-        <a href="{{ url_for('products.product_detail', id=item.id) }}">
-            <div class="bg-white dark:bg-dark-200 rounded-lg shadow overflow-hidden hover:shadow-xl transition">
-                <div class="aspect-video bg-gray-200"><video poster="{{ item.thumbnail }}"><source src="{{ item.video_url }}"></video></div>
-                <div class="p-4"><h3 class="font-semibold">{{ item.title }}</h3><p class="text-lg font-bold text-indigo-600 mt-2">€{{ item.price }}</p></div>
+        <a href="{{ url_for('products.product_detail', id=item.id) }}" class="group">
+            <div class="bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden hover:shadow-xl transition">
+                <div class="relative aspect-video bg-gray-200 dark:bg-dark-300">
+                    <video class="w-full h-full object-cover" poster="{{ item.thumbnail }}">
+                        <source src="{{ item.video_url }}" type="video/mp4">
+                    </video>
+                    <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                        {{ item.duration }}
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                        {{ item.title }}
+                    </h3>
+                    <p class="text-sm text-gray-500 dark:text-dark-500 mt-1">{{ item.condition }}</p>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mt-2">€{{ item.price }}</p>
+                </div>
             </div>
         </a>
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-12"><i data-feather="search" class="h-16 w-16 text-gray-400 mx-auto mb-4"></i><h3 class="text-lg font-medium mb-2">No results found</h3></div>
+    <div class="text-center py-12">
+        <i data-feather="search" class="h-16 w-16 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No results found</h3>
+        <p class="text-gray-500 dark:text-dark-500">Try adjusting your search or filters</p>
+    </div>
     {% endif %}
 </div>
-<script>feather.replace();</script>
+
+<script>
+    feather.replace();
+    
+    // Filter functionality
+    document.getElementById('apply-filters')?.addEventListener('click', function() {
+        const form = document.querySelector('form');
+        const filters = document.querySelectorAll('[name^="subcategory"], [name^="room"], [name^="condition"], [name^="material"], [name^="price_"], [name^="style"], [name^="color"]');
+        
+        const params = new URLSearchParams(form ? new FormData(form) : {});
+        filters.forEach(input => {
+            if (input.value) {
+                params.set(input.name, input.value);
+            }
+        });
+        
+        window.location.href = `{{ url_for('search.search_page', category='home-garden') }}?${params.toString()}`;
+    });
+    
+    document.getElementById('clear-filters')?.addEventListener('click', function() {
+        document.querySelectorAll('[name^="subcategory"], [name^="room"], [name^="condition"], [name^="material"], [name^="price_"], [name^="style"], [name^="color"]').forEach(input => {
+            input.value = '';
+        });
+        window.location.href = `{{ url_for('search.search_page', category='home-garden') }}`;
+    });
+    
+    // Restore filter values from URL
+    window.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        params.forEach((value, key) => {
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input) input.value = value;
+        });
+    });
+</script>
 {% endblock %}

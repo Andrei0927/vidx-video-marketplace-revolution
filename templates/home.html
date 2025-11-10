@@ -20,11 +20,85 @@
     transform: translateY(-5px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    /* Mobile search header */
+    .mobile-search-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px 16px;
+    }
+    
+    html.dark .mobile-search-header {
+        background: #242526;
+        border-bottom-color: #3a3b3c;
+    }
+    
+    /* Categories horizontal scroll */
+    .categories-scroll {
+        display: flex;
+        overflow-x: auto;
+        gap: 12px;
+        padding: 16px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .categories-scroll::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .category-card-mobile {
+        min-width: 100px;
+        flex-shrink: 0;
+    }
+    
+    /* Two-row category carousel */
+    .categories-grid-mobile {
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        grid-auto-flow: column;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 16px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .categories-grid-mobile::-webkit-scrollbar {
+        display: none;
+    }
+}
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<div class="relative overflow-hidden">
+<!-- Mobile Search Header (visible only on mobile) -->
+<div class="mobile-search-header md:hidden">
+    <div class="flex items-center gap-3">
+        <a href="{{ url_for('home.index') }}" class="flex-shrink-0 flex items-center">
+            <i data-feather="video" class="text-indigo-600 dark:text-indigo-400 h-7 w-7"></i>
+        </a>
+        <form action="{{ url_for('search.search_page') }}" method="GET" class="flex-1">
+            <div class="relative">
+                <input type="text" 
+                       name="q" 
+                       placeholder="What are you looking for?" 
+                       class="w-full px-4 py-2.5 pl-10 border border-gray-300 dark:border-dark-300 rounded-xl bg-gray-50 dark:bg-dark-200 text-gray-900 dark:text-dark-600 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
+                <i data-feather="search" class="absolute left-3 top-3 h-5 w-5 text-gray-400"></i>
+            </div>
+        </form>
+        <button class="p-2 rounded-xl text-gray-500 dark:text-dark-500 hover:bg-gray-100 dark:hover:bg-dark-200">
+            <i data-feather="bell" class="h-6 w-6"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Hero Section (Desktop only) -->
+<div class="relative overflow-hidden hidden md:block">
     <div class="max-w-7xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
         <div class="text-center">
             <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-dark-600 sm:text-5xl md:text-6xl">
@@ -39,9 +113,10 @@
 </div>
 
 <!-- Categories Section -->
-<div id="categories" class="py-12 bg-white dark:bg-dark-100">
+<div id="categories" class="py-6 md:py-12 bg-white dark:bg-dark-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
+        <!-- Desktop: Title -->
+        <div class="text-center hidden md:block">
             <h2 class="text-3xl font-extrabold text-gray-900 dark:text-dark-600 sm:text-4xl">
                 Popular Categories
             </h2>
@@ -50,7 +125,71 @@
             </p>
         </div>
 
-        <div class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+        <!-- Mobile: Two-row horizontal scroll -->
+        <div class="md:hidden">
+            <div class="categories-grid-mobile">
+                <!-- Row 1 -->
+                <a href="{{ url_for('categories.category_page', category='automotive') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="truck" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Automotive</h3>
+                </a>
+
+                <a href="{{ url_for('categories.category_page', category='fashion') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="shopping-bag" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Fashion</h3>
+                </a>
+
+                <a href="{{ url_for('categories.category_page', category='sports') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="activity" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Sports</h3>
+                </a>
+
+                <a href="{{ url_for('categories.category_page', category='jobs') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="briefcase" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Jobs</h3>
+                </a>
+
+                <!-- Row 2 -->
+                <a href="{{ url_for('categories.category_page', category='electronics') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="monitor" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Electronics</h3>
+                </a>
+
+                <a href="{{ url_for('categories.category_page', category='home-garden') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="home" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Home</h3>
+                </a>
+
+                <a href="{{ url_for('categories.category_page', category='real-estate') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="map-pin" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Real Estate</h3>
+                </a>
+
+                <a href="{{ url_for('categories.category_page', category='services') }}" class="category-card-mobile bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-4 min-w-[100px]">
+                    <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                        <i data-feather="tool" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-xs font-medium text-gray-900 dark:text-dark-600 text-center">Services</h3>
+                </a>
+            </div>
+        </div>
+
+        <!-- Desktop: Grid layout -->
+        <div class="mt-10 hidden md:grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
             <!-- Automotive -->
             <a href="{{ url_for('categories.category_page', category='automotive') }}" class="category-card bg-white dark:bg-dark-200 rounded-lg shadow-md dark:shadow-dark-300 overflow-hidden flex flex-col items-center p-6 hover:shadow-lg dark:hover:shadow-dark-300/50">
                 <div class="category-icon bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-full">
@@ -126,8 +265,87 @@
     </div>
 </div>
 
-<!-- How It Works -->
-<div class="py-12 bg-gray-50 dark:bg-dark-50">
+<!-- Recommended Videos Section (Mobile) -->
+<div class="md:hidden bg-gray-50 dark:bg-dark-50 py-6">
+    <div class="px-4">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-dark-600 mb-4">Recommended for You</h2>
+        
+        <!-- First video - Autoplaying (muted) -->
+        <div class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden mb-4">
+            <div class="relative aspect-[9/16] bg-gray-900">
+                <video 
+                    id="featured-video"
+                    class="w-full h-full object-cover"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    poster="https://via.placeholder.com/405x720/6366f1/ffffff?text=Featured+Video">
+                    <!-- Placeholder - add real video sources -->
+                </video>
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                    <h3 class="text-white font-semibold text-lg">Premium Product</h3>
+                    <p class="text-white/90 text-sm">$299</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="text-white/80 text-xs">Electronics</span>
+                        <span class="text-white/60">•</span>
+                        <span class="text-white/80 text-xs">2 hours ago</span>
+                    </div>
+                </div>
+                <!-- Mute indicator -->
+                <div class="absolute top-4 right-4 bg-black/40 rounded-full p-2">
+                    <i data-feather="volume-x" class="h-5 w-5 text-white"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- More videos grid -->
+        <div class="grid grid-cols-2 gap-3">
+            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
+                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
+                    <img src="https://via.placeholder.com/300x400/818cf8/ffffff?text=Video+2" alt="Video thumbnail" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                        <p class="text-white font-semibold text-sm">$149</p>
+                        <p class="text-white/80 text-xs mt-1">Fashion Item</p>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
+                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
+                    <img src="https://via.placeholder.com/300x400/a78bfa/ffffff?text=Video+3" alt="Video thumbnail" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                        <p class="text-white font-semibold text-sm">$89</p>
+                        <p class="text-white/80 text-xs mt-1">Home & Garden</p>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
+                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
+                    <img src="https://via.placeholder.com/300x400/c084fc/ffffff?text=Video+4" alt="Video thumbnail" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                        <p class="text-white font-semibold text-sm">$1,299</p>
+                        <p class="text-white/80 text-xs mt-1">Automotive</p>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
+                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
+                    <img src="https://via.placeholder.com/300x400/e879f9/ffffff?text=Video+5" alt="Video thumbnail" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                        <p class="text-white font-semibold text-sm">$59</p>
+                        <p class="text-white/80 text-xs mt-1">Sports</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works (Desktop Only) -->
+<div class="py-12 bg-gray-50 dark:bg-dark-50 hidden md:block">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="lg:text-center">
             <h2 class="text-3xl font-extrabold text-gray-900 dark:text-dark-600 sm:text-4xl">
@@ -180,8 +398,8 @@
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="bg-white dark:bg-dark-100">
+<!-- Footer (Desktop Only) -->
+<footer class="bg-white dark:bg-dark-100 hidden md:block">
     <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
@@ -269,6 +487,20 @@
     document.addEventListener('DOMContentLoaded', () => {
         const isDark = document.documentElement.classList.contains('dark');
         updateVantaBackground(isDark);
+        
+        // Handle featured video autoplay on mobile
+        const featuredVideo = document.getElementById('featured-video');
+        if (featuredVideo) {
+            // Attempt to play video (will be muted)
+            const playPromise = featuredVideo.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Autoplay prevented:', error);
+                    // Show play button overlay if autoplay fails
+                });
+            }
+        }
     });
 
     // Update on theme change

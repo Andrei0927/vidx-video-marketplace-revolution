@@ -11,6 +11,19 @@
     {%- endif -%}
 {% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Hide navigation on search page for immersive experience */
+    nav {
+        display: none !important;
+    }
+    
+    body {
+        padding-top: 0 !important;
+    }
+</style>
+{% endblock %}
+
 {% block extra_styles %}
 .filter-section {
     display: none;

@@ -3,9 +3,11 @@ class AuthService {
   constructor(baseUrl = null) {
     // Auto-detect the base URL based on environment
     if (!baseUrl) {
-      // If on localhost, use the local API server
+      // If on localhost, use the Flask API server (same port as main app)
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        this.baseUrl = 'http://localhost:3001/api/auth';
+        // Use the same port as the current page (Flask dev server)
+        const port = window.location.port || '8080';
+        this.baseUrl = `http://localhost:${port}/api/auth`;
       } 
       else {
         // For production, use Azure Container Apps backend

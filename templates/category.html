@@ -2,6 +2,26 @@
 
 {% block title %}{{ category_info.name }} - VidX{% endblock %}
 
+{% block extra_head %}
+{% if show_videos %}
+<style>
+    /* Hide navigation on video feed page for immersive experience */
+    nav {
+        display: none !important;
+    }
+    
+    body {
+        padding-top: 0 !important;
+    }
+    
+    /* Hide desktop header and category links on video feed */
+    .hidden.lg\:block {
+        display: none !important;
+    }
+</style>
+{% endif %}
+{% endblock %}
+
 {% block extra_styles %}
 /* Filter Modal Styles */
 #filter-modal {
@@ -249,20 +269,26 @@
 {% endblock %}
 
 {% block content %}
-<!-- Filter Modal Overlay (Shows First) -->
-<div id="filter-modal" class="fixed inset-0 bg-white dark:bg-dark-50 z-[200] flex flex-col transition-transform duration-300">
+{% if not show_videos %}
+<!-- FILTER PAGE: Show filters first -->
+<div id="filter-modal" class="min-h-screen bg-white dark:bg-dark-50 flex flex-col">
     <!-- Modal Header -->
     <div class="bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-300 px-4 py-4 flex items-center justify-between sticky top-0 z-10">
-        <div class="flex items-center space-x-3">
-            <div class="bg-indigo-100 dark:bg-indigo-900/30 p-2 rounded-lg">
-                <i data-feather="{{ category_info.icon }}" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
-            </div>
-            <div>
-                <h2 class="text-lg font-bold text-gray-900 dark:text-dark-600">{{ category_info.name }}</h2>
-                <p class="text-xs text-gray-500 dark:text-dark-500">Set your preferences</p>
+        <div class="flex items-center space-x-4">
+            <a href="{{ url_for('home.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-700 dark:hover:text-indigo-300 transition">
+                ← Back
+            </a>
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-100 dark:bg-indigo-900/30 p-2 rounded-lg">
+                    <i data-feather="{{ category_info.icon }}" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-dark-600">{{ category_info.name }}</h2>
+                    <p class="text-xs text-gray-500 dark:text-dark-500">Set your preferences</p>
+                </div>
             </div>
         </div>
-        <button id="skip-filters" class="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+        <button id="skip-filters" class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-700 dark:hover:text-indigo-300 transition">
             Skip
         </button>
     </div>
@@ -278,7 +304,7 @@
     </div>
 
     <!-- Bottom Action Bar -->
-    <div class="bg-white dark:bg-dark-100 border-t border-gray-200 dark:border-dark-300 px-4 py-4 sticky bottom-0">
+    <div class="bg-white dark:bg-dark-100 border-t border-gray-200 dark:border-dark-300 px-4 py-4 fixed bottom-16 md:bottom-0 left-0 right-0 md:sticky z-40">
         <div class="max-w-2xl mx-auto flex gap-3">
             <button id="clear-all-filters" class="flex-1 px-4 py-3 border border-gray-300 dark:border-dark-300 rounded-xl text-gray-700 dark:text-dark-500 font-medium hover:bg-gray-50 dark:hover:bg-dark-200">
                 Clear All
@@ -289,42 +315,35 @@
         </div>
     </div>
 </div>
-
-<!-- Desktop Category Header (Desktop Only) -->
+{% else %}
+<!-- VIDEO FEED PAGE: Show videos with applied filters -->
 <div class="hidden lg:block bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center">
-            <div class="flex-shrink-0">
-                <div class="bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-lg">
-                    <i data-feather="{{ category_info.icon }}" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-lg">
+                        <i data-feather="{{ category_info.icon }}" class="h-8 w-8 text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-600">{{ category_info.name }}</h1>
+                    <p class="text-gray-500 dark:text-dark-500">{{ category_info.description }}</p>
                 </div>
             </div>
-            <div class="ml-4">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-600">{{ category_info.name }}</h1>
-                <p class="text-gray-500 dark:text-dark-500">{{ category_info.description }}</p>
-            </div>
+            <a href="{{ url_for('categories.category_page', category=category) }}" 
+               class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-md text-sm font-medium text-gray-700 dark:text-dark-500 bg-white dark:bg-dark-100 hover:bg-gray-50 dark:hover:bg-dark-200 transition">
+                <i data-feather="sliders" class="h-4 w-4 mr-2"></i>
+                Adjust Filters
+            </a>
         </div>
     </div>
 </div>
 
-<!-- Desktop Category Quick Links -->
-<div class="hidden lg:block bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 sticky top-16 z-30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center space-x-2 py-3">
-            {% for cat_key, cat_info in all_categories.items() %}
-            <a href="{{ url_for('categories.category_page', category=cat_key) }}" 
-               class="px-3 py-1.5 text-sm font-medium rounded-md transition
-                      {% if cat_key == category %}
-                      text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-dark-200
-                      {% else %}
-                      text-gray-700 dark:text-dark-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-dark-200
-                      {% endif %}">
-                {{ cat_info.name }}
-            </a>
-            {% endfor %}
-        </div>
     </div>
 </div>
+
+<!-- Video Grid -->
 
 <!-- Legacy Filters (Hidden - Desktop Only) -->
 <div class="hidden lg:block">
@@ -422,6 +441,12 @@
 <!-- Video Grid -->
 <div class="video-grid" id="video-grid"></div>
 
+<!-- Mobile: Floating Back Button (Video Feed Only) -->
+<a href="{{ url_for('categories.category_page', category=category) }}" 
+   class="fixed top-4 left-4 z-50 lg:hidden bg-white/90 dark:bg-dark-100/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-100 transition">
+    <i data-feather="arrow-left" class="h-5 w-5 text-gray-900 dark:text-dark-600"></i>
+</a>
+
 <!-- No Results Message -->
 <div id="no-results" class="hidden text-center py-16 px-4">
     <div class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
@@ -431,12 +456,10 @@
     <p class="mt-2 text-gray-500 dark:text-dark-400">Try adjusting your filters or reset them to see all listings.</p>
     <button id="no-results-reset" class="mt-6 px-4 py-2 rounded-md bg-indigo-600 dark:bg-indigo-500 text-white hover:bg-indigo-700 dark:hover:bg-indigo-600">Reset Filters</button>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block extra_scripts %}
-<!-- Category Page Script -->
-<script type="module" src="{{ url_for('static', filename='js/' + category + '-page.js') }}"></script>
-
 <!-- Video Card Engagement -->
 <script src="{{ url_for('static', filename='js/video-card-engagement.js') }}"></script>
 
@@ -510,6 +533,8 @@
     checkForEmptyState();
 </script>
 
-<!-- Filter Modal Script -->
-<script type="module" src="{{ url_for('static', filename='js/filter-modal.js') }}"></script>
+{% if not show_videos %}
+<!-- Filter Modal Script (loaded as regular script for iOS compatibility) -->
+<script src="{{ url_for('static', filename='js/filter-modal.js') }}"></script>
+{% endif %}
 {% endblock %}

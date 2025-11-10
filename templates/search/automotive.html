@@ -3,6 +3,20 @@
 {% block title %}Search Automotive - VidX{% endblock %}
 
 {% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex items-center text-sm text-gray-500 dark:text-dark-500">
+            <a href="{{ url_for('main.index') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center">
+                <i data-feather="home" class="h-4 w-4 mr-1"></i>
+                Home
+            </a>
+            <i data-feather="chevron-right" class="h-4 w-4 mx-2"></i>
+            <span class="text-gray-900 dark:text-dark-600 font-medium">Automotive</span>
+        </div>
+    </div>
+</div>
+
 <!-- Search Header -->
 <div class="bg-white dark:bg-dark-100 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -30,59 +44,133 @@
 <!-- Filters -->
 <div class="bg-gray-50 dark:bg-dark-50 border-b border-gray-200 dark:border-dark-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Vehicle Type -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Vehicle Type</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                <select name="vehicle_type" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
                     <option value="">All Types</option>
                     <option value="car">Cars</option>
                     <option value="motorcycle">Motorcycles</option>
                     <option value="truck">Trucks</option>
                     <option value="van">Vans</option>
+                    <option value="suv">SUVs</option>
                     <option value="parts">Parts & Accessories</option>
                 </select>
             </div>
             
+            <!-- Make -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Make</label>
+                <select name="make" id="make-select" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Make</option>
+                    <option value="audi">Audi</option>
+                    <option value="bmw">BMW</option>
+                    <option value="mercedes">Mercedes-Benz</option>
+                    <option value="volkswagen">Volkswagen</option>
+                    <option value="toyota">Toyota</option>
+                    <option value="honda">Honda</option>
+                    <option value="ford">Ford</option>
+                    <option value="nissan">Nissan</option>
+                    <option value="renault">Renault</option>
+                    <option value="peugeot">Peugeot</option>
+                    <option value="opel">Opel</option>
+                    <option value="citroen">Citroën</option>
+                    <option value="fiat">Fiat</option>
+                    <option value="volvo">Volvo</option>
+                    <option value="mazda">Mazda</option>
+                    <option value="kia">Kia</option>
+                    <option value="hyundai">Hyundai</option>
+                    <option value="skoda">Škoda</option>
+                    <option value="seat">SEAT</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <!-- Fuel Type -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Fuel Type</label>
+                <select name="fuel_type" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Fuel</option>
+                    <option value="petrol">Petrol</option>
+                    <option value="diesel">Diesel</option>
+                    <option value="electric">Electric</option>
+                    <option value="hybrid">Hybrid</option>
+                    <option value="plugin-hybrid">Plug-in Hybrid</option>
+                    <option value="lpg">LPG</option>
+                </select>
+            </div>
+            
+            <!-- Transmission -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Transmission</label>
+                <select name="transmission" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Transmission</option>
+                    <option value="manual">Manual</option>
+                    <option value="automatic">Automatic</option>
+                    <option value="semi-automatic">Semi-Automatic</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Second Row of Filters -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
             <!-- Price Range -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Price Range</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
-                    <option value="">Any Price</option>
-                    <option value="0-5000">€0 - €5,000</option>
-                    <option value="5000-10000">€5,000 - €10,000</option>
-                    <option value="10000-20000">€10,000 - €20,000</option>
-                    <option value="20000-50000">€20,000 - €50,000</option>
-                    <option value="50000+">€50,000+</option>
-                </select>
+                <div class="flex gap-2">
+                    <input type="number" name="price_min" placeholder="Min" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <span class="self-center text-gray-500">-</span>
+                    <input type="number" name="price_max" placeholder="Max" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                </div>
             </div>
             
-            <!-- Year -->
+            <!-- Year Range -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Year</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
-                    <option value="">Any Year</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="older">Older</option>
-                </select>
+                <div class="flex gap-2">
+                    <input type="number" name="year_min" placeholder="From" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <span class="self-center text-gray-500">-</span>
+                    <input type="number" name="year_max" placeholder="To" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                </div>
             </div>
             
-            <!-- Mileage -->
+            <!-- Mileage Range -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Mileage</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
-                    <option value="">Any Mileage</option>
-                    <option value="0-10000">0 - 10,000 km</option>
-                    <option value="10000-50000">10,000 - 50,000 km</option>
-                    <option value="50000-100000">50,000 - 100,000 km</option>
-                    <option value="100000-200000">100,000 - 200,000 km</option>
-                    <option value="200000+">200,000+ km</option>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Mileage (km)</label>
+                <div class="flex gap-2">
+                    <input type="number" name="mileage_min" placeholder="Min" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <span class="self-center text-gray-500">-</span>
+                    <input type="number" name="mileage_max" placeholder="Max" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                </div>
+            </div>
+            
+            <!-- Condition -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Condition</label>
+                <select name="condition" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Condition</option>
+                    <option value="new">New</option>
+                    <option value="used">Used</option>
+                    <option value="certified">Certified Pre-Owned</option>
                 </select>
             </div>
+        </div>
+        
+        <!-- Filter Actions -->
+        <div class="mt-4 flex gap-2">
+            <button type="button" id="apply-filters" class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                Apply Filters
+            </button>
+            <button type="button" id="clear-filters" class="bg-gray-200 dark:bg-dark-300 text-gray-700 dark:text-dark-500 px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-dark-400 transition font-medium">
+                Clear All
+            </button>
         </div>
     </div>
 </div>
@@ -135,5 +223,43 @@
 <script>
     // Replace feather icons
     feather.replace();
+    
+    // Filter functionality
+    document.getElementById('apply-filters')?.addEventListener('click', function() {
+        const form = document.querySelector('form');
+        const filters = document.querySelectorAll('[name^="vehicle_type"], [name^="make"], [name^="fuel_type"], [name^="transmission"], [name^="price_"], [name^="year_"], [name^="mileage_"], [name^="condition"]');
+        
+        // Build query string from filters
+        const params = new URLSearchParams(form ? new FormData(form) : {});
+        filters.forEach(input => {
+            if (input.value) {
+                params.set(input.name, input.value);
+            }
+        });
+        
+        // Navigate with filters
+        window.location.href = `{{ url_for('search.search_page', category='automotive') }}?${params.toString()}`;
+    });
+    
+    document.getElementById('clear-filters')?.addEventListener('click', function() {
+        // Clear all filter inputs
+        document.querySelectorAll('[name^="vehicle_type"], [name^="make"], [name^="fuel_type"], [name^="transmission"], [name^="price_"], [name^="year_"], [name^="mileage_"], [name^="condition"]').forEach(input => {
+            input.value = '';
+        });
+        
+        // Reload page without filters
+        window.location.href = `{{ url_for('search.search_page', category='automotive') }}`;
+    });
+    
+    // Restore filter values from URL parameters
+    window.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        params.forEach((value, key) => {
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input) {
+                input.value = value;
+            }
+        });
+    });
 </script>
 {% endblock %}

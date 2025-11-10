@@ -1,6 +1,5 @@
 // Single, clean AuthModal web component implementation
 // Dark-mode aware via :host-context(.dark)
-let authService;
 
 class AuthModal extends HTMLElement {
   constructor() {
@@ -8,14 +7,8 @@ class AuthModal extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.isLoading = false;
     
-    // Load auth service with cache busting
-    const cacheBust = new Date().getTime();
-    import(`../js/auth-service.js?v=${cacheBust}`).then(module => {
-      authService = module.default;
-      console.log('[AuthModal] Auth service loaded successfully');
-    }).catch(error => {
-      console.error('Failed to load auth service:', error);
-    });
+    // Auth service is loaded globally via script tag in base.html
+    console.log('[AuthModal] Auth service available:', !!window.authService);
   }
 
   connectedCallback() {
@@ -382,7 +375,7 @@ class AuthModal extends HTMLElement {
       console.log('=== LOGIN START ===');
       
       // Check if authService is loaded
-      if (!authService) {
+      if (!window.authService) {
         console.error('Auth service not loaded yet!');
         this.showError('login-error', 'Please wait and try again');
         return;
@@ -414,9 +407,9 @@ class AuthModal extends HTMLElement {
         return;
       }
 
-      console.log('Calling authService.login...');
+      console.log('Calling window.authService.login...');
       this.setLoading(true);
-      const result = await authService.login(email, password);
+      const result = await window.authService.login(email, password);
       
       console.log('Login result:', result);
       
@@ -466,7 +459,7 @@ class AuthModal extends HTMLElement {
       console.log('=== REGISTRATION START ===');
       
       // Check if authService is loaded
-      if (!authService) {
+      if (!window.authService) {
         console.error('Auth service not loaded yet!');
         this.showError('register-error', 'Please wait and try again');
         return;
@@ -518,7 +511,7 @@ class AuthModal extends HTMLElement {
 
       console.log('Calling authService.register...');
       this.setLoading(true);
-      const result = await authService.register({ name, email, password });
+      const result = await window.authService.register({ name, email, password });
       
       console.log('Registration result:', result);
       

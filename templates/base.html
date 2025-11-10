@@ -23,49 +23,8 @@
     <!-- Dark Mode Bootstrap - Load BEFORE other scripts -->
     <script src="{{ url_for('static', filename='js/theme-bootstrap.js') }}"></script>
     
-    <!-- Safari Fallback CSS - Load BEFORE Tailwind -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/safari-fallback.css') }}">
-    
-    <!-- Tailwind CSS - Using CDN with suppress production warning -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio" crossorigin="anonymous"></script>
-    <script>
-        // Suppress Tailwind production warning
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        dark: {
-                            50: '#18191A',
-                            100: '#242526',
-                            200: '#3A3B3C',
-                            300: '#4E4F50',
-                            400: '#6B6C6D',
-                            500: '#B0B3B8',
-                            600: '#E4E6EB',
-                            700: '#F5F6F7'
-                        }
-                    }
-                }
-            }
-        };
-        
-        // Suppress console warning
-        const originalWarn = console.warn;
-        console.warn = function(...args) {
-            if (args[0]?.includes?.('cdn.tailwindcss.com')) return;
-            originalWarn.apply(console, args);
-        };
-        
-        // Safari: Detect if Tailwind loaded successfully
-        setTimeout(() => {
-            if (typeof tailwind === 'undefined' || !window.tailwind) {
-                console.error('Tailwind CSS failed to load. Using fallback styles.');
-                // Add a class to body to indicate fallback mode
-                document.documentElement.classList.add('tailwind-fallback');
-            }
-        }, 2000);
-    </script>
+    <!-- Tailwind CSS - Compiled locally (Safari compatible) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
     
     <!-- Icon Libraries -->
     <script src="https://unpkg.com/feather-icons"></script>
@@ -96,6 +55,13 @@
         body {
             width: 100%;
             overflow-x: hidden;
+        }
+        
+        /* Mobile bottom padding for navbar */
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 70px;
+            }
         }
         
         /* Dark mode transitions */
@@ -155,12 +121,59 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
+        /* Mobile Bottom Navigation */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            z-index: 50;
+            height: 64px;
+        }
+        
+        html.dark .mobile-nav {
+            background: #242526;
+            border-top-color: #3a3b3c;
+        }
+        
+        .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #6b7280;
+            transition: all 0.2s;
+            padding: 8px;
+        }
+        
+        html.dark .mobile-nav-item {
+            color: #9ca3af;
+        }
+        
+        .mobile-nav-item.active {
+            color: #6366f1;
+        }
+        
+        html.dark .mobile-nav-item.active {
+            color: #818cf8;
+        }
+        
+        .mobile-nav-item span {
+            font-size: 11px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        
         {% block extra_styles %}{% endblock %}
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-dark-50 dark-mode-transition">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200">
+    <!-- Navigation (Desktop Only) -->
+    <nav class="bg-white dark:bg-dark-100 shadow-sm dark:shadow-dark-200 hidden md:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center space-x-4 flex-1">
@@ -201,6 +214,34 @@
 
     <!-- Main Content -->
     {% block content %}{% endblock %}
+
+    <!-- Mobile Bottom Navigation (hidden on desktop) -->
+    <nav class="mobile-nav md:hidden">
+        <div class="flex h-full">
+            <a href="{{ url_for('home.index') }}" class="mobile-nav-item" id="mobile-nav-categories">
+                <i data-feather="grid" class="h-6 w-6"></i>
+                <span>Categories</span>
+            </a>
+            <a href="{{ url_for('user.favourites') }}" class="mobile-nav-item" id="mobile-nav-favourites">
+                <i data-feather="heart" class="h-6 w-6"></i>
+                <span>Favourites</span>
+            </a>
+            <button class="mobile-nav-item" id="mobile-nav-upload">
+                <div class="flex items-center justify-center bg-indigo-600 dark:bg-indigo-500 rounded-full h-12 w-12 -mt-6 shadow-lg">
+                    <i data-feather="plus" class="h-6 w-6 text-white"></i>
+                </div>
+                <span class="mt-1">Upload</span>
+            </button>
+            <a href="#" class="mobile-nav-item" id="mobile-nav-chat">
+                <i data-feather="message-circle" class="h-6 w-6"></i>
+                <span>Chat</span>
+            </a>
+            <button class="mobile-nav-item" id="mobile-nav-account">
+                <i data-feather="user" class="h-6 w-6"></i>
+                <span>Account</span>
+            </button>
+        </div>
+    </nav>
 
     <!-- Common Scripts -->
     <script type="module" src="{{ url_for('static', filename='components/user-dropdown.js') }}"></script>
@@ -274,7 +315,7 @@
                 });
             }
 
-            // New Ad button
+            // New Ad button (desktop)
             const newAdBtn = document.getElementById('new-ad-btn');
             if (newAdBtn) {
                 newAdBtn.addEventListener('click', (e) => {
@@ -298,6 +339,67 @@
                         }
                     }, 50);
                 });
+            }
+            
+            // Mobile Bottom Navigation
+            const mobileUploadBtn = document.getElementById('mobile-nav-upload');
+            const mobileAccountBtn = document.getElementById('mobile-nav-account');
+            
+            // Mobile upload button
+            if (mobileUploadBtn) {
+                mobileUploadBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (isLoggedIn()) {
+                        window.location.href = '{{ url_for("upload.upload_step1") }}';
+                        return;
+                    }
+
+                    const modal = document.createElement('auth-modal');
+                    document.body.appendChild(modal);
+
+                    setTimeout(() => {
+                        try {
+                            const registerTab = modal.shadowRoot?.querySelector('.tab[data-tab="register"]');
+                            if (registerTab) registerTab.click();
+                        } catch (err) {
+                            console.error('Could not switch to register tab', err);
+                        }
+                    }, 50);
+                });
+            }
+            
+            // Mobile account button
+            if (mobileAccountBtn) {
+                mobileAccountBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (!isLoggedIn()) {
+                        const modal = document.createElement('auth-modal');
+                        document.body.appendChild(modal);
+                        return;
+                    }
+                    
+                    window.location.href = '{{ url_for("user.profile") }}';
+                });
+            }
+            
+            // Set active state for mobile nav
+            const currentPath = window.location.pathname;
+            const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+            
+            mobileNavItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.startsWith(href) && href !== '#') {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Special case for homepage
+            if (currentPath === '/' || currentPath === '/index.html') {
+                document.getElementById('mobile-nav-categories')?.classList.add('active');
             }
         });
         

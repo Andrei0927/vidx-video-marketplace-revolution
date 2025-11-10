@@ -3,7 +3,7 @@ Category pages routes
 Handles all 8 category pages with a single template
 """
 
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template, abort, request
 
 bp = Blueprint('categories', __name__)
 
@@ -56,6 +56,7 @@ def category_page(category):
     """
     Render category page
     ONE template serves all 8 categories
+    Shows filters by default, or video feed if ?show=videos
     """
     # Validate category
     if category not in CATEGORIES:
@@ -63,7 +64,15 @@ def category_page(category):
     
     category_info = CATEGORIES[category]
     
-    # TODO: Fetch actual items from database
+    # Check if we should show videos or filters
+    show_videos = request.args.get('show') == 'videos'
+    
+    # Get filter parameters from URL
+    filters = dict(request.args)
+    if 'show' in filters:
+        del filters['show']  # Remove the 'show' parameter from filters
+    
+    # TODO: Fetch actual items from database based on filters
     # For now, return empty list
     items = []
     
@@ -71,5 +80,7 @@ def category_page(category):
                          category=category,
                          category_info=category_info,
                          items=items,
-                         all_categories=CATEGORIES)  # For category quick links
+                         all_categories=CATEGORIES,
+                         show_videos=show_videos,
+                         filters=filters)
 

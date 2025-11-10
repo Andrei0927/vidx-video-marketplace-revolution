@@ -3,6 +3,20 @@
 {% block title %}Search Fashion - VidX{% endblock %}
 
 {% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex items-center text-sm text-gray-500 dark:text-dark-500">
+            <a href="{{ url_for('main.index') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center">
+                <i data-feather="home" class="h-4 w-4 mr-1"></i>
+                Home
+            </a>
+            <i data-feather="chevron-right" class="h-4 w-4 mx-2"></i>
+            <span class="text-gray-900 dark:text-dark-600 font-medium">Fashion</span>
+        </div>
+    </div>
+</div>
+
 <!-- Search Header -->
 <div class="bg-white dark:bg-dark-100 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -30,61 +44,144 @@
 <!-- Filters -->
 <div class="bg-gray-50 dark:bg-dark-50 border-b border-gray-200 dark:border-dark-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Category -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Category</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                <select name="subcategory" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
                     <option value="">All Categories</option>
                     <option value="clothing">Clothing</option>
-                    <option value="shoes">Shoes</option>
+                    <option value="shoes">Shoes & Footwear</option>
                     <option value="accessories">Accessories</option>
-                    <option value="bags">Bags</option>
-                    <option value="jewelry">Jewelry</option>
+                    <option value="bags">Bags & Purses</option>
+                    <option value="jewelry">Jewelry & Watches</option>
+                    <option value="sportswear">Sportswear</option>
+                    <option value="outerwear">Outerwear & Jackets</option>
+                    <option value="underwear">Underwear & Sleepwear</option>
                 </select>
             </div>
             
             <!-- Gender -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Gender</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                <select name="gender" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
                     <option value="">All</option>
                     <option value="men">Men</option>
                     <option value="women">Women</option>
                     <option value="unisex">Unisex</option>
+                    <option value="kids">Kids</option>
                 </select>
             </div>
             
+            <!-- Brand -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Brand</label>
+                <select name="brand" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Brand</option>
+                    <option value="nike">Nike</option>
+                    <option value="adidas">Adidas</option>
+                    <option value="zara">Zara</option>
+                    <option value="hm">H&M</option>
+                    <option value="gucci">Gucci</option>
+                    <option value="prada">Prada</option>
+                    <option value="lvmh">Louis Vuitton</option>
+                    <option value="chanel">Chanel</option>
+                    <option value="uniqlo">Uniqlo</option>
+                    <option value="gap">Gap</option>
+                    <option value="levis">Levi's</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <!-- Condition -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Condition</label>
+                <select name="condition" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Condition</option>
+                    <option value="new">Brand New (with tags)</option>
+                    <option value="like-new">Like New</option>
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair/Vintage</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Second Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
             <!-- Size -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Size</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                <select name="size" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
                     <option value="">Any Size</option>
+                    <option value="xxs">XXS</option>
                     <option value="xs">XS</option>
                     <option value="s">S</option>
                     <option value="m">M</option>
                     <option value="l">L</option>
                     <option value="xl">XL</option>
                     <option value="xxl">XXL</option>
+                    <option value="xxxl">XXXL</option>
                 </select>
             </div>
             
-            <!-- Price -->
+            <!-- Color -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Color</label>
+                <select name="color" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Color</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="gray">Gray</option>
+                    <option value="blue">Blue</option>
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="pink">Pink</option>
+                    <option value="brown">Brown</option>
+                    <option value="multicolor">Multicolor</option>
+                </select>
+            </div>
+            
+            <!-- Price Range -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Price Range</label>
-                <select class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
-                    <option value="">Any Price</option>
-                    <option value="0-20">€0 - €20</option>
-                    <option value="20-50">€20 - €50</option>
-                    <option value="50-100">€50 - €100</option>
-                    <option value="100-200">€100 - €200</option>
-                    <option value="200+">€200+</option>
+                <div class="flex gap-2">
+                    <input type="number" name="price_min" placeholder="Min €" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <span class="self-center text-gray-500">-</span>
+                    <input type="number" name="price_max" placeholder="Max €" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                </div>
+            </div>
+            
+            <!-- Material -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-dark-500 mb-1">Material</label>
+                <select name="material" class="w-full px-3 py-2 border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-dark-600">
+                    <option value="">Any Material</option>
+                    <option value="cotton">Cotton</option>
+                    <option value="polyester">Polyester</option>
+                    <option value="leather">Leather</option>
+                    <option value="denim">Denim</option>
+                    <option value="silk">Silk</option>
+                    <option value="wool">Wool</option>
+                    <option value="synthetic">Synthetic</option>
                 </select>
             </div>
         </div>
+        
+        <!-- Filter Actions -->
+        <div class="mt-4 flex gap-2">
+            <button type="button" id="apply-filters" class="bg-indigo-600 dark:bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                Apply Filters
+            </button>
+            <button type="button" id="clear-filters" class="bg-gray-200 dark:bg-dark-300 text-gray-700 dark:text-dark-500 px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-dark-400 transition font-medium">
+                Clear All
+            </button>
+        </div>
     </div>
 </div>
-
 <!-- Results -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {% if query %}
@@ -132,5 +229,36 @@
 
 <script>
     feather.replace();
+    
+    // Filter functionality
+    document.getElementById('apply-filters')?.addEventListener('click', function() {
+        const form = document.querySelector('form');
+        const filters = document.querySelectorAll('[name^="subcategory"], [name^="gender"], [name^="brand"], [name^="condition"], [name^="size"], [name^="color"], [name^="price_"], [name^="material"]');
+        
+        const params = new URLSearchParams(form ? new FormData(form) : {});
+        filters.forEach(input => {
+            if (input.value) {
+                params.set(input.name, input.value);
+            }
+        });
+        
+        window.location.href = `{{ url_for('search.search_page', category='fashion') }}?${params.toString()}`;
+    });
+    
+    document.getElementById('clear-filters')?.addEventListener('click', function() {
+        document.querySelectorAll('[name^="subcategory"], [name^="gender"], [name^="brand"], [name^="condition"], [name^="size"], [name^="color"], [name^="price_"], [name^="material"]').forEach(input => {
+            input.value = '';
+        });
+        window.location.href = `{{ url_for('search.search_page', category='fashion') }}`;
+    });
+    
+    // Restore filter values from URL
+    window.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        params.forEach((value, key) => {
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input) input.value = value;
+        });
+    });
 </script>
 {% endblock %}

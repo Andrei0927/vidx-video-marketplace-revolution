@@ -1,9 +1,37 @@
 # VidX Platform - Go-Live Roadmap 🚀
 
 **Document Date**: December 2024  
-**Last Updated**: December 2024  
+**Last Updated**: November 10, 2025  
 **Target Go-Live**: Pending Azure Container Apps deployment  
 **Objective**: Deploy production-ready VidX platform with critical bugs fixed
+
+---
+
+## 🚨 IMMEDIATE PRE-LAUNCH BLOCKERS (November 2025)
+
+**Status**: 3 CRITICAL UX issues discovered that MUST be fixed before launch
+
+### 🔴 Critical UX Blockers
+1. **CRITICAL-UX1**: Category page filters not working
+   - **Impact**: Users cannot filter products on any category page
+   - **Effort**: 2-3 hours
+   - **Location**: `templates/category.html`
+   - **Status**: ❌ BLOCKING LAUNCH
+
+2. **CRITICAL-UX2**: No breadcrumb navigation on category pages  
+   - **Impact**: Users trapped in category view, cannot return to homepage
+   - **Effort**: 1 hour
+   - **Location**: `templates/category.html` header
+   - **Status**: ❌ BLOCKING LAUNCH
+
+3. **CRITICAL-UX3**: Dark mode verification needed
+   - **Impact**: Brand inconsistency if dark mode broken
+   - **Effort**: 30 minutes
+   - **Location**: All templates after recent CSS changes
+   - **Status**: ⚠️ NEEDS TESTING
+
+**Total Time to Fix**: ~4 hours  
+**Priority**: MUST complete before any deployment
 
 ---
 
@@ -1394,6 +1422,24 @@ def get_upload_url():
 - [ ] **Day 3**: Bundle Tailwind CSS (2-3 hours) ⏸️ DEFERRED (CDN works for MVP)
 - [x] **Day 3**: Consolidate Feather icons (1-2 hours) ✅ COMPLETED (partial)
 - [x] **Day 3**: Fix Vanta.js memory leak (30 min) ✅ COMPLETED
+- [ ] **🔴 CRITICAL-UX1**: Fix category page filters functionality (2-3 hours) ⚠️ BLOCKING
+  - Issue: Apply/Clear filter buttons not working on category pages
+  - Location: `templates/category.html` filter system
+  - Fix: Implement proper filter form submission and URL parameter handling
+  - Test: Apply filters on automotive/electronics/fashion/home-garden pages
+  - **Priority**: CRITICAL - Core functionality broken
+- [ ] **🔴 CRITICAL-UX2**: Add breadcrumb navigation to category pages (1 hour) ⚠️ BLOCKING
+  - Issue: No way to return to homepage from category filter view
+  - Location: `templates/category.html` header section
+  - Fix: Add breadcrumb navigation (Home > Category Name) with working links
+  - Test: Click breadcrumb on all category pages, verify navigation works
+  - **Priority**: CRITICAL - User navigation blocker
+- [ ] **🔴 CRITICAL-UX3**: Verify dark mode working on all pages (30 min) ⚠️ BLOCKING
+  - Issue: Dark mode may not work properly after recent CSS changes
+  - Location: All templates, especially category pages
+  - Fix: Test dark mode toggle on all major pages
+  - Test: Homepage, categories, upload flow, profile, search results
+  - **Priority**: CRITICAL - Brand consistency blocker
 - [ ] **Day 4**: Set up monitoring (Sentry) (1-2 hours) - NOW INCLUDED in Week 2
 - [ ] **Day 4**: Set up analytics (Plausible) (1 hour) - NOW INCLUDED in Week 2
 - [ ] **AUDIT-M1**: Set up CI/CD pipeline (GitHub Actions) (4-6 hours) ⚠️ NEW
