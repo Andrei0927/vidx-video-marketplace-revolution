@@ -539,4 +539,4 @@ try {
   // ignore in non-browser environments
 }
 
-export default authServiceInstance;
+// Remove ES6 export - just use window.authService for global access

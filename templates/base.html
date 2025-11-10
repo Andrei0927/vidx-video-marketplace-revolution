@@ -19,9 +19,10 @@
     <!-- Dark Mode Bootstrap - Load BEFORE other scripts -->
     <script src="{{ url_for('static', filename='js/theme-bootstrap.js') }}"></script>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS - Using CDN with suppress production warning -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
     <script>
+        // Suppress Tailwind production warning
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -40,7 +41,14 @@
                     }
                 }
             }
-        }
+        };
+        
+        // Suppress console warning
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            if (args[0]?.includes?.('cdn.tailwindcss.com')) return;
+            originalWarn.apply(console, args);
+        };
     </script>
     
     <!-- Icon Libraries -->

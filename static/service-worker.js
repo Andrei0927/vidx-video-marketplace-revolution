@@ -1,15 +1,13 @@
-const CACHE_NAME = 'vidx-v4';
+const CACHE_NAME = 'vidx-v5';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/automotive.html',
-  '/details.html',
-  '/style.css',
-  '/css/dark-mode.css',
-  '/components/auth-modal.js',
-  '/components/user-dropdown.js',
-  '/js/dark-mode.js'
-  // Note: /js/auth-service.js removed to avoid caching API configuration
+  '/static/css/dark-mode.css',
+  '/static/components/auth-modal.js',
+  '/static/components/user-dropdown.js',
+  '/static/js/dark-mode.js',
+  '/static/js/theme-bootstrap.js',
+  '/static/js/icons.js',
+  '/static/manifest.json'
 ];
 
 // Install event - cache assets
