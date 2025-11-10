@@ -3,6 +3,10 @@ node_modules/
 npm-debug.log
 package-lock.json
 
+# Tailwind
+static/css/input.css
+tailwindcss
+
 # Python
 # Python
 __pycache__/
