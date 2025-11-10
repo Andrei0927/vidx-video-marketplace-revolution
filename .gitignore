@@ -32,6 +32,15 @@ wheels/
 # Old static HTML files (Flask templates are in templates/)
 /*.html
 
+# Deployment artifacts
+deploy.zip
+deployment.zip
+deployment.log
+*.log
+
+# Azure
+.azure/
+
 # Logs
 *.log
 Logs/

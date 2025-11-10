@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{% block title %}VidX - Discover Products Through Video{% endblock %}</title>
+    
+    <!-- Safari-specific meta tags -->
+    <meta name="format-detection" content="telephone=no">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#6366f1">
@@ -19,8 +23,11 @@
     <!-- Dark Mode Bootstrap - Load BEFORE other scripts -->
     <script src="{{ url_for('static', filename='js/theme-bootstrap.js') }}"></script>
     
+    <!-- Safari Fallback CSS - Load BEFORE Tailwind -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/safari-fallback.css') }}">
+    
     <!-- Tailwind CSS - Using CDN with suppress production warning -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio" crossorigin="anonymous"></script>
     <script>
         // Suppress Tailwind production warning
         tailwind.config = {
@@ -49,6 +56,15 @@
             if (args[0]?.includes?.('cdn.tailwindcss.com')) return;
             originalWarn.apply(console, args);
         };
+        
+        // Safari: Detect if Tailwind loaded successfully
+        setTimeout(() => {
+            if (typeof tailwind === 'undefined' || !window.tailwind) {
+                console.error('Tailwind CSS failed to load. Using fallback styles.');
+                // Add a class to body to indicate fallback mode
+                document.documentElement.classList.add('tailwind-fallback');
+            }
+        }, 2000);
     </script>
     
     <!-- Icon Libraries -->
