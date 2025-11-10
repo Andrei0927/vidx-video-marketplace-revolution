@@ -1,7 +1,7 @@
 /**
  * Electronics & Technology Filter Schema
  * For vidx-video-marketplace-revolution
- * Inspired by OLX, eBay, Amazon patterns
+ * Professional electronics marketplace filter system
  */
 
 const electronicsFilterSchema = {

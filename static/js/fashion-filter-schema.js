@@ -1,7 +1,7 @@
 /**
  * Fashion Filter Schema
  * Comprehensive clothing and accessories filters
- * Based on Amazon Fashion, eBay Clothing, OLX, FashionDays, AboutYou
+ * Professional fashion marketplace filter system
  */
 
 const fashionFilterSchema = {

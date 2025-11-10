@@ -1,7 +1,7 @@
 /**
  * Home & Garden Filter Schema
  * For vidx-video-marketplace-revolution
- * Inspired by OLX, eBay, IKEA, Wayfair patterns
+ * Professional home and garden marketplace filter system
  */
 
 const homeGardenFilterSchema = {

@@ -1,13 +1,13 @@
 /**
  * Comprehensive Automotive Filter Schema
- * Based on OLX.ro structure for vidx-video-marketplace-revolution
+ * Professional automotive marketplace filter system
  * 
  * This schema defines all available filters for automotive listings
  * with their respective options, types, and metadata.
  */
 
 const automotiveFilterSchema = {
-    // Main category structure (like OLX subcategories)
+    // Main category structure
     categories: {
         type: 'dropdown',
         label: 'Category',
@@ -408,7 +408,7 @@ const automotiveFilterSchema = {
         ]
     },
 
-    // Additional OLX-inspired filters
+    // Additional marketplace filters
     sellerType: {
         type: 'radio',
         label: 'Seller Type',
@@ -442,7 +442,7 @@ const automotiveFilterSchema = {
         ]
     },
 
-    // Location (inspired by OLX)
+    // Location filter
     location: {
         type: 'text',
         label: 'Location',
