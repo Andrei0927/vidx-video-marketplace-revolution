@@ -3,6 +3,52 @@
 {% block title %}{{ category_info.name }} - VidX{% endblock %}
 
 {% block extra_styles %}
+/* Filter Modal Styles */
+#filter-modal {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
+}
+
+.modal-header {
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 10;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgb(229, 231, 235);
+}
+
+.dark .modal-header {
+    border-bottom-color: rgb(55, 65, 81);
+}
+
+.bottom-action-bar {
+    position: sticky;
+    bottom: 0;
+    background: inherit;
+    z-index: 10;
+    padding: 1.5rem;
+    border-top: 1px solid rgb(229, 231, 235);
+}
+
+.dark .bottom-action-bar {
+    border-top-color: rgb(55, 65, 81);
+}
+
+.filter-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgb(243, 244, 246);
+}
+
+.dark .filter-section {
+    border-bottom-color: rgb(31, 41, 55);
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+}
+
+/* Scrollbar Styles */
 .scroll-container {
     scrollbar-width: thin;
     scrollbar-color: #6366f1 #f1f1f1;
@@ -203,6 +249,47 @@
 {% endblock %}
 
 {% block content %}
+<!-- Filter Modal Overlay (Shows First) -->
+<div id="filter-modal" class="fixed inset-0 bg-white dark:bg-dark-50 z-[200] flex flex-col transition-transform duration-300">
+    <!-- Modal Header -->
+    <div class="bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-300 px-4 py-4 flex items-center justify-between sticky top-0 z-10">
+        <div class="flex items-center space-x-3">
+            <div class="bg-indigo-100 dark:bg-indigo-900/30 p-2 rounded-lg">
+                <i data-feather="{{ category_info.icon }}" class="h-6 w-6 text-indigo-600 dark:text-indigo-400"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-dark-600">{{ category_info.name }}</h2>
+                <p class="text-xs text-gray-500 dark:text-dark-500">Set your preferences</p>
+            </div>
+        </div>
+        <button id="skip-filters" class="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+            Skip
+        </button>
+    </div>
+
+    <!-- Filter Options (Scrollable) -->
+    <div class="flex-1 overflow-y-auto px-4 py-6">
+        <div class="max-w-2xl mx-auto space-y-6">
+            <!-- Dynamic Filters Will Be Loaded Here by JS -->
+            <div id="filter-options-container" class="space-y-6">
+                <!-- Filters loaded via JavaScript based on category -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="bg-white dark:bg-dark-100 border-t border-gray-200 dark:border-dark-300 px-4 py-4 sticky bottom-0">
+        <div class="max-w-2xl mx-auto flex gap-3">
+            <button id="clear-all-filters" class="flex-1 px-4 py-3 border border-gray-300 dark:border-dark-300 rounded-xl text-gray-700 dark:text-dark-500 font-medium hover:bg-gray-50 dark:hover:bg-dark-200">
+                Clear All
+            </button>
+            <button id="apply-filters" class="flex-1 px-4 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-xl font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 shadow-lg">
+                Show Videos
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Desktop Category Header (Desktop Only) -->
 <div class="hidden lg:block bg-white dark:bg-dark-100 border-b border-gray-200 dark:border-dark-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -422,4 +509,7 @@
 
     checkForEmptyState();
 </script>
+
+<!-- Filter Modal Script -->
+<script type="module" src="{{ url_for('static', filename='js/filter-modal.js') }}"></script>
 {% endblock %}

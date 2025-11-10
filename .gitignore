@@ -4,6 +4,7 @@ npm-debug.log
 package-lock.json
 
 # Python
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -12,7 +13,24 @@ __pycache__/
 env/
 venv/
 ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
+.installed.cfg
+*.egg
+
+# Old static HTML files (Flask templates are in templates/)
+/*.html
 
 # Logs
 *.log
