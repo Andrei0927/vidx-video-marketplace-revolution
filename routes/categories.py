@@ -4,6 +4,8 @@ Handles all 8 category pages with a single template
 """
 
 from flask import Blueprint, render_template, abort, request
+import json
+import os
 
 bp = Blueprint('categories', __name__)
 
@@ -51,6 +53,15 @@ CATEGORIES = {
     }
 }
 
+def load_db():
+    """Load data from db.json"""
+    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'db.json')
+    try:
+        with open(db_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {'listings': []}
+
 @bp.route('/<category>')
 def category_page(category):
     """
@@ -72,9 +83,32 @@ def category_page(category):
     if 'show' in filters:
         del filters['show']  # Remove the 'show' parameter from filters
     
-    # TODO: Fetch actual items from database based on filters
-    # For now, return empty list
+    # Load items from database
+    db = load_db()
+    listings = db.get('listings', [])
+    
+    # Filter by category
     items = []
+    for listing in listings:
+        if listing.get('category') == category:
+            items.append({
+                'id': listing['id'],
+                'title': listing['title'],
+                'price': f"€{listing['price']:,}" if listing.get('currency') == 'EUR' else f"${listing['price']:,}",
+                'location': listing.get('location', ''),
+                'video_url': listing['video_url'],
+                'thumbnail': listing.get('thumbnail_url', listing.get('video_url')),
+                'user': {
+                    'name': 'VidX Demo',
+                    'avatar': 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo'
+                },
+                'stats': {
+                    'views': listing.get('views', 0),
+                    'likes': listing.get('likes', 0)
+                },
+                'description': listing.get('description', ''),
+                'features': []  # Can be added from metadata if needed
+            })
     
     return render_template('category.html',
                          category=category,

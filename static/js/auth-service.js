@@ -10,8 +10,9 @@ class AuthService {
         this.baseUrl = `http://localhost:${port}/api/auth`;
       } 
       else {
-        // For production, use Azure Container Apps backend
-        this.baseUrl = 'https://video-marketplace-api.victoriousforest-01a281fd.northeurope.azurecontainerapps.io/api/auth';
+        // For production, use same-origin API (Azure App Service)
+        // This avoids CORS issues since frontend and backend are on same domain
+        this.baseUrl = `${window.location.origin}/api/auth`;
       }
     } else {
       this.baseUrl = baseUrl;

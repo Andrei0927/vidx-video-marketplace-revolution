@@ -58,5 +58,49 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=test@example.com",
       "bio": ""
     }
+  ],
+  "listings": [
+    {
+      "id": "6ffc3239",
+      "userId": 1,
+      "title": "Renault Wind Roadster 2011",
+      "category": "automotive",
+      "description": "Renault Wind, an 2011 – un roadster compact, perfect pentru cei care vor o experiență de condus diferită. Sub capotă ai motorul de 1.2 benzină, 100 de cai putere, suficient pentru oraș și pentru drumuri scurte în afara lui.\n\nMașina vine cu jante din aliaj, plafon decapotabil electric și un interior cu scaune sport, finisate în semipiele. La interior găsești și comenzi pe volan, pilot automat și oglinzi electrice – exact cât ai nevoie pentru confort în utilizarea zilnică.\n\nStarea generală este foarte bună, atât tehnic cât și estetic. Există și posibilitatea de achiziție în rate, dacă preferi o variantă mai flexibilă.\n\nDacă vrei o mașină mică, diferită și plăcută la condus, acest Renault Wind merită văzut!",
+      "price": 6500,
+      "currency": "EUR",
+      "condition": "Foarte bună",
+      "location": "București, România",
+      "video_url": "https://pub-384ac06d34574276b20539cbf26191e2.r2.dev/test-videos/automotive/6ffc3239_1762826994.mp4",
+      "thumbnail_url": "https://pub-384ac06d34574276b20539cbf26191e2.r2.dev/test-videos/automotive/6ffc3239_1762826994.mp4",
+      "images": [
+        "https://pub-384ac06d34574276b20539cbf26191e2.r2.dev/test-videos/automotive/6ffc3239_frame1.jpg",
+        "https://pub-384ac06d34574276b20539cbf26191e2.r2.dev/test-videos/automotive/6ffc3239_frame2.jpg",
+        "https://pub-384ac06d34574276b20539cbf26191e2.r2.dev/test-videos/automotive/6ffc3239_frame3.jpg"
+      ],
+      "created_at": "2025-11-11T04:09:54Z",
+      "updated_at": "2025-11-11T04:09:54Z",
+      "views": 0,
+      "likes": 0,
+      "favorites": 0,
+      "status": "active",
+      "metadata": {
+        "make": "Renault",
+        "model": "Wind",
+        "year": 2011,
+        "mileage": 85000,
+        "fuel_type": "Benzină",
+        "transmission": "Manual",
+        "engine_size": "1.2",
+        "horsepower": 100,
+        "body_type": "Roadster",
+        "color": "Roșu",
+        "doors": 2,
+        "seats": 2,
+        "duration": 23.209999084472656,
+        "word_count": 55,
+        "has_captions": true,
+        "ai_generated": true
+      }
+    }
   ]
 }
