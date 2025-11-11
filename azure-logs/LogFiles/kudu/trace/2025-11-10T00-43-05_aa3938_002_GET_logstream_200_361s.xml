@@ -1,5 +1,0 @@
-<step title="Incoming Request" date="2025-11-10T00:43:05.645" instance="aa3938" url="/logstream" method="GET" type="request" pid="774,1,7" Host="vidx-marketplace.scm.azurewebsites.net" User-Agent="AZURECLI/2.79.0 (HOMEBREW)" Accept-Encoding="identity" Authorization="Bea..." x-ms-client-request-id="fabccae6-bdcd-11f0-9667-86f12b0e615d" X-ARR-LOG-ID="fabccae6-bdcd-11f0-9667-86f12b0e615d" CLIENT-IP="188.26.8.71:52030" X-SITE-DEPLOYMENT-ID="vidx-marketplace" WAS-DEFAULT-HOSTNAME="vidx-marketplace.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/logstream" X-Client-IP="188.26.8.71" X-Client-Port="52030" >
-  <step title="LogStreamHandlerMiddleware.Invoke" date="2025-11-10T00:43:05.849" /><!-- duration: 179ms -->
-  <step title="Error occurred" date="2025-11-10T00:49:06.043" type="error" text="LogStreamManager: ProcessRequest end" /><!-- duration: 33ms -->
-  <step title="Outgoing response" date="2025-11-10T00:49:06.168" type="response" statusCode="200" statusText="OK" /><!-- duration: 19ms -->
-</step><!-- duration: 360554ms -->

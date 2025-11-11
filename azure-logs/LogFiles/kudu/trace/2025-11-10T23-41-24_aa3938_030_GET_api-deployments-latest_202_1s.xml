@@ -1,9 +1,0 @@
-<step title="Incoming Request" date="2025-11-10T23:41:24.780" instance="aa3938" url="/api/deployments/latest" method="GET" type="request" pid="770,1,88" Accept="*/*" Host="vidx-marketplace.scm.azurewebsites.net" User-Agent="AZURECLI/2.79.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." x-ms-client-request-id="aa18a09e-be8e-11f0-8f0e-86f12b0e615d" X-ARR-LOG-ID="aa18a09e-be8e-11f0-8f0e-86f12b0e615d" CLIENT-IP="188.26.8.71:54483" X-SITE-DEPLOYMENT-ID="vidx-marketplace" WAS-DEFAULT-HOSTNAME="vidx-marketplace.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest" X-Client-IP="188.26.8.71" X-Client-Port="54483" >
-  <step title="Cleanup Xml Logs" date="2025-11-10T23:41:24.832" /><!-- duration: 20ms -->
-  <step title="DeploymentService.GetResult" date="2025-11-10T23:41:24.902" >
-    <step title="DeploymentService.GetLatestDeployment" date="2025-11-10T23:41:24.911" >
-      <step title="DeploymentManager.GetResults" date="2025-11-10T23:41:24.914" /><!-- duration: 810ms -->
-    </step><!-- duration: 822ms -->
-  </step><!-- duration: 842ms -->
-  <step title="Outgoing response" date="2025-11-10T23:41:25.763" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 11ms -->
-</step><!-- duration: 1016ms -->
