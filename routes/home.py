@@ -11,10 +11,20 @@ bp = Blueprint('home', __name__)
 def load_db():
     """Load data from db.json"""
     db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'db.json')
+    print(f"[DEBUG] Looking for db.json at: {db_path}")
+    print(f"[DEBUG] File exists: {os.path.exists(db_path)}")
+    if os.path.exists(db_path):
+        print(f"[DEBUG] File size: {os.path.getsize(db_path)} bytes")
     try:
         with open(db_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
+            data = json.load(f)
+            print(f"[DEBUG] Loaded {len(data.get('listings', []))} listings")
+            return data
+    except FileNotFoundError as e:
+        print(f"[ERROR] db.json not found: {e}")
+        return {'listings': []}
+    except Exception as e:
+        print(f"[ERROR] Failed to load db.json: {e}")
         return {'listings': []}
 
 @bp.route('/')
