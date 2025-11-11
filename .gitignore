@@ -86,3 +86,5 @@ secrets.*
 data/*.backup
 data/*.bak
 .env.production
+azure-logs.zip
+azure-logs/

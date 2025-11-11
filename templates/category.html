@@ -453,9 +453,9 @@
                     loop
                     playsinline
                     webkit-playsinline
+                    muted
                     preload="metadata"
-                    poster="{{ item.thumbnail }}"
-                    crossorigin="anonymous">
+                    poster="{{ item.thumbnail }}">
                     <source src="{{ item.video_url }}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -468,7 +468,7 @@
                 </div>
                 
                 <!-- Sound Toggle Button -->
-                <button class="sound-toggle-btn absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100" data-video-id="video-{{ item.id }}">
+                <button class="sound-toggle-btn absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all" data-video-id="video-{{ item.id }}">
                     <i data-feather="volume-x" class="h-5 w-5"></i>
                 </button>
                 
@@ -652,38 +652,35 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let isPlaying = false;
         let isMuted = true;
+        let hoverTimeout = null;
+        let isDesktop = () => window.innerWidth >= 1024;
         
         // Error handling for video load failures
         video.addEventListener('error', (e) => {
             console.error('Video load error:', e);
-            console.error('Video source:', video.querySelector('source')?.src);
-            
-            // Show error message on the card
             const errorOverlay = document.createElement('div');
-            errorOverlay.className = 'absolute inset-0 flex items-center justify-center bg-black/80 text-white text-center p-4';
+            errorOverlay.className = 'absolute inset-0 flex items-center justify-center bg-black/80 text-white text-center p-4 z-20';
             errorOverlay.innerHTML = `
                 <div>
                     <i data-feather="alert-circle" class="h-12 w-12 mx-auto mb-2"></i>
                     <p class="text-sm">Unable to load video</p>
-                    <p class="text-xs mt-1 text-gray-400">Please try refreshing</p>
+                    <p class="text-xs mt-1 text-gray-400">Please try refreshing the page</p>
                 </div>
             `;
             video.parentElement.appendChild(errorOverlay);
             if (typeof feather !== 'undefined') feather.replace();
         });
         
-        // Attempt to load video
+        // Load video
         video.load();
         
-        // Sound toggle button
+        // Sound toggle button handler
         if (soundToggleBtn) {
             soundToggleBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 
-                if (!userInteracted) {
-                    userInteracted = true;
-                }
-                
+                userInteracted = true;
                 isMuted = !isMuted;
                 video.muted = isMuted;
                 
@@ -694,71 +691,83 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (typeof feather !== 'undefined') feather.replace();
                 }
                 
-                console.log(`🔊 Sound ${isMuted ? 'muted' : 'unmuted'} for video`);
+                console.log(`🔊 Sound ${isMuted ? 'muted' : 'unmuted'}`);
             });
         }
         
-        // Play video on hover (desktop)
-        card.addEventListener('mouseenter', async () => {
-            if (window.innerWidth >= 1024) { // Desktop only
-                try {
-                    video.muted = !userInteracted; // Mute until user interaction
-                    await video.play();
-                    isPlaying = true;
-                    if (playOverlay) playOverlay.style.opacity = '0';
-                } catch (err) {
-                    console.warn('Autoplay prevented:', err.message);
-                    // Try with muted
-                    try {
-                        video.muted = true;
-                        await video.play();
-                        isPlaying = true;
-                        if (playOverlay) playOverlay.style.opacity = '0';
-                    } catch (err2) {
-                        console.error('Failed to play video:', err2);
+        // Desktop: Hover to preview
+        if (isDesktop()) {
+            card.addEventListener('mouseenter', () => {
+                if (hoverTimeout) clearTimeout(hoverTimeout);
+                
+                hoverTimeout = setTimeout(async () => {
+                    if (!isPlaying && isDesktop()) {
+                        try {
+                            video.muted = true; // Always muted for hover preview
+                            await video.play();
+                            isPlaying = true;
+                            if (playOverlay) playOverlay.style.opacity = '0';
+                        } catch (err) {
+                            console.warn('Hover preview failed:', err.message);
+                        }
                     }
-                }
-            }
-        });
-        
-        // Pause on hover leave (desktop)
-        card.addEventListener('mouseleave', () => {
-            if (window.innerWidth >= 1024) {
-                video.pause();
-                video.currentTime = 0;
-                isPlaying = false;
-                if (playOverlay) playOverlay.style.opacity = '';
-            }
-        });
-        
-        // Click/tap to play (mobile and desktop)
-        card.addEventListener('click', async (e) => {
-            // Don't interfere with buttons
-            if (e.target.closest('button') || e.target.closest('a')) return;
+                }, 300); // Small delay to prevent accidental triggers
+            });
             
-            if (!userInteracted) {
-                userInteracted = true;
+            card.addEventListener('mouseleave', () => {
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
+                }
+                
+                if (isPlaying && isDesktop()) {
+                    video.pause();
+                    video.currentTime = 0;
+                    isPlaying = false;
+                    if (playOverlay) playOverlay.style.opacity = '';
+                }
+            });
+        }
+        
+        // Click to play/pause (all devices)
+        card.addEventListener('click', async (e) => {
+            // Ignore if clicking buttons or links
+            if (e.target.closest('button:not(.play-overlay button)') || e.target.closest('a')) {
+                return;
+            }
+            
+            e.preventDefault();
+            userInteracted = true;
+            
+            // Clear any hover timeout
+            if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = null;
             }
             
             if (isPlaying) {
+                // Pause the video
                 video.pause();
                 isPlaying = false;
                 if (playOverlay) playOverlay.style.opacity = '';
+                console.log('Video paused');
             } else {
+                // Play the video
                 try {
                     video.muted = isMuted;
                     await video.play();
                     isPlaying = true;
                     if (playOverlay) playOverlay.style.opacity = '0';
+                    console.log(`Video playing (${isMuted ? 'muted' : 'unmuted'})`);
                 } catch (err) {
-                    console.warn('Play prevented:', err.message);
-                    // Fallback to muted
+                    console.warn('Play failed, trying muted:', err.message);
                     try {
                         video.muted = true;
                         isMuted = true;
                         await video.play();
                         isPlaying = true;
                         if (playOverlay) playOverlay.style.opacity = '0';
+                        console.log('Video playing (forced muted)');
                     } catch (err2) {
                         console.error('Failed to play video:', err2);
                     }
@@ -766,11 +775,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Handle video ending
+        // Handle video ending (loop)
         video.addEventListener('ended', () => {
-            video.currentTime = 0;
-            if (video.loop) {
-                video.play().catch(err => console.warn('Loop play failed:', err));
+            if (video.loop && isPlaying) {
+                video.currentTime = 0;
+                video.play().catch(err => console.warn('Loop failed:', err));
             }
         });
     });
