@@ -440,7 +440,79 @@
 </div>
 
 <!-- Video Grid -->
-<div class="video-grid" id="video-grid"></div>
+<div class="video-grid" id="video-grid">
+    {% if items %}
+        {% for item in items %}
+        <div class="video-card bg-white dark:bg-dark-100 rounded-lg overflow-hidden shadow-md dark:shadow-dark-200 hover:shadow-xl transition-shadow cursor-pointer" data-ad-id="{{ item.id }}">
+            <!-- Video Container -->
+            <div class="relative aspect-[9/16] bg-gray-900 group">
+                <!-- Video Element -->
+                <video 
+                    id="video-{{ item.id }}"
+                    class="w-full h-full object-cover"
+                    loop
+                    playsinline
+                    webkit-playsinline
+                    muted
+                    preload="metadata"
+                    poster="{{ item.thumbnail }}">
+                    <source src="{{ item.video_url }}" type="video/mp4">
+                </video>
+                
+                <!-- Play Icon Overlay -->
+                <div class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none play-overlay">
+                    <div class="bg-white/90 rounded-full p-4 transform scale-90 group-hover:scale-100 transition-transform">
+                        <i data-feather="play" class="h-8 w-8 text-indigo-600"></i>
+                    </div>
+                </div>
+                
+                <!-- Video Overlay with Info -->
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                    <!-- Title and Price -->
+                    <h3 class="text-white font-semibold text-lg line-clamp-2 mb-1">{{ item.title }}</h3>
+                    <p class="text-white/90 text-xl font-bold mb-2">{{ item.price }}</p>
+                    
+                    <!-- Meta Info -->
+                    <div class="flex items-center gap-2 text-white/80 text-xs mb-3">
+                        <span class="capitalize">{{ category_info.name }}</span>
+                        {% if item.location %}
+                        <span class="text-white/60">•</span>
+                        <span>{{ item.location }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Engagement Stats -->
+                    <div class="flex items-center gap-4 text-white/80 text-xs">
+                        <div class="flex items-center gap-1">
+                            <i data-feather="eye" class="h-4 w-4"></i>
+                            <span>{{ item.stats.views }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <i data-feather="heart" class="h-4 w-4"></i>
+                            <span>{{ item.stats.likes }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card Footer -->
+            <div class="p-4">
+                <!-- User Info -->
+                <div class="flex items-center gap-3">
+                    <img src="{{ item.user.avatar }}" alt="{{ item.user.name }}" class="h-8 w-8 rounded-full">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-dark-600 truncate">{{ item.user.name }}</p>
+                        <p class="text-xs text-gray-500 dark:text-dark-400">Verified Seller</p>
+                    </div>
+                    <button class="favorite-btn p-2 text-gray-400 dark:text-dark-400 hover:text-red-500 dark:hover:text-red-400 transition-colors" data-ad-id="{{ item.id }}">
+                        <i data-feather="heart" class="h-5 w-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
 
 <!-- Mobile: Floating Back Button (Video Feed Only) -->
 <a href="{{ url_for('categories.category_page', category=category) }}" 

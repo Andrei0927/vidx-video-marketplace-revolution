@@ -86,7 +86,8 @@ def category_page(category):
     category_info = CATEGORIES[category]
     
     # Check if we should show videos or filters
-    show_videos = request.args.get('show') == 'videos'
+    # Default to showing videos if no explicit filter request
+    show_videos = request.args.get('show', 'videos') == 'videos'
     
     # Get filter parameters from URL
     filters = dict(request.args)
@@ -101,24 +102,38 @@ def category_page(category):
     items = []
     for listing in listings:
         if listing.get('category') == category:
+            # Format price with currency symbol
+            price_value = listing.get('price', 0)
+            currency = listing.get('currency', 'EUR')
+            if currency == 'EUR':
+                price_str = f"€{price_value:,}"
+            else:
+                price_str = f"${price_value:,}"
+            
             items.append({
                 'id': listing['id'],
                 'title': listing['title'],
-                'price': f"€{listing['price']:,}" if listing.get('currency') == 'EUR' else f"${listing['price']:,}",
+                'price': price_str,
+                'price_value': price_value,  # Keep numeric value for sorting
+                'currency': currency,
                 'location': listing.get('location', ''),
                 'video_url': listing['video_url'],
                 'thumbnail': listing.get('thumbnail_url', listing.get('video_url')),
                 'user': {
-                    'name': 'VidX Demo',
-                    'avatar': 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo'
+                    'name': listing.get('seller_name', 'VidX Demo'),
+                    'avatar': listing.get('seller_avatar', 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo')
                 },
                 'stats': {
                     'views': listing.get('views', 0),
                     'likes': listing.get('likes', 0)
                 },
                 'description': listing.get('description', ''),
-                'features': []  # Can be added from metadata if needed
+                'features': listing.get('features', [])
             })
+    
+    print(f"[DEBUG] Category: {category}, Found {len(items)} items")
+    if items:
+        print(f"[DEBUG] First item: {items[0]['title']}")
     
     return render_template('category.html',
                          category=category,
