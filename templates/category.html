@@ -269,6 +269,7 @@
 {% endblock %}
 
 {% block content %}
+<!-- FILTER OR VIDEO PAGE -->
 {% if not show_videos %}
 <!-- FILTER PAGE: Show filters first -->
 <div id="filter-modal" class="min-h-screen bg-white dark:bg-dark-50 flex flex-col">
@@ -460,8 +461,70 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<!-- Seed Test Data (Development Only) -->
+<script src="{{ url_for('static', filename='js/seed-test-data.js') }}"></script>
+
+<!-- Video Card Renderer -->
+<script src="{{ url_for('static', filename='js/video-card-renderer.js') }}"></script>
+
 <!-- Video Card Engagement -->
 <script src="{{ url_for('static', filename='js/video-card-engagement.js') }}"></script>
+
+{% if show_videos %}
+<!-- Load and Display Videos -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const videoGrid = document.getElementById('video-grid');
+    const category = '{{ category }}';
+    
+    // Load published ads from localStorage
+    const publishedAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
+    
+    // Filter by category
+    const categoryAds = publishedAds.filter(ad => ad.category === category);
+    
+    console.log(`📊 Category: ${category}`);
+    console.log(`   Total ads in storage: ${publishedAds.length}`);
+    console.log(`   Ads in this category: ${categoryAds.length}`);
+    
+    if (categoryAds.length > 0) {
+        // Use VideoCardRenderer with sound enabled for category pages
+        const renderer = new VideoCardRenderer(videoGrid, {
+            enableSound: true,      // Enable sound on hover
+            autoplayFirst: true     // Autoplay first video with sound
+        });
+        renderer.addCards(categoryAds);
+        
+        // Replace feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        
+        console.log(`✅ Loaded ${categoryAds.length} video(s) for ${category} (with sound enabled)`);
+    } else {
+        // Show empty state
+        videoGrid.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center min-h-[60vh]">
+                <i data-feather="inbox" class="h-24 w-24 text-gray-400 dark:text-dark-400 mb-6"></i>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-2">
+                    No listings yet in {{ category_info.name }}
+                </h3>
+                <p class="text-gray-600 dark:text-dark-400 mb-6 max-w-md">
+                    Be the first to post in this category! Upload your item and reach thousands of potential buyers.
+                </p>
+                <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                    <i data-feather="plus-circle" class="h-5 w-5 mr-2"></i>
+                    Create First Listing
+                </a>
+            </div>
+        `;
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+});
+</script>
+{% endif %}
 
 <!-- iOS Safari Collapsible Navigation -->
 <script>

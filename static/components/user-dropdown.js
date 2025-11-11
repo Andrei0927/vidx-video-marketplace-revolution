@@ -102,9 +102,9 @@ class UserDropdown extends HTMLElement {
         }
       </style>
       <div class="dropdown-content" role="menu">
-        <a href="profile.html" class="dropdown-item" role="menuitem">My Profile</a>
-        <a href="my-ads.html" class="dropdown-item" role="menuitem">My ads</a>
-        <a href="favourites.html" class="dropdown-item" role="menuitem">Favourites</a>
+        <a href="/profile" class="dropdown-item" role="menuitem">My Profile</a>
+        <a href="/my-ads" class="dropdown-item" role="menuitem">My ads</a>
+        <a href="/favourites" class="dropdown-item" role="menuitem">Favourites</a>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item" id="logout-btn" type="button" role="menuitem">Log out</button>
       </div>
@@ -175,8 +175,8 @@ class UserDropdown extends HTMLElement {
       // Notify host page
       this.dispatchEvent(new CustomEvent('user-logout', { bubbles: true, composed: true }));
       
-      console.log('[user-dropdown] redirecting to index.html');
-      window.location.href = 'index.html';
+      console.log('[user-dropdown] redirecting to home');
+      window.location.href = '/';
     };
 
     this._logoutBtn.addEventListener('click', this._logoutHandler);

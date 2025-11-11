@@ -265,82 +265,17 @@
     </div>
 </div>
 
-<!-- Recommended Videos Section (Mobile) -->
-<div class="md:hidden bg-gray-50 dark:bg-dark-50 py-6">
-    <div class="px-4">
-        <h2 class="text-xl font-bold text-gray-900 dark:text-dark-600 mb-4">Recommended for You</h2>
-        
-        <!-- First video - Autoplaying (muted) -->
-        <div class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden mb-4">
-            <div class="relative aspect-[9/16] bg-gray-900">
-                <video 
-                    id="featured-video"
-                    class="w-full h-full object-cover"
-                    autoplay
-                    muted
-                    loop
-                    playsinline
-                    poster="https://via.placeholder.com/405x720/6366f1/ffffff?text=Featured+Video">
-                    <!-- Placeholder - add real video sources -->
-                </video>
-                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-                    <h3 class="text-white font-semibold text-lg">Premium Product</h3>
-                    <p class="text-white/90 text-sm">$299</p>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span class="text-white/80 text-xs">Electronics</span>
-                        <span class="text-white/60">•</span>
-                        <span class="text-white/80 text-xs">2 hours ago</span>
-                    </div>
-                </div>
-                <!-- Mute indicator -->
-                <div class="absolute top-4 right-4 bg-black/40 rounded-full p-2">
-                    <i data-feather="volume-x" class="h-5 w-5 text-white"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- More videos grid -->
-        <div class="grid grid-cols-2 gap-3">
-            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
-                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
-                    <img src="https://via.placeholder.com/300x400/818cf8/ffffff?text=Video+2" alt="Video thumbnail" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                        <p class="text-white font-semibold text-sm">$149</p>
-                        <p class="text-white/80 text-xs mt-1">Fashion Item</p>
-                    </div>
-                </div>
-            </a>
-            
-            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
-                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
-                    <img src="https://via.placeholder.com/300x400/a78bfa/ffffff?text=Video+3" alt="Video thumbnail" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                        <p class="text-white font-semibold text-sm">$89</p>
-                        <p class="text-white/80 text-xs mt-1">Home & Garden</p>
-                    </div>
-                </div>
-            </a>
-            
-            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
-                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
-                    <img src="https://via.placeholder.com/300x400/c084fc/ffffff?text=Video+4" alt="Video thumbnail" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                        <p class="text-white font-semibold text-sm">$1,299</p>
-                        <p class="text-white/80 text-xs mt-1">Automotive</p>
-                    </div>
-                </div>
-            </a>
-            
-            <a href="#" class="bg-white dark:bg-dark-200 rounded-xl shadow-sm dark:shadow-dark-300 overflow-hidden">
-                <div class="relative aspect-[3/4] bg-gray-200 dark:bg-dark-300">
-                    <img src="https://via.placeholder.com/300x400/e879f9/ffffff?text=Video+5" alt="Video thumbnail" class="w-full h-full object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                        <p class="text-white font-semibold text-sm">$59</p>
-                        <p class="text-white/80 text-xs mt-1">Sports</p>
-                    </div>
-                </div>
+<!-- Published Ads Section (All Screens) -->
+<div class="bg-white dark:bg-dark-100 py-6" id="published-ads-section" style="display: none;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-dark-600">Recently Published</h2>
+            <a href="/my-ads.html" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
+                View all <i data-feather="arrow-right" class="inline h-4 w-4"></i>
             </a>
         </div>
+        <!-- Video cards will be dynamically inserted here -->
+        <div id="published-ads-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
     </div>
 </div>
 
@@ -445,6 +380,87 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<!-- Seed Test Data (Development Only) -->
+<script src="/static/js/seed-test-data.js"></script>
+<!-- Video Card Renderer -->
+<script src="/static/js/video-card-renderer.js"></script>
+<!-- Video Card Engagement -->
+<script src="/static/js/video-card-engagement.js"></script>
+
+<script>
+    // Load and display published ads from localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+        const publishedAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
+        
+        if (publishedAds.length > 0) {
+            // Show the published ads section
+            const section = document.getElementById('published-ads-section');
+            if (section) {
+                section.style.display = 'block';
+            }
+            
+            // Initialize video card renderer
+            const container = document.getElementById('published-ads-container');
+            if (container) {
+                // Homepage: Muted videos, autoplay first video
+                const renderer = new VideoCardRenderer(container, {
+                    enableSound: false,
+                    autoplayFirst: true
+                });
+                
+                // Get current user
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const userEmail = currentUser.email;
+                
+                // Simple recommendation logic:
+                // - For testlive@example.com: show automotive category
+                // - For others: show all recent videos
+                let recommendedAds = publishedAds;
+                
+                if (userEmail === 'testlive@example.com') {
+                    // Recommend automotive videos for test user
+                    recommendedAds = publishedAds.filter(ad => ad.category === 'automotive');
+                    console.log(`🎯 Recommending ${recommendedAds.length} automotive video(s) for ${userEmail}`);
+                    
+                    // Update section title
+                    const sectionTitle = section.querySelector('h2');
+                    if (sectionTitle && recommendedAds.length > 0) {
+                        sectionTitle.textContent = 'Recommended for You';
+                    }
+                }
+                
+                // Transform published ads data to match VideoCardRenderer format
+                const transformedAds = recommendedAds.map(ad => ({
+                    id: ad.id || `ad-${Date.now()}-${Math.random()}`,
+                    title: ad.title || ad.listing?.title || 'Untitled',
+                    category: ad.category || ad.listing?.category || 'general',
+                    description: ad.description || ad.listing?.description || '',
+                    price: ad.price || ad.listing?.price || 0,
+                    condition: ad.condition || ad.details?.condition || 'good',
+                    location: ad.location || ad.details?.location || 'Romania',
+                    video_url: ad.video_url || ad.videoUrl || '',
+                    thumbnail_url: ad.thumbnail_url || ad.videoUrl || '',
+                    created_at: ad.created_at || ad.publishedAt || new Date().toISOString(),
+                    views: ad.views || 0,
+                    likes: ad.likes || 0,
+                    favorites: ad.favorites || 0,
+                    metadata: ad.metadata || {}
+                }));
+                
+                // Display only the first 10 ads
+                renderer.addCards(transformedAds.slice(0, 10));
+                
+                // Replace feather icons
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+                
+                console.log(`✅ Loaded ${transformedAds.length} video(s) on homepage`);
+            }
+        }
+    });
+</script>
+
 <script>
     // Vanta.js animated background
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;

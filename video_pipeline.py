@@ -11,13 +11,19 @@ import json
 import tempfile
 import subprocess
 from pathlib import Path
-from openai import OpenAI
+from openai import AsyncOpenAI
 import boto3
 from datetime import datetime
 import hashlib
+from dotenv import load_dotenv
+import asyncio
+from tts_config import get_tts_config, ROMANIAN_TTS_INSTRUCTIONS
 
-# Initialize OpenAI client
-openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize OpenAI async client for TTS
+openai_client = AsyncOpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 # Initialize R2 client (S3-compatible)
 r2_client = boto3.client(
@@ -69,7 +75,11 @@ Just the script text, no labels or formatting."""
         prompt += f"\n\nAdditional Details:\n{json.dumps(details, indent=2)}"
 
     try:
-        response = openai_client.chat.completions.create(
+        # Use sync client for script generation
+        from openai import OpenAI
+        sync_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        
+        response = sync_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
@@ -103,35 +113,72 @@ Just the script text, no labels or formatting."""
         raise
 
 
-def generate_voiceover(script, voice='alloy'):
+async def generate_voiceover_async(script, category='automotive', language='ro'):
     """
-    Generate voiceover using OpenAI TTS
+    Generate voiceover using OpenAI TTS with custom Romanian instructions (async)
     
     Args:
         script: Text to convert to speech
-        voice: OpenAI voice name (alloy, echo, fable, onyx, nova, shimmer)
+        category: Product category (automotive, electronics, fashion)
+        language: Language code (ro, en)
     
     Returns:
         str: Path to generated audio file
     """
     try:
-        response = openai_client.audio.speech.create(
-            model="tts-1-hd",  # High quality
-            voice=voice,
+        # Get TTS configuration for category and language
+        tts_config = get_tts_config(category, language)
+        
+        print(f"TTS Config: model={tts_config['model']}, voice={tts_config['voice']}")
+        if 'instructions' in tts_config:
+            print(f"Using Romanian voice instructions")
+        
+        # Create the speech using async client with streaming
+        async with openai_client.audio.speech.with_streaming_response.create(
+            model=tts_config['model'],
+            voice=tts_config['voice'],
             input=script,
-            speed=1.0
-        )
-        
-        # Save to temp file
-        temp_audio = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
-        response.stream_to_file(temp_audio.name)
-        
-        print(f"✓ Generated voiceover: {temp_audio.name}")
-        return temp_audio.name
+            instructions=tts_config.get('instructions'),  # Romanian instructions
+            response_format='mp3'  # Use mp3 for FFmpeg compatibility
+        ) as response:
+            # Save to temp file
+            temp_audio = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
+            
+            # Stream the response to file
+            async for chunk in response.iter_bytes(chunk_size=4096):
+                temp_audio.write(chunk)
+            
+            temp_audio.close()
+            
+            print(f"✓ Generated Romanian voiceover: {temp_audio.name}")
+            return temp_audio.name
     
     except Exception as e:
         print(f"Error generating voiceover: {e}")
         raise
+
+
+def generate_voiceover(script, category='automotive', language='ro'):
+    """
+    Generate voiceover using OpenAI TTS (sync wrapper)
+    
+    Args:
+        script: Text to convert to speech
+        category: Product category (automotive, electronics, fashion)
+        language: Language code (ro, en)
+    
+    Returns:
+        str: Path to generated audio file
+    """
+    # Run async function in event loop
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        # Create new event loop if one doesn't exist
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    
+    return loop.run_until_complete(generate_voiceover_async(script, category, language))
 
 
 def generate_captions(audio_path):
@@ -145,8 +192,12 @@ def generate_captions(audio_path):
         dict: {text: str, words: [{word, start, end}]}
     """
     try:
+        # Use sync client for Whisper
+        from openai import OpenAI
+        sync_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        
         with open(audio_path, 'rb') as audio_file:
-            transcript = openai_client.audio.transcriptions.create(
+            transcript = sync_client.audio.transcriptions.create(
                 model="whisper-1",
                 file=audio_file,
                 response_format="verbose_json",
@@ -295,8 +346,9 @@ def upload_to_r2(file_path, object_key=None):
                 }
             )
         
-        # Generate public URL (assuming R2 public access is configured)
-        public_url = f"https://pub-{os.getenv('R2_ACCOUNT_ID')}.r2.dev/{object_key}"
+        # Generate public URL using configured public URL
+        r2_public_url = os.getenv('R2_PUBLIC_URL', f"https://pub-{os.getenv('R2_ACCOUNT_ID')}.r2.dev")
+        public_url = f"{r2_public_url}/{object_key}"
         
         print(f"✓ Uploaded to R2: {public_url}")
         return public_url
@@ -306,7 +358,7 @@ def upload_to_r2(file_path, object_key=None):
         raise
 
 
-def generate_video_pipeline(images, description, title, category, price, details=None, voice='alloy'):
+def generate_video_pipeline(images, description, title, category, price, details=None, language='ro'):
     """
     Complete video generation pipeline
     
@@ -317,7 +369,7 @@ def generate_video_pipeline(images, description, title, category, price, details
         category: Product category
         price: Product price
         details: Additional details (dict)
-        voice: TTS voice name
+        language: Language code (ro, en)
     
     Returns:
         dict: {
@@ -334,15 +386,16 @@ def generate_video_pipeline(images, description, title, category, price, details
         print(f"\n=== Video Generation Pipeline ===")
         print(f"Product: {title}")
         print(f"Images: {len(images)}")
+        print(f"Language: {language}")
         
         # Step 1: Generate script
         print("\n[1/5] Generating script...")
         script_result = generate_script(description, title, category, price, details)
         print(f"Script: {script_result['script'][:100]}...")
         
-        # Step 2: Generate voiceover
-        print("\n[2/5] Generating voiceover...")
-        audio_path = generate_voiceover(script_result['script'], voice)
+        # Step 2: Generate voiceover with Romanian instructions
+        print("\n[2/5] Generating Romanian voiceover...")
+        audio_path = generate_voiceover(script_result['script'], category, language)
         temp_files.append(audio_path)
         
         # Step 3: Generate captions
@@ -391,7 +444,7 @@ def generate_video_pipeline(images, description, title, category, price, details
 
 # Example usage
 if __name__ == '__main__':
-    # Test with sample data
+    # Test with Romanian Renault Wind ad (your example)
     test_images = [
         'sample_images/car1.jpg',
         'sample_images/car2.jpg',
@@ -400,17 +453,26 @@ if __name__ == '__main__':
     
     result = generate_video_pipeline(
         images=test_images,
-        description="2020 Toyota Camry in excellent condition. Low mileage, one owner, full service history.",
-        title="2020 Toyota Camry",
+        description="Renault Wind, an 2011 – un roadster compact, perfect pentru cei care vor o experiență de condus diferită. Sub capotă ai motorul de 1.2 benzină, 100 de cai putere, suficient pentru oraș și pentru drumuri scurte în afara lui.\nMașina vine cu jante din aliaj, plafon decapotabil electric și un interior cu scaune sport, finisate în semipiele. La interior găsești și comenzi pe volan, pilot automat și oglinzi electrice – exact cât ai nevoie pentru confort în utilizarea zilnică.\nStarea generală este foarte bună, atât tehnic cât și estetic. Există și posibilitatea de achiziție în rate, dacă preferi o variantă mai flexibilă.\nDacă vrei o mașină mică, diferită și plăcută la condus, acest Renault Wind merită văzut!",
+        title="Renault Wind 2011",
         category="automotive",
-        price=18500,
+        price=4500,
         details={
-            'make': 'Toyota',
-            'model': 'Camry',
-            'year': 2020,
-            'mileage': 35000
+            'make': 'Renault',
+            'model': 'Wind',
+            'year': 2011,
+            'engine': '1.2 benzină',
+            'horsepower': 100,
+            'features': [
+                'Jante din aliaj',
+                'Plafon decapotabil electric',
+                'Scaune sport semipiele',
+                'Comenzi pe volan',
+                'Pilot automat',
+                'Oglinzi electrice'
+            ]
         },
-        voice='nova'
+        language='ro'
     )
     
     print(json.dumps(result, indent=2))

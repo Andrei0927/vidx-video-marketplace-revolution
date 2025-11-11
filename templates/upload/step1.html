@@ -186,8 +186,22 @@
     let uploadedFiles = [];
     
     // Browse button click
-    browseBtn.addEventListener('click', () => fileInput.click());
-    uploadArea.addEventListener('click', () => fileInput.click());
+    browseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Browse button clicked');
+        fileInput.click();
+    });
+    
+    // Upload area click
+    uploadArea.addEventListener('click', (e) => {
+        // Don't trigger if clicking the browse button
+        if (e.target === browseBtn || browseBtn.contains(e.target)) {
+            return;
+        }
+        console.log('Upload area clicked');
+        fileInput.click();
+    });
     
     // Drag and drop handlers
     uploadArea.addEventListener('dragover', (e) => {

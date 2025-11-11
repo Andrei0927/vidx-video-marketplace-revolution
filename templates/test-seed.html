@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Test Data - VidX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">VidX Test Data Seeder</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Current Data</h2>
+            <div id="current-data" class="bg-gray-100 p-4 rounded font-mono text-sm overflow-auto max-h-64"></div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Actions</h2>
+            <div class="space-y-3">
+                <button onclick="seedData()" class="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700">
+                    Seed Test Video
+                </button>
+                <button onclick="clearData()" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">
+                    Clear All Data
+                </button>
+                <button onclick="loadData()" class="w-full bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700">
+                    Refresh Display
+                </button>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Test Links</h2>
+            <div class="space-y-2">
+                <a href="/" class="block text-indigo-600 hover:underline">→ Homepage</a>
+                <a href="/automotive?show=videos" class="block text-indigo-600 hover:underline">→ Automotive Page</a>
+            </div>
+        </div>
+        
+        <div id="message" class="mt-6 p-4 rounded-lg hidden"></div>
+    </div>
+
+    <script>
+        const testVideo = {
+            id: "6ffc3239",
+            title: "Renault Wind Roadster 2011",
+            category: "automotive",
+            description: "Roadster compact 2011, motor 1.2 benzină 100 CP",
+            price: 6500,
+            condition: "Foarte bună",
+            location: "București, România",
+            video_url: "https://pub-384ac06d34574276b20539cbf26191e2.r2.dev/test-videos/automotive/6ffc3239_1762826994.mp4",
+            thumbnail_url: "https://pub-384ac06d34574276b20539cbf26191e2.r2.dev/test-videos/automotive/6ffc3239_1762826994.mp4",
+            created_at: "2025-11-11T04:09:54Z",
+            views: 0,
+            likes: 0,
+            favorites: 0,
+            metadata: {
+                duration: 23.209999084472656,
+                word_count: 55,
+                has_captions: true,
+                ai_generated: true
+            }
+        };
+
+        function loadData() {
+            const data = localStorage.getItem('publishedAds');
+            const currentData = document.getElementById('current-data');
+            
+            if (data) {
+                const ads = JSON.parse(data);
+                currentData.textContent = JSON.stringify(ads, null, 2);
+                showMessage(`Found ${ads.length} ad(s) in localStorage`, 'success');
+            } else {
+                currentData.textContent = 'No data in localStorage';
+                showMessage('No data found', 'info');
+            }
+        }
+
+        function seedData() {
+            const existingAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
+            
+            // Check if test video already exists
+            const exists = existingAds.some(ad => ad.id === testVideo.id);
+            
+            if (!exists) {
+                existingAds.unshift(testVideo);
+                localStorage.setItem('publishedAds', JSON.stringify(existingAds));
+                showMessage('✅ Test video seeded successfully!', 'success');
+            } else {
+                showMessage('ℹ️ Test video already exists', 'info');
+            }
+            
+            loadData();
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all published ads?')) {
+                localStorage.removeItem('publishedAds');
+                showMessage('🗑️ All data cleared', 'success');
+                loadData();
+            }
+        }
+
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `mt-6 p-4 rounded-lg ${
+                type === 'success' ? 'bg-green-100 text-green-800' :
+                type === 'error' ? 'bg-red-100 text-red-800' :
+                'bg-blue-100 text-blue-800'
+            }`;
+            message.classList.remove('hidden');
+            
+            setTimeout(() => {
+                message.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>

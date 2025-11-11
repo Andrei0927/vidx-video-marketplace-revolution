@@ -254,10 +254,26 @@
         
         // Auth state management
         function isLoggedIn() {
-            return !!localStorage.getItem('authToken');
+            return !!(localStorage.getItem('sessionToken') || localStorage.getItem('authToken'));
         }
 
         function getCurrentUser() {
+            // Try to get from stored user data
+            const userId = localStorage.getItem('userId');
+            const userEmail = localStorage.getItem('userEmail');
+            const userName = localStorage.getItem('userName');
+            const userAvatar = localStorage.getItem('userAvatar');
+            
+            if (userId && userEmail) {
+                return {
+                    id: userId,
+                    email: userEmail,
+                    fullName: userName || userEmail,
+                    avatarUrl: userAvatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'
+                };
+            }
+            
+            // Fallback to old storage format
             const userStr = localStorage.getItem('currentUser');
             return userStr ? JSON.parse(userStr) : null;
         }
@@ -269,7 +285,7 @@
             
             if (user) {
                 if (navAvatar) {
-                    navAvatar.src = user.avatarUrl || '/images/default-avatar.png';
+                    navAvatar.src = user.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default';
                     navAvatar.classList.remove('hidden');
                 }
                 if (navUsername) {

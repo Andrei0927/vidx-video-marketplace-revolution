@@ -1,0 +1,23 @@
+{
+  "test_ad": {
+    "title": "Renault Wind 2011",
+    "category": "automotive",
+    "description": "Roadster compact 2011, motor 1.2 benzină 100 CP, plafon decapotabil electric, interior sport semipiele, pilot automat, oglinzi electrice, stare foarte bună",
+    "price": 6500,
+    "year": 2011,
+    "mileage": 145000,
+    "fuel_type": "Benzină",
+    "features": [
+      "Plafon decapotabil electric",
+      "Interior sport semipiele",
+      "Pilot automat",
+      "Oglinzi electrice",
+      "Jante din aliaj"
+    ]
+  },
+  "steps": {},
+  "error": {
+    "message": "write() argument must be str, not dict",
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/andreipredescu/Documents/Apps/vidx-video-marketplace-revolution/test_full_pipeline.py\", line 102, in test_full_pipeline\n    f.write(script)\nTypeError: write() argument must be str, not dict\n"
+  }
+}

@@ -3,44 +3,20 @@ Product detail pages routes
 Handles all product detail pages with a single template
 """
 
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template
 
 bp = Blueprint('products', __name__)
 
-@bp.route('/product/<int:product_id>')
-@bp.route('/product/<slug>')
-def product_detail(product_id=None, slug=None):
+@bp.route('/product/<product_id>')
+def product_detail(product_id):
     """
     Product detail page
-    ONE template serves all products
-    Can access by ID or slug
+    Data is fetched client-side from localStorage
+    product_id can be string or int
     """
-    # TODO: Fetch product from database by ID or slug
-    # For now, return mock data
+    # Check if scroll to description is requested
+    from flask import request
+    scroll_to_desc = request.args.get('scroll') == 'description'
     
-    if product_id:
-        # Fetch by ID
-        product = {
-            'id': product_id,
-            'title': 'Sample Product',
-            'description': 'This is a sample product',
-            'price': 999,
-            'category': 'electronics',
-            'images': [],
-            'video_url': None
-        }
-    elif slug:
-        # Fetch by slug (for clean URLs like /product/iphone-15-pro-max)
-        product = {
-            'id': 1,
-            'title': slug.replace('-', ' ').title(),
-            'description': f'Details for {slug}',
-            'price': 999,
-            'category': 'electronics',
-            'images': [],
-            'video_url': None
-        }
-    else:
-        abort(404)
-    
-    return render_template('product.html', product=product)
+    # Pass product_id to template, let client-side JS fetch the data
+    return render_template('product.html', product_id=product_id, scroll_to_desc=scroll_to_desc)

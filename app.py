@@ -57,9 +57,11 @@ def register_api_routes():
     try:
         from api.auth import bp as api_auth_bp
         from api.listings import bp as api_listings_bp
+        from routes.video_api import bp as video_api_bp
         
         app.register_blueprint(api_auth_bp)
         app.register_blueprint(api_listings_bp)
+        app.register_blueprint(video_api_bp)
         print("API routes registered successfully")
     except ImportError as e:
         print(f"API routes not yet created: {e}")
@@ -141,6 +143,12 @@ def health():
         return jsonify({'status': 'healthy', 'database': 'connected'}), 200
     except Exception as e:
         return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+
+# Test seed page (development only)
+@app.route('/test-seed')
+def test_seed():
+    """Test data seeder page"""
+    return render_template('test-seed.html')
 
 # Register endpoint
 @app.route('/api/auth/register', methods=['POST'])

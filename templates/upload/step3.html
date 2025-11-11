@@ -88,6 +88,66 @@
                 </div>
             </div>
 
+            <!-- AI Video Generation -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg p-6">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-dark-600 flex items-center">
+                            <i data-feather="video" class="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400"></i>
+                            AI Video Generation
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-dark-400 mt-1">
+                            Generate a professional Romanian video ad automatically (~2 minutes, €0.02)
+                        </p>
+                        <div id="video-status" class="mt-3 hidden">
+                            <div class="flex items-center text-sm">
+                                <div class="animate-spin h-4 w-4 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full mr-2"></div>
+                                <span id="video-status-text" class="text-indigo-700 dark:text-indigo-300">Generating video...</span>
+                            </div>
+                            <div class="mt-2 bg-white dark:bg-dark-100 rounded-lg p-2">
+                                <div class="w-full bg-gray-200 dark:bg-dark-200 rounded-full h-2">
+                                    <div id="video-progress" class="bg-indigo-600 dark:bg-indigo-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="video-result" class="mt-3 hidden">
+                            <div class="flex items-center text-sm text-green-700 dark:text-green-300">
+                                <i data-feather="check-circle" class="h-4 w-4 mr-2"></i>
+                                <span>Video generated successfully!</span>
+                            </div>
+                            <div class="mt-3 flex gap-2">
+                                <a id="video-preview-link" href="#" target="_blank" class="inline-flex items-center text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
+                                    <i data-feather="external-link" class="h-4 w-4 mr-1"></i>
+                                    Preview video
+                                </a>
+                                <button id="show-video-card-preview" class="inline-flex items-center text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
+                                    <i data-feather="eye" class="h-4 w-4 mr-1"></i>
+                                    View as card
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="generate-video-btn" type="button" class="ml-4 px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md shadow-sm text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors">
+                        Generate Video
+                    </button>
+                </div>
+            </div>
+
+            <!-- Video Card Preview (Hidden Initially) -->
+            <div id="video-card-preview-section" class="hidden">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-dark-600 mb-3">
+                    How It Will Look in Feed
+                </h3>
+                <div class="max-w-sm mx-auto">
+                    <div id="video-card-container" class="bg-gray-50 dark:bg-dark-50 rounded-lg p-4">
+                        <!-- Video card will be rendered here -->
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-dark-400 text-center mt-2">
+                        Hover over the card to see autoplay effect
+                    </p>
+                </div>
+            </div>
+
             <!-- Terms and Conditions -->
             <div class="bg-gray-50 dark:bg-dark-50 rounded-lg p-4">
                 <label class="flex items-start">
@@ -143,22 +203,30 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<!-- Video Card Renderer -->
+<script src="{{ url_for('static', filename='js/video-card-renderer.js') }}"></script>
 <script>
     // Load and display saved data
     const savedData = sessionStorage.getItem('adDetails');
+    const uploadedFiles = sessionStorage.getItem('uploadedFiles');
     const agreeTerms = document.getElementById('agree-terms');
     const publishBtn = document.getElementById('publish-btn');
+    const generateVideoBtn = document.getElementById('generate-video-btn');
+    
+    let generatedAdData = null;
+    let videoCardRenderer = null;
+    let adData = null;
     
     if (savedData) {
-        const data = JSON.parse(savedData);
+        adData = JSON.parse(savedData);
         
         // Populate preview
-        document.getElementById('preview-title').textContent = data.title;
-        document.getElementById('preview-price').textContent = '€' + data.price;
-        document.getElementById('preview-category').textContent = capitalizeCategory(data.category);
-        document.getElementById('preview-condition').textContent = capitalizeCondition(data.condition);
-        document.getElementById('preview-location').textContent = data.location;
-        document.getElementById('preview-description').textContent = data.description;
+        document.getElementById('preview-title').textContent = adData.title;
+        document.getElementById('preview-price').textContent = '€' + adData.price;
+        document.getElementById('preview-category').textContent = capitalizeCategory(adData.category);
+        document.getElementById('preview-condition').textContent = capitalizeCondition(adData.condition);
+        document.getElementById('preview-location').textContent = adData.location;
+        document.getElementById('preview-description').textContent = adData.description;
     } else {
         // No data, redirect to step 1
         window.location.href = "{{ url_for('upload.upload_step1') }}";
@@ -167,6 +235,136 @@
     // Enable publish button when terms are agreed
     agreeTerms.addEventListener('change', () => {
         publishBtn.disabled = !agreeTerms.checked;
+    });
+    
+    // Generate Video button handler
+    generateVideoBtn.addEventListener('click', async () => {
+        const videoStatus = document.getElementById('video-status');
+        const videoStatusText = document.getElementById('video-status-text');
+        const videoProgress = document.getElementById('video-progress');
+        const videoResult = document.getElementById('video-result');
+        const videoPreviewLink = document.getElementById('video-preview-link');
+        
+        // Show status
+        videoStatus.classList.remove('hidden');
+        videoResult.classList.add('hidden');
+        generateVideoBtn.disabled = true;
+        generateVideoBtn.textContent = 'Generating...';
+        
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress > 90) progress = 90;
+            videoProgress.style.width = progress + '%';
+        }, 500);
+        
+        try {
+            // Get uploaded images (we'll use placeholder for now)
+            const images = []; // TODO: Get actual uploaded images from Step 1
+            
+            // Prepare request payload
+            const payload = {
+                title: adData.title,
+                category: adData.category,
+                description: adData.description,
+                price: parseFloat(adData.price),
+                details: {
+                    condition: adData.condition,
+                    location: adData.location
+                },
+                images: images  // Base64 encoded images
+            };
+            
+            console.log('🎬 Requesting video generation:', payload);
+            
+            // Update status
+            videoStatusText.textContent = 'Step 1/5: Generating script...';
+            
+            // Call video generation API
+            const response = await fetch('/api/video/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            clearInterval(progressInterval);
+            videoProgress.style.width = '100%';
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                console.log('✅ Video generated:', result);
+                
+                // Store full ad data from API response
+                generatedAdData = result.ad;
+                
+                // Show success
+                videoStatus.classList.add('hidden');
+                videoResult.classList.remove('hidden');
+                videoPreviewLink.href = result.video_url;
+                
+                // Store video data with ad data
+                adData.videoUrl = result.video_url;
+                adData.generatedAd = generatedAdData;
+                sessionStorage.setItem('adDetails', JSON.stringify(adData));
+                
+                generateVideoBtn.textContent = 'Regenerate Video';
+                generateVideoBtn.disabled = false;
+                
+                // Show video card preview
+                showVideoCardPreview(generatedAdData);
+                
+            } else {
+                throw new Error(result.error || 'Video generation failed');
+            }
+            
+        } catch (error) {
+            console.error('❌ Video generation error:', error);
+            
+            clearInterval(progressInterval);
+            
+            videoStatus.classList.add('hidden');
+            generateVideoBtn.disabled = false;
+            generateVideoBtn.textContent = 'Retry Generation';
+            
+            alert('Error generating video: ' + error.message + '\n\nPlease try again or continue without video.');
+        }
+    });
+    
+    // Show video card preview
+    function showVideoCardPreview(adData) {
+        const previewSection = document.getElementById('video-card-preview-section');
+        const container = document.getElementById('video-card-container');
+        
+        // Initialize renderer if not already done
+        if (!videoCardRenderer) {
+            videoCardRenderer = new VideoCardRenderer(container);
+        }
+        
+        // Clear and render new card
+        videoCardRenderer.clear();
+        videoCardRenderer.addCard(adData);
+        
+        // Show section
+        previewSection.classList.remove('hidden');
+        
+        // Scroll to preview
+        previewSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Replace feather icons
+        if (window.feather) {
+            window.feather.replace();
+        }
+    }
+    
+    // Show video card preview button handler
+    document.getElementById('show-video-card-preview')?.addEventListener('click', () => {
+        if (generatedAdData) {
+            showVideoCardPreview(generatedAdData);
+        }
     });
     
     // Publish button handler
@@ -178,12 +376,26 @@
         publishBtn.disabled = true;
         publishingStatus.classList.remove('hidden');
         
-        try {
-            // TODO: Send data to API
+        try:
+            // Prepare listing data
+            const listingData = generatedAdData || {
+                ...adData,
+                videoUrl: adData.videoUrl,
+                publishedAt: new Date().toISOString()
+            };
+            
+            console.log('📤 Publishing listing:', listingData);
+            
+            // Save to localStorage for display on homepage/my-ads
+            const publishedAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
+            publishedAds.unshift(listingData); // Add to beginning of array
+            localStorage.setItem('publishedAds', JSON.stringify(publishedAds));
+            
+            // TODO: Send data to API when available
             // const response = await fetch('/api/listings', {
             //     method: 'POST',
             //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ ...data, media: files })
+            //     body: JSON.stringify(listingData)
             // });
             
             // Simulate API call
@@ -197,6 +409,7 @@
             sessionStorage.removeItem('adDetails');
             sessionStorage.removeItem('uploadStep');
             sessionStorage.removeItem('uploadDraft');
+            sessionStorage.removeItem('uploadedFiles');
             
             // Redirect to user's ads after 2 seconds
             setTimeout(() => {
