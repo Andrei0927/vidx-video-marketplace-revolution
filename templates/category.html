@@ -332,7 +332,7 @@
                     <p class="text-gray-500 dark:text-dark-500">{{ category_info.description }}</p>
                 </div>
             </div>
-            <a href="{{ url_for('categories.category_page', category=category) }}" 
+            <a href="{{ url_for('categories.category_page', category=category, show='filters') }}" 
                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-dark-300 rounded-md text-sm font-medium text-gray-700 dark:text-dark-500 bg-white dark:bg-dark-100 hover:bg-gray-50 dark:hover:bg-dark-200 transition">
                 <i data-feather="sliders" class="h-4 w-4 mr-2"></i>
                 Adjust Filters
@@ -549,47 +549,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoGrid = document.getElementById('video-grid');
     const category = '{{ category }}';
     
-    // Load published ads from localStorage
-    const publishedAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
-    
-    // Filter by category
-    const categoryAds = publishedAds.filter(ad => ad.category === category);
+    // Check if there are already server-rendered video cards
+    const existingCards = videoGrid.querySelectorAll('.video-card');
     
     console.log(`📊 Category: ${category}`);
-    console.log(`   Total ads in storage: ${publishedAds.length}`);
-    console.log(`   Ads in this category: ${categoryAds.length}`);
+    console.log(`   Server-rendered cards: ${existingCards.length}`);
     
-    if (categoryAds.length > 0) {
-        // Use VideoCardRenderer with sound enabled for category pages
-        const renderer = new VideoCardRenderer(videoGrid, {
-            enableSound: true,      // Enable sound on hover
-            autoplayFirst: true     // Autoplay first video with sound
-        });
-        renderer.addCards(categoryAds);
+    // Only load from localStorage if there are no server-rendered cards
+    if (existingCards.length === 0) {
+        // Load published ads from localStorage
+        const publishedAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
         
-        // Replace feather icons
-        if (typeof feather !== 'undefined') {
-            feather.replace();
+        // Filter by category
+        const categoryAds = publishedAds.filter(ad => ad.category === category);
+        
+        console.log(`   Total ads in storage: ${publishedAds.length}`);
+        console.log(`   Ads in this category: ${categoryAds.length}`);
+        
+        if (categoryAds.length > 0) {
+            // Use VideoCardRenderer with sound enabled for category pages
+            const renderer = new VideoCardRenderer(videoGrid, {
+                enableSound: true,      // Enable sound on hover
+                autoplayFirst: true     // Autoplay first video with sound
+            });
+            renderer.addCards(categoryAds);
+            
+            // Replace feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            console.log(`✅ Loaded ${categoryAds.length} video(s) from localStorage (with sound enabled)`);
+        } else {
+            // Show empty state only if no server-rendered cards and no localStorage ads
+            videoGrid.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center min-h-[60vh]">
+                    <i data-feather="inbox" class="h-24 w-24 text-gray-400 dark:text-dark-400 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-2">
+                        No listings yet in {{ category_info.name }}
+                    </h3>
+                    <p class="text-gray-600 dark:text-dark-400 mb-6 max-w-md">
+                        Be the first to post in this category! Upload your item and reach thousands of potential buyers.
+                    </p>
+                    <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
+                        <i data-feather="plus-circle" class="h-5 w-5 mr-2"></i>
+                        Create First Listing
+                    </a>
+                </div>
+            `;
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
         }
-        
-        console.log(`✅ Loaded ${categoryAds.length} video(s) for ${category} (with sound enabled)`);
     } else {
-        // Show empty state
-        videoGrid.innerHTML = `
-            <div class="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center min-h-[60vh]">
-                <i data-feather="inbox" class="h-24 w-24 text-gray-400 dark:text-dark-400 mb-6"></i>
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-2">
-                    No listings yet in {{ category_info.name }}
-                </h3>
-                <p class="text-gray-600 dark:text-dark-400 mb-6 max-w-md">
-                    Be the first to post in this category! Upload your item and reach thousands of potential buyers.
-                </p>
-                <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
-                    <i data-feather="plus-circle" class="h-5 w-5 mr-2"></i>
-                    Create First Listing
-                </a>
-            </div>
-        `;
+        console.log(`✅ Using ${existingCards.length} server-rendered video(s)`);
+        
+        // Just replace feather icons for the server-rendered cards
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
@@ -637,35 +652,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(toggleBtn);
         window.replaceFeatherIcons();
     }
-
-    // Empty State Handler
-    function checkForEmptyState() {
-        const videoGrid = document.getElementById('video-grid');
-        if (!videoGrid) return;
-        
-        const videoCards = videoGrid.querySelectorAll('.video-card');
-        
-        if (videoCards.length === 0) {
-            videoGrid.innerHTML = `
-                <div class="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center">
-                    <i data-feather="inbox" class="h-24 w-24 text-gray-400 dark:text-dark-400 mb-6"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-dark-600 mb-2">
-                        No listings yet
-                    </h3>
-                    <p class="text-gray-600 dark:text-dark-400 mb-6 max-w-md">
-                        Be the first to post in {{ category_info.name }}! Upload your item and reach thousands of potential buyers.
-                    </p>
-                    <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-medium">
-                        <i data-feather="plus-circle" class="h-5 w-5 mr-2"></i>
-                        Create First Listing
-                    </a>
-                </div>
-            `;
-            window.replaceFeatherIcons();
-        }
-    }
-
-    checkForEmptyState();
 </script>
 
 {% if not show_videos %}
