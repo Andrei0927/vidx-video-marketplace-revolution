@@ -1,0 +1,4 @@
+<step title="Incoming Request" date="2025-11-11T06:44:23.902" instance="aa3938" url="/dump" method="GET" type="request" pid="772,1,39" Host="vidx-marketplace.scm.azurewebsites.net" User-Agent="AZURECLI/2.79.0 (HOMEBREW)" Accept-Encoding="identity" Authorization="Bea..." x-ms-client-request-id="da764a6c-bec9-11f0-8a50-86f12b0e615d" X-ARR-LOG-ID="da764a6c-bec9-11f0-8a50-86f12b0e615d" CLIENT-IP="188.26.8.71:52579" X-SITE-DEPLOYMENT-ID="vidx-marketplace" WAS-DEFAULT-HOSTNAME="vidx-marketplace.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/dump" X-Client-IP="188.26.8.71" X-Client-Port="52579" >
+  <step title="Cleanup Xml Logs" date="2025-11-11T06:44:23.904" >
+    <step title="Cleanup Infos" date="2025-11-11T06:44:23.911" totalFiles="291" totalCleanup="131" /><!-- duration: 3ms -->
+  </step><!-- duration: 12ms -->

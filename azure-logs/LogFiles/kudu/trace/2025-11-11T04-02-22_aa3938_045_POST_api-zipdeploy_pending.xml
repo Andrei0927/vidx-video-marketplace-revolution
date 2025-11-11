@@ -1,0 +1,16 @@
+<step title="Incoming Request" date="2025-11-11T04:02:22.018" instance="aa3938" url="/api/zipdeploy?isAsync=true" method="POST" type="request" pid="770,1,44" Accept="*/*" Host="vidx-marketplace.scm.azurewebsites.net" User-Agent="AZURECLI/2.79.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cache-Control="no-cache" Content-Type="application/octet-stream" Content-Length="77675514" x-ms-client-request-id="2b3875d6-beb3-11f0-a0aa-86f12b0e615d" x-ms-artifact-checksum="cf88b5f15e2baecccd4d515ad3f03b3d98087ae50791755928a6ef9c9264d59a" X-ARR-LOG-ID="2b3875d6-beb3-11f0-a0aa-86f12b0e615d" CLIENT-IP="188.26.8.71:59646" X-SITE-DEPLOYMENT-ID="vidx-marketplace" WAS-DEFAULT-HOSTNAME="vidx-marketplace.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/zipdeploy?isAsync=true" X-Client-IP="188.26.8.71" X-Client-Port="59646" >
+  <step title="Cleanup Xml Logs" date="2025-11-11T04:02:22.067" /><!-- duration: 285ms -->
+  <step title="ZipPushDeploy" date="2025-11-11T04:02:23.551" >
+    <step title="ZipDeploy. Extract zip. Remote build." date="2025-11-11T04:02:23.660" /><!-- duration: 10ms -->
+    <step title="Starting PushDeployAsync" date="2025-11-11T04:02:23.693" /><!-- duration: 17ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/5513a161-4c41-4bc2-8714-ed239aad94cd.zip" date="2025-11-11T04:02:23.950" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/5513a161-4c41-4bc2-8714-ed239aad94cd.zip" date="2025-11-11T04:02:23.972" /><!-- duration: 19ms -->
+    </step><!-- duration: 6696ms -->
+    <step title="Removing previous build artifact&apos;s manifest file" date="2025-11-11T04:02:30.654" >
+      <step title="Start deployment in the background" date="2025-11-11T04:02:30.674" >
+        <step title="Acquiring Deployment Lock" date="2025-11-11T04:02:30.717" /><!-- duration: 11ms -->
+        <step title="Acquired Deployment Lock" date="2025-11-11T04:02:30.841" /><!-- duration: 3ms -->
+      </step><!-- duration: 319ms -->
+    </step><!-- duration: 367ms -->
+    <step title="Outgoing response" date="2025-11-11T04:02:31.041" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 4ms -->
+  </step><!-- duration: 7496ms -->

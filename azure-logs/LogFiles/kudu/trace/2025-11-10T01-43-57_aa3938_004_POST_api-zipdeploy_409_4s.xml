@@ -1,0 +1,16 @@
+<step title="Incoming Request" date="2025-11-10T01:43:57.093" instance="aa3938" url="/api/zipdeploy?isAsync=true" method="POST" type="request" pid="770,1,23" Accept="*/*" Host="vidx-marketplace.scm.azurewebsites.net" User-Agent="AZURECLI/2.79.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cache-Control="no-cache" Content-Type="application/octet-stream" Content-Length="26543912" x-ms-client-request-id="aea4ae22-bdd6-11f0-9a05-86f12b0e615d" x-ms-artifact-checksum="5ca6f935c3350cceb8981690ba720266298c5c73636efc3a02a3f08e0266cabd" X-ARR-LOG-ID="aea4ae22-bdd6-11f0-9a05-86f12b0e615d" CLIENT-IP="188.26.8.71:52015" X-SITE-DEPLOYMENT-ID="vidx-marketplace" WAS-DEFAULT-HOSTNAME="vidx-marketplace.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/zipdeploy?isAsync=true" X-Client-IP="188.26.8.71" X-Client-Port="52015" >
+  <step title="Cleanup Xml Logs" date="2025-11-10T01:43:57.095" /><!-- duration: 18ms -->
+  <step title="ZipPushDeploy" date="2025-11-10T01:43:57.146" >
+    <step title="ZipDeploy. Extract zip. Remote build." date="2025-11-10T01:43:57.153" /><!-- duration: 2ms -->
+    <step title="Starting PushDeployAsync" date="2025-11-10T01:43:57.158" /><!-- duration: 2ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/38d80f61-cfef-4895-a8d9-5a5ec78ddbd8.zip" date="2025-11-10T01:43:57.180" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/38d80f61-cfef-4895-a8d9-5a5ec78ddbd8.zip" date="2025-11-10T01:43:57.209" /><!-- duration: 5ms -->
+    </step><!-- duration: 2972ms -->
+    <step title="Start deployment in the background" date="2025-11-10T01:44:00.190" >
+      <step title="Acquiring Deployment Lock" date="2025-11-10T01:44:00.310" /><!-- duration: 2ms -->
+      <step title="Cannot Acquire Deployment Lock already held" date="2025-11-10T01:44:00.342" /><!-- duration: 19ms -->
+    </step><!-- duration: 371ms -->
+    <step title="There is a deployment currently in progress. Please try again when it completes." date="2025-11-10T01:44:00.603" /><!-- duration: 29ms -->
+  </step><!-- duration: 3508ms -->
+  <step title="Outgoing response" date="2025-11-10T01:44:00.731" type="response" statusCode="409" statusText="Conflict" /><!-- duration: 10ms -->
+</step><!-- duration: 3660ms -->

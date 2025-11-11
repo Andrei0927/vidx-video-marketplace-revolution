@@ -1,0 +1,17 @@
+<step title="Incoming Request" date="2025-11-10T01:24:48.323" instance="aa3938" url="/api/zipdeploy?isAsync=true" method="POST" type="request" pid="774,1,20" Accept="*/*" Host="vidx-marketplace.scm.azurewebsites.net" User-Agent="AZURECLI/2.79.0 (HOMEBREW)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cache-Control="no-cache" Content-Type="application/octet-stream" Content-Length="5331670" x-ms-client-request-id="09184a1a-bdd4-11f0-bb4e-86f12b0e615d" x-ms-artifact-checksum="eb9ffd7e86afbc572adf77738f161db2e7414109f9fe3b67d2f5d907e033f0a7" X-ARR-LOG-ID="09184a1a-bdd4-11f0-bb4e-86f12b0e615d" CLIENT-IP="188.26.8.71:63283" X-SITE-DEPLOYMENT-ID="vidx-marketplace" WAS-DEFAULT-HOSTNAME="vidx-marketplace.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/zipdeploy?isAsync=true" X-Client-IP="188.26.8.71" X-Client-Port="63283" >
+  <step title="Cleanup Xml Logs" date="2025-11-10T01:24:48.326" /><!-- duration: 60ms -->
+  <step title="ZipPushDeploy" date="2025-11-10T01:24:48.496" >
+    <step title="ZipDeploy. Extract zip. Remote build." date="2025-11-10T01:24:48.544" /><!-- duration: 2ms -->
+    <step title="Starting PushDeployAsync" date="2025-11-10T01:24:48.556" /><!-- duration: 39ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/410accdb-10c9-40bf-ac37-8f2ad935bcd1.zip" date="2025-11-10T01:24:48.636" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/410accdb-10c9-40bf-ac37-8f2ad935bcd1.zip" date="2025-11-10T01:24:48.667" /><!-- duration: 29ms -->
+    </step><!-- duration: 339ms -->
+    <step title="Removing previous build artifact&apos;s manifest file" date="2025-11-10T01:24:48.979" >
+      <step title="Start deployment in the background" date="2025-11-10T01:24:48.995" >
+        <step title="Acquiring Deployment Lock" date="2025-11-10T01:24:49.098" /><!-- duration: 10ms -->
+        <step title="Cannot Acquire Deployment Lock already held" date="2025-11-10T01:24:49.127" /><!-- duration: 18ms -->
+      </step><!-- duration: 384ms -->
+      <step title="There is a deployment currently in progress. Please try again when it completes." date="2025-11-10T01:24:49.417" /><!-- duration: 31ms -->
+    </step><!-- duration: 488ms -->
+    <step title="Outgoing response" date="2025-11-10T01:24:49.498" type="response" statusCode="409" statusText="Conflict" /><!-- duration: 3ms -->
+  </step><!-- duration: 1026ms -->

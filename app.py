@@ -54,6 +54,7 @@ def register_web_routes():
         from routes.products import bp as products_bp
         from routes.upload import bp as upload_bp
         from routes.user import bp as user_bp
+        from routes.debug import bp as debug_bp
         
         app.register_blueprint(home_bp)
         app.register_blueprint(categories_bp)
@@ -61,6 +62,7 @@ def register_web_routes():
         app.register_blueprint(products_bp)
         app.register_blueprint(upload_bp)
         app.register_blueprint(user_bp)
+        app.register_blueprint(debug_bp)
     except ImportError as e:
         print(f"Web routes not yet created: {e}")
 
