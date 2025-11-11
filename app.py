@@ -21,6 +21,14 @@ import hashlib
 from datetime import datetime, timedelta
 from functools import wraps
 
+# Load environment variables
+from dotenv import load_dotenv
+# Load .env.production if it exists (for Azure deployment)
+if os.path.exists('.env.production'):
+    load_dotenv('.env.production')
+else:
+    load_dotenv()
+
 app = Flask(__name__)
 
 # Secret key for sessions
@@ -29,7 +37,12 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Configure CORS - allow frontend domain
 CORS_ORIGIN = os.getenv('CORS_ORIGIN', 'http://localhost:8080')
-CORS(app, origins=[CORS_ORIGIN, 'http://localhost:8080', 'http://127.0.0.1:8080'])
+CORS(app, origins=[
+    CORS_ORIGIN, 
+    'http://localhost:8080', 
+    'http://127.0.0.1:8080',
+    'https://vidx-marketplace.azurewebsites.net'
+])
 
 # Register web route blueprints
 def register_web_routes():
