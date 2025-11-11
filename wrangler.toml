@@ -1,0 +1,18 @@
+# Cloudflare Worker Configuration
+name = "r2-video-proxy"
+main = "cloudflare-worker-r2-proxy.js"
+compatibility_date = "2024-01-01"
+
+# R2 Bucket Binding
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "video-marketplace-videos"
+
+# Routes (optional - deploy to custom domain)
+# routes = [
+#   { pattern = "videos.vidx-marketplace.com/*", zone_name = "vidx-marketplace.com" }
+# ]
+
+# Environment variables (if needed)
+# [vars]
+# ENVIRONMENT = "production"

@@ -1,4 +1,98 @@
-# R2 CORS Configuration Instructions
+# R2 Production Setup - CRITICAL
+
+## ⚠️ URGENT: Rate Limiting Issue
+
+**Current Problem**: We're using `pub-384ac06d34574276b20539cbf26191e2.r2.dev` which is:
+- ❌ **Rate limited** for production use
+- ❌ Meant for **development/testing only**
+- ❌ Will cause video loading failures at scale
+
+**Impact**: Videos may fail to load for users when rate limits are hit.
+
+## 🚨 Required Actions
+
+### Option 1: Custom Domain (Recommended)
+
+Set up a custom domain for R2 to bypass rate limits and get production-grade performance.
+
+#### Steps:
+
+1. **In Cloudflare Dashboard**:
+   - Go to R2 > `video-marketplace-videos`
+   - Click "Settings" > "Public Access"
+   - Click "Connect Domain"
+   - Choose a subdomain: `videos.vidx-marketplace.com` (or similar)
+   - Follow DNS setup instructions
+
+2. **Update Environment Variables**:
+   ```bash
+   # In Azure App Service Configuration
+   R2_PUBLIC_URL=https://videos.vidx-marketplace.com
+   ```
+
+3. **Update db.json**:
+   Replace all `pub-384ac06d34574276b20539cbf26191e2.r2.dev` URLs with your custom domain
+
+#### Benefits:
+- ✅ No rate limits
+- ✅ Better performance (Cloudflare CDN)
+- ✅ Custom branding
+- ✅ Full CORS control
+- ✅ SSL/TLS included
+
+### Option 2: Cloudflare Workers Proxy (Quick Fix)
+
+If you don't have a custom domain, use a Worker to proxy R2:
+
+1. **Create Worker** (`r2-video-proxy`):
+   ```javascript
+   export default {
+     async fetch(request, env) {
+       const url = new URL(request.url);
+       const objectKey = url.pathname.slice(1); // Remove leading /
+       
+       try {
+         const object = await env.MY_BUCKET.get(objectKey);
+         if (!object) {
+           return new Response('Video not found', { status: 404 });
+         }
+         
+         const headers = new Headers();
+         headers.set('Content-Type', 'video/mp4');
+         headers.set('Access-Control-Allow-Origin', '*');
+         headers.set('Cache-Control', 'public, max-age=31536000');
+         
+         return new Response(object.body, { headers });
+       } catch (error) {
+         return new Response('Error loading video', { status: 500 });
+       }
+     }
+   };
+   ```
+
+2. **Bind R2 Bucket** to Worker:
+   ```bash
+   wrangler r2 bucket binding create MY_BUCKET --bucket video-marketplace-videos
+   ```
+
+3. **Deploy Worker**:
+   ```bash
+   wrangler deploy
+   ```
+
+4. **Update Environment**:
+   ```bash
+   R2_PUBLIC_URL=https://r2-video-proxy.your-subdomain.workers.dev
+   ```
+
+### Option 3: Migrate to Azure Blob Storage
+
+If R2 continues to cause issues:
+
+1. Create Azure Storage Account
+2. Enable Static Website hosting
+3. Upload videos to `$web` container
+4. Update URLs to use Azure CDN
 
 ## Problem
 Videos from R2 bucket fail to load with CORS error:
