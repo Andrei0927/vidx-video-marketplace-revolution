@@ -453,10 +453,11 @@
                     loop
                     playsinline
                     webkit-playsinline
-                    muted
                     preload="metadata"
-                    poster="{{ item.thumbnail }}">
+                    poster="{{ item.thumbnail }}"
+                    crossorigin="anonymous">
                     <source src="{{ item.video_url }}" type="video/mp4">
+                    Your browser does not support the video tag.
                 </video>
                 
                 <!-- Play Icon Overlay -->
@@ -465,6 +466,11 @@
                         <i data-feather="play" class="h-8 w-8 text-indigo-600"></i>
                     </div>
                 </div>
+                
+                <!-- Sound Toggle Button -->
+                <button class="sound-toggle-btn absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100" data-video-id="video-{{ item.id }}">
+                    <i data-feather="volume-x" class="h-5 w-5"></i>
+                </button>
                 
                 <!-- Video Overlay with Info -->
                 <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
@@ -514,10 +520,22 @@
     {% endif %}
 </div>
 
-<!-- Mobile: Floating Back Button (Video Feed Only) -->
-<a href="{{ url_for('categories.category_page', category=category) }}" 
-   class="fixed top-4 left-4 z-50 lg:hidden bg-white/90 dark:bg-dark-100/90 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white dark:hover:bg-dark-100 transition">
-    <i data-feather="arrow-left" class="h-5 w-5 text-gray-900 dark:text-dark-600"></i>
+<!-- Mobile: Fixed Navigation Buttons -->
+<div class="lg:hidden fixed right-4 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3">
+    <!-- Filter Button -->
+    <a href="{{ url_for('categories.category_page', category=category, show='filters') }}" 
+       class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg transition-all flex items-center justify-center"
+       title="Filters">
+        <i data-feather="sliders" class="h-6 w-6"></i>
+    </a>
+    
+    <!-- Home Button -->
+    <a href="{{ url_for('home.index') }}" 
+       class="bg-white dark:bg-dark-100 hover:bg-gray-50 dark:hover:bg-dark-200 text-gray-900 dark:text-dark-600 p-3 rounded-full shadow-lg transition-all flex items-center justify-center"
+       title="Home">
+        <i data-feather="home" class="h-6 w-6"></i>
+    </a>
+</div>
 </a>
 
 <!-- No Results Message -->
@@ -608,6 +626,158 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
+    }
+});
+</script>
+
+<!-- Video Interaction Handler for Server-Rendered Cards -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const videoCards = document.querySelectorAll('.video-card');
+    let userInteracted = false;
+    
+    // Detect first user interaction to enable sound
+    ['click', 'touchstart', 'keydown'].forEach(event => {
+        document.addEventListener(event, () => {
+            userInteracted = true;
+        }, { once: true });
+    });
+    
+    videoCards.forEach(card => {
+        const video = card.querySelector('video');
+        const playOverlay = card.querySelector('.play-overlay');
+        const soundToggleBtn = card.querySelector('.sound-toggle-btn');
+        
+        if (!video) return;
+        
+        let isPlaying = false;
+        let isMuted = true;
+        
+        // Error handling for video load failures
+        video.addEventListener('error', (e) => {
+            console.error('Video load error:', e);
+            console.error('Video source:', video.querySelector('source')?.src);
+            
+            // Show error message on the card
+            const errorOverlay = document.createElement('div');
+            errorOverlay.className = 'absolute inset-0 flex items-center justify-center bg-black/80 text-white text-center p-4';
+            errorOverlay.innerHTML = `
+                <div>
+                    <i data-feather="alert-circle" class="h-12 w-12 mx-auto mb-2"></i>
+                    <p class="text-sm">Unable to load video</p>
+                    <p class="text-xs mt-1 text-gray-400">Please try refreshing</p>
+                </div>
+            `;
+            video.parentElement.appendChild(errorOverlay);
+            if (typeof feather !== 'undefined') feather.replace();
+        });
+        
+        // Attempt to load video
+        video.load();
+        
+        // Sound toggle button
+        if (soundToggleBtn) {
+            soundToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                if (!userInteracted) {
+                    userInteracted = true;
+                }
+                
+                isMuted = !isMuted;
+                video.muted = isMuted;
+                
+                // Update icon
+                const icon = soundToggleBtn.querySelector('i');
+                if (icon) {
+                    icon.setAttribute('data-feather', isMuted ? 'volume-x' : 'volume-2');
+                    if (typeof feather !== 'undefined') feather.replace();
+                }
+                
+                console.log(`🔊 Sound ${isMuted ? 'muted' : 'unmuted'} for video`);
+            });
+        }
+        
+        // Play video on hover (desktop)
+        card.addEventListener('mouseenter', async () => {
+            if (window.innerWidth >= 1024) { // Desktop only
+                try {
+                    video.muted = !userInteracted; // Mute until user interaction
+                    await video.play();
+                    isPlaying = true;
+                    if (playOverlay) playOverlay.style.opacity = '0';
+                } catch (err) {
+                    console.warn('Autoplay prevented:', err.message);
+                    // Try with muted
+                    try {
+                        video.muted = true;
+                        await video.play();
+                        isPlaying = true;
+                        if (playOverlay) playOverlay.style.opacity = '0';
+                    } catch (err2) {
+                        console.error('Failed to play video:', err2);
+                    }
+                }
+            }
+        });
+        
+        // Pause on hover leave (desktop)
+        card.addEventListener('mouseleave', () => {
+            if (window.innerWidth >= 1024) {
+                video.pause();
+                video.currentTime = 0;
+                isPlaying = false;
+                if (playOverlay) playOverlay.style.opacity = '';
+            }
+        });
+        
+        // Click/tap to play (mobile and desktop)
+        card.addEventListener('click', async (e) => {
+            // Don't interfere with buttons
+            if (e.target.closest('button') || e.target.closest('a')) return;
+            
+            if (!userInteracted) {
+                userInteracted = true;
+            }
+            
+            if (isPlaying) {
+                video.pause();
+                isPlaying = false;
+                if (playOverlay) playOverlay.style.opacity = '';
+            } else {
+                try {
+                    video.muted = isMuted;
+                    await video.play();
+                    isPlaying = true;
+                    if (playOverlay) playOverlay.style.opacity = '0';
+                } catch (err) {
+                    console.warn('Play prevented:', err.message);
+                    // Fallback to muted
+                    try {
+                        video.muted = true;
+                        isMuted = true;
+                        await video.play();
+                        isPlaying = true;
+                        if (playOverlay) playOverlay.style.opacity = '0';
+                    } catch (err2) {
+                        console.error('Failed to play video:', err2);
+                    }
+                }
+            }
+        });
+        
+        // Handle video ending
+        video.addEventListener('ended', () => {
+            video.currentTime = 0;
+            if (video.loop) {
+                video.play().catch(err => console.warn('Loop play failed:', err));
+            }
+        });
+    });
+    
+    // Replace feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
     }
 });
 </script>
