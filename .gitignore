@@ -85,3 +85,4 @@ secrets.*
 *.db.backup
 data/*.backup
 data/*.bak
+.env.production

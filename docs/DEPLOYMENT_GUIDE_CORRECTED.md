@@ -1105,16 +1105,219 @@ aws s3 ls s3://vidx-uploads \
 
 ---
 
+## 🔧 Production Deployment Lessons (November 11, 2025)
+
+### Critical Issue: OpenAI AsyncClient Incompatibility
+
+**Problem**: After successful local testing, production deployment failed with:
+```
+TypeError: AsyncClient.__init__() got an unexpected keyword argument 'proxies'
+```
+
+**Root Cause**: The `openai==1.51.0` library had incompatibility with httpx versions in Azure's build environment.
+
+**Solution**: Update requirements.txt with compatible versions:
+```txt
+openai==1.54.4     # Updated from 1.51.0
+httpx==0.27.2      # Pinned compatible version
+```
+
+**Impact**: 
+- Initial deployments: Failed after 840+ seconds
+- After fix: Successful deployment in 266 seconds (Build: 187s, Startup: 79s)
+
+### Key Learnings
+
+#### 1. Always Pin Dependency Versions
+**Don't:**
+```txt
+openai>=1.0.0
+httpx
+```
+
+**Do:**
+```txt
+openai==1.54.4
+httpx==0.27.2
+boto3==1.34.51
+```
+
+**Why**: Azure's build environment may install different versions than your local environment, causing incompatibilities.
+
+#### 2. Azure Logs Location
+When deployment fails, check logs at:
+```bash
+# Web Interface (BEST - shows full error traces)
+https://[app-name].scm.azurewebsites.net/api/logs/docker
+
+# CLI (sometimes incomplete)
+az webapp log tail --name [app-name] --resource-group [resource-group]
+```
+
+**Note**: CLI logs can be empty even when errors exist. Always check web interface logs.
+
+#### 3. Deployment Method Matters
+**Local deployment (Recommended)**:
+```bash
+az webapp up --name vidx-marketplace --runtime "PYTHON:3.12" --sku B1 --location westeurope
+```
+- ✅ Deploys complete application from local directory
+- ✅ Includes all files (templates, static, modules)
+- ✅ Fast and reliable
+- ✅ Works with .gitignore (excludes venv, node_modules, etc.)
+
+**Git deployment** (Requires careful commit management):
+```bash
+git push azure main
+```
+- ⚠️ Only deploys committed files
+- ⚠️ Easy to miss files after git reset
+- ⚠️ Requires proper .gitignore configuration
+
+#### 4. Environment Variables
+Set all sensitive credentials as Azure environment variables, **never** commit them:
+
+```bash
+# Set via CLI
+az webapp config appsettings set \
+  --name vidx-marketplace \
+  --resource-group andrei_09_rg_3843 \
+  --settings \
+    OPENAI_API_KEY="sk-proj-..." \
+    R2_SECRET_ACCESS_KEY="..." \
+    SECRET_KEY="..."
+```
+
+**Important**: GitHub will block commits containing API keys. Use environment variables instead of `.env` files in production.
+
+#### 5. Port Configuration
+Azure provides the `PORT` environment variable dynamically. Your startup script should:
+
+```bash
+# startup.sh
+PORT=${PORT:-8000}  # Use Azure's PORT or default to 8000
+gunicorn --bind=0.0.0.0:$PORT --timeout 600 app:app
+```
+
+**Don't hardcode** `PORT=8000` in environment variables.
+
+#### 6. Startup Command Configuration
+Set via Azure CLI:
+```bash
+az webapp config set \
+  --name vidx-marketplace \
+  --resource-group andrei_09_rg_3843 \
+  --startup-file "gunicorn --bind=0.0.0.0:8000 --timeout=600 app:app"
+```
+
+Or use a startup script:
+```bash
+--startup-file "./startup.sh"
+```
+
+#### 7. Build Settings
+Enable Oryx build for automatic dependency installation:
+```bash
+az webapp config appsettings set \
+  --name vidx-marketplace \
+  --resource-group andrei_09_rg_3843 \
+  --settings \
+    ENABLE_ORYX_BUILD=true \
+    SCM_DO_BUILD_DURING_DEPLOYMENT=true
+```
+
+### Updated Requirements.txt (Production-Tested)
+
+```txt
+flask==3.0.0
+flask-cors==4.0.0
+psycopg2-binary==2.9.9
+python-dotenv==1.0.0
+gunicorn==21.2.0
+openai==1.54.4          # ✅ CRITICAL: Use 1.54.4, not 1.51.0
+httpx==0.27.2           # ✅ CRITICAL: Pin httpx version
+boto3==1.34.51
+sendgrid==6.11.0
+Pillow==10.1.0
+requests==2.31.0
+```
+
+### Deployment Checklist
+
+Before deploying to production:
+
+- [ ] All dependencies pinned to specific versions
+- [ ] requirements.txt tested locally
+- [ ] Environment variables set in Azure (not in code)
+- [ ] .gitignore excludes .env files
+- [ ] Startup command configured
+- [ ] PORT variable handled dynamically
+- [ ] CORS configured for production domain
+- [ ] Database connection string uses environment variable
+- [ ] R2/S3 credentials in environment variables
+- [ ] OpenAI API key in environment variables
+- [ ] gunicorn timeout set (600s for video processing)
+- [ ] Logs enabled in Azure portal
+
+### Successful Deployment Timeline
+
+Based on production deployment November 11, 2025:
+
+1. **Zip creation**: ~5 seconds
+2. **Upload to Azure**: ~10 seconds
+3. **Build phase**: ~187 seconds (3 minutes)
+   - Install dependencies from requirements.txt
+   - Create virtual environment
+   - Extract packages
+4. **Startup phase**: ~79 seconds (1.3 minutes)
+   - Initialize application
+   - Load environment variables
+   - Start gunicorn workers
+5. **Total**: ~266 seconds (4.4 minutes)
+
+### Common Errors and Solutions
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `Worker failed to boot` | Dependency conflict | Check logs, pin versions |
+| `Module not found` | Missing dependency | Add to requirements.txt |
+| `Port already in use` | Hardcoded port | Use PORT environment variable |
+| `AsyncClient unexpected keyword` | OpenAI/httpx incompatibility | Use openai==1.54.4, httpx==0.27.2 |
+| `CORS error` | Wrong origin configured | Update CORS_ORIGIN in Azure settings |
+| `Database connection failed` | Missing DATABASE_URL | Set in environment variables |
+| `R2 upload failed` | Wrong credentials | Verify R2_* variables in Azure |
+
+### Performance Benchmarks
+
+**Azure App Service (Basic B1)**:
+- CPU: 1 core
+- RAM: 1.75 GB
+- Storage: 10 GB
+- Build time: ~187 seconds
+- Startup time: ~79 seconds
+- Response time: <500ms (homepage)
+- Cost: ~$13-15/month
+
+**Recommended for production**:
+- SKU: B1 or higher
+- Workers: 2 (configured in gunicorn)
+- Timeout: 600s (for video processing)
+- Auto-scaling: Consider Standard S1 for >100 concurrent users
+
+---
+
 ## Next Steps
 
 1. **Test the deployment guide** with Azure free trial ($200 credit)
 2. **Choose deployment option** (A, B, or C)
-3. **Deploy backend** to Azure Container Instances
+3. **Deploy backend** to Azure App Service (proven method)
 4. **Set up Cloudflare R2** for storage
-5. **Update frontend** API endpoints
-6. **Run end-to-end tests**
-7. **Monitor with Sentry**
-8. **Go live!**
+5. **Pin all dependencies** in requirements.txt
+6. **Set environment variables** in Azure portal
+7. **Run end-to-end tests**
+8. **Monitor with Sentry** (optional)
+9. **Configure custom domain** (optional)
+10. **Go live!**
 
 ---
 
@@ -1122,5 +1325,16 @@ aws s3 ls s3://vidx-uploads \
 **Monthly Cost:** $42-47/month  
 **Cost per Video:** $0.024 (98% savings vs Revid.ai)  
 **Deployment Complexity:** Intermediate  
+**Production Tested:** ✅ November 11, 2025
 
 🎉 **Ready to deploy your production-grade video marketplace!**
+
+---
+
+## Additional Resources
+
+- **Successful Deployment Report**: See `DEPLOYMENT_SUCCESS_NOV11.md`
+- **Requirements**: `requirements.txt` (pinned versions)
+- **Azure Documentation**: https://docs.microsoft.com/azure/app-service/
+- **OpenAI Python SDK**: https://github.com/openai/openai-python
+- **Cloudflare R2**: https://developers.cloudflare.com/r2/

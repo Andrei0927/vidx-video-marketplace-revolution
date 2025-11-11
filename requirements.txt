@@ -1,10 +1,20 @@
+# VidX Video Marketplace - Production Dependencies
+# Last Updated: November 11, 2025
+# Production Tested: ✅ Azure App Service (Python 3.12)
+#
+# CRITICAL VERSION NOTES:
+# - openai==1.54.4 + httpx==0.27.2 are REQUIRED together
+# - DO NOT use openai==1.51.0 (breaks with AsyncClient error in Azure)
+# - All versions pinned to prevent deployment failures
+# - Tested deployment time: 266 seconds (Build: 187s, Startup: 79s)
+
 flask==3.0.0
 flask-cors==4.0.0
 psycopg2-binary==2.9.9
 python-dotenv==1.0.0
 gunicorn==21.2.0
-openai==1.54.4
-httpx==0.27.2
+openai==1.54.4          # ⚠️ CRITICAL: Use 1.54.4, not 1.51.0
+httpx==0.27.2           # ⚠️ CRITICAL: Pin httpx version for OpenAI compatibility
 boto3==1.34.51
 sendgrid==6.11.0
 Pillow==10.1.0

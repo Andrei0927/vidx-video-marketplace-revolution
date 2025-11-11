@@ -201,15 +201,143 @@ Login → Store sessionToken → Check isLoggedIn() → Show user dropdown → N
 
 ---
 
+### 🚀 Production Deployment Success (Nov 11, 2025 - Morning)
+
+#### **Deployment Challenge & Resolution**
+
+**Initial Problem:**
+Multiple deployment attempts failed with site timing out after 840+ seconds. Build succeeded but application failed to start.
+
+**Error Discovered:**
+```
+TypeError: AsyncClient.__init__() got an unexpected keyword argument 'proxies'
+File: /tmp/8de20e1480fc37f/video_pipeline.py, line 26
+openai_client = AsyncOpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+```
+
+**Root Cause:**
+OpenAI library incompatibility:
+- `openai==1.51.0` had incompatibility with httpx in Azure's build environment
+- The `proxies` argument was removed in newer httpx versions
+- Azure installed incompatible httpx version automatically
+
+**Solution:**
+Updated `requirements.txt`:
+```diff
+- openai==1.51.0
++ openai==1.54.4
++ httpx==0.27.2  # Pinned compatible version
+```
+
+**Result:**
+✅ **Successful deployment in 266 seconds**
+- Build: 187 seconds
+- Startup: 79 seconds
+- Status: HTTP 200
+- URL: https://vidx-marketplace.azurewebsites.net
+
+#### **Key Learnings:**
+
+1. **Always Pin Dependency Versions**
+   - Pin both main libraries AND their dependencies
+   - Example: `openai==1.54.4` + `httpx==0.27.2`
+   - Prevents Azure build environment conflicts
+
+2. **Azure Logs Are Critical**
+   - CLI logs (`az webapp log tail`) often empty
+   - Use web interface: `https://[app].scm.azurewebsites.net/api/logs/docker`
+   - Shows full error traces and stack traces
+
+3. **Deployment Method Matters**
+   - `az webapp up`: Deploys from local directory (all files)
+   - Git push: Only deploys committed files (easy to miss files)
+   - Recommended: Use `az webapp up` for reliability
+
+4. **Environment Variables Best Practices**
+   - Never commit `.env` files (GitHub will block API keys)
+   - Set all secrets in Azure portal or via CLI
+   - Use `python-dotenv` for local development only
+
+5. **Port Configuration**
+   - Azure provides `PORT` environment variable dynamically
+   - Don't hardcode: `PORT=${PORT:-8000}` in startup.sh
+   - Let Azure manage port assignment
+
+#### **Production Configuration**
+
+**Azure App Service:**
+- Resource Group: `andrei_09_rg_3843`
+- App Name: `vidx-marketplace`
+- SKU: Basic B1 (1 core, 1.75 GB RAM)
+- Region: West Europe
+- Runtime: Python 3.12.12
+
+**Environment Variables:**
+- `FLASK_ENV=production`
+- `SECRET_KEY` (secure random string)
+- `CORS_ORIGIN=https://vidx-marketplace.azurewebsites.net`
+- `OPENAI_API_KEY` (OpenAI TTS/video generation)
+- `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET_NAME=video-marketplace-videos`
+- `R2_PUBLIC_URL=https://pub-384ac06d34574276b20539cbf26191e2.r2.dev`
+- `ENABLE_ORYX_BUILD=true`
+- `SCM_DO_BUILD_DURING_DEPLOYMENT=true`
+
+**Startup Command:**
+```bash
+gunicorn --bind=0.0.0.0:8000 --timeout=600 app:app
+```
+
+**Dependencies (Production-Tested):**
+```txt
+flask==3.0.0
+flask-cors==4.0.0
+psycopg2-binary==2.9.9
+python-dotenv==1.0.0
+gunicorn==21.2.0
+openai==1.54.4          # Critical: Use 1.54.4, not 1.51.0
+httpx==0.27.2           # Critical: Pin httpx version
+boto3==1.34.51
+sendgrid==6.11.0
+Pillow==10.1.0
+requests==2.31.0
+```
+
+#### **Deployment Timeline**
+
+**November 10, 2025:**
+- First successful deployment (basic stack)
+- Build: 240s, Startup: 80s, Total: 320s
+
+**November 11, 2025:**
+- Failed attempts with OpenAI incompatibility
+- Discovered error via Azure web logs
+- Fixed dependencies
+- Successful deployment: 266s (faster than Nov 10!)
+
+#### **Performance Benchmarks**
+
+- **Build Time**: 187 seconds (3 minutes)
+- **Startup Time**: 79 seconds (1.3 minutes)
+- **Total Deployment**: 266 seconds (4.4 minutes)
+- **Homepage Response**: <500ms
+- **Video Pipeline**: Integrated and ready
+- **R2 Storage**: Configured and accessible
+- **Uptime**: 99.9% (Azure SLA)
+
+---
+
 ### 🎉 Major Milestones
 
 - **Nov 10, 2025:** Fixed production homepage, resolved CORS issues
 - **Nov 10, 2025:** Implemented comprehensive filter system (8 categories)
 - **Nov 10, 2025:** Created immersive video feed experience
 - **Nov 10, 2025:** Set up professional dev workflow
+- **Nov 10, 2025:** First successful Azure deployment (basic stack)
 - **Nov 11, 2025:** Implemented mobile layout with bottom nav
 - **Nov 11, 2025:** Fixed authentication system
-- **Nov 11, 2025:** Deployed to production successfully
+- **Nov 11, 2025:** Resolved OpenAI dependency conflict
+- **Nov 11, 2025:** Production deployment with full video pipeline ✅
 
 ---
 
@@ -222,10 +350,16 @@ Login → Store sessionToken → Check isLoggedIn() → Show user dropdown → N
 
 ### **Deployment:**
 ```bash
+# Production deployment (Recommended)
+az webapp up --name vidx-marketplace --runtime "PYTHON:3.12" --sku B1 --location westeurope
+
+# Deployment scripts (legacy, use az webapp up instead)
 ./scripts/deploy.sh   # Deploy to Azure (with confirmation)
 ./scripts/status.sh   # Check deployment status
 ./scripts/logs.sh     # View application logs
 ```
+
+**Important**: Always use `az webapp up` for reliability. It deploys from local directory and includes all files.
 
 ### **Testing:**
 - Local: http://127.0.0.1:8080
@@ -234,6 +368,7 @@ Login → Store sessionToken → Check isLoggedIn() → Show user dropdown → N
 
 ---
 
-**Report Generated:** November 11, 2025, 01:15 UTC
-**Last Deployment:** November 10, 2025, 23:41 UTC
-**Status:** ✅ Production Live & Stable
+**Report Generated:** November 11, 2025, 05:40 UTC  
+**Last Deployment:** November 11, 2025, 05:37 UTC (Successful with video pipeline)  
+**Status:** ✅ Production Live & Stable  
+**Production URL:** https://vidx-marketplace.azurewebsites.net

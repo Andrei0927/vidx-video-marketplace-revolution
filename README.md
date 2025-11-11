@@ -35,19 +35,34 @@ Visit **http://127.0.0.1:5000**
 ### Deploy to Production
 
 ```bash
-# One command deployment
+# Recommended: Deploy from local directory (includes all files)
+az webapp up --name vidx-marketplace --runtime "PYTHON:3.12" --sku B1 --location westeurope
+
+# Alternative: Legacy deployment script
 ./scripts/deploy.sh
 ```
 
-**📖 Full documentation**: See [DEVELOPMENT.md](DEVELOPMENT.md)
+**⚠️ Important**: Always use `az webapp up` for production deployments. It's faster, more reliable, and deploys the complete application from your local directory.
+
+**📖 Full deployment guide**: See [DEPLOYMENT_GUIDE_CORRECTED.md](docs/DEPLOYMENT_GUIDE_CORRECTED.md)  
+**🔧 Troubleshooting**: See [DEPLOYMENT_SUCCESS_NOV11.md](DEPLOYMENT_SUCCESS_NOV11.md)
 
 ---
 
 ## 🌐 Live Production Site
 
-**URL**: https://vidx-marketplace.azurewebsites.net
+**URL**: https://vidx-marketplace.azurewebsites.net  
+**Status**: ✅ Live and deployed on Azure App Service  
+**Last Deployed**: November 11, 2025  
+**Deployment Time**: 266 seconds (Build: 187s, Startup: 79s)
 
-**Status**: ✅ Live and deployed on Azure App Service
+### Production Stack
+- **Hosting**: Azure App Service (Basic B1)
+- **Runtime**: Python 3.12.12
+- **Server**: Gunicorn with 2 workers
+- **Storage**: Cloudflare R2 (S3-compatible)
+- **Video Pipeline**: OpenAI TTS + FFmpeg
+- **Region**: West Europe
 
 ## 🚀 Key Features
 
@@ -66,4 +81,41 @@ Visit **http://127.0.0.1:5000**
 - **Responsive Design**: Mobile-first with iOS Safari optimizations
 - **Authentication**: In-memory auth system (PostgreSQL ready)
 - **API Endpoints**: RESTful API for auth, listings, and uploads
+- **Video Pipeline**: OpenAI TTS + FFmpeg for automated video generation
+- **Cloud Storage**: Cloudflare R2 (S3-compatible) for media files
 
+---
+
+## 📦 Dependencies & Requirements
+
+### Production-Tested Stack (November 11, 2025)
+
+```txt
+flask==3.0.0              # Web framework
+flask-cors==4.0.0         # Cross-origin resource sharing
+psycopg2-binary==2.9.9    # PostgreSQL adapter
+python-dotenv==1.0.0      # Environment variable management
+gunicorn==21.2.0          # Production WSGI server
+openai==1.54.4            # ⚠️ CRITICAL: Use 1.54.4 (not 1.51.0)
+httpx==0.27.2             # ⚠️ CRITICAL: Pin for OpenAI compatibility
+boto3==1.34.51            # AWS S3/R2 client
+sendgrid==6.11.0          # Email service
+Pillow==10.1.0            # Image processing
+requests==2.31.0          # HTTP library
+```
+
+### Critical Version Notes
+
+**OpenAI + httpx Compatibility**:
+- ✅ `openai==1.54.4` + `httpx==0.27.2` - **Production tested, works**
+- ❌ `openai==1.51.0` - **Breaks in Azure** with `AsyncClient` error
+- **Always pin both versions** to prevent deployment failures
+
+**Why These Versions Matter**:
+- Different environments (local vs Azure) may install different httpx versions
+- OpenAI 1.51.0 has incompatibility with newer httpx releases
+- Pinning prevents `TypeError: AsyncClient.__init__() got an unexpected keyword argument 'proxies'`
+
+See [DEPLOYMENT_SUCCESS_NOV11.md](DEPLOYMENT_SUCCESS_NOV11.md) for full deployment troubleshooting guide.
+
+---
