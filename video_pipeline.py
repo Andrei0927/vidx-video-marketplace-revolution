@@ -130,16 +130,16 @@ async def generate_voiceover_async(script, category='automotive', language='ro')
         tts_config = get_tts_config(category, language)
         
         print(f"TTS Config: model={tts_config['model']}, voice={tts_config['voice']}")
-        if 'instructions' in tts_config:
-            print(f"Using Romanian voice instructions")
+        # Note: OpenAI TTS API doesn't support 'instructions' parameter
+        # Voice characteristics are controlled by the 'voice' parameter only
         
         # Create the speech using async client with streaming
         async with openai_client.audio.speech.with_streaming_response.create(
             model=tts_config['model'],
             voice=tts_config['voice'],
             input=script,
-            instructions=tts_config.get('instructions'),  # Romanian instructions
-            response_format='mp3'  # Use mp3 for FFmpeg compatibility
+            response_format='mp3',  # Use mp3 for FFmpeg compatibility
+            speed=1.0  # Normal speed
         ) as response:
             # Save to temp file
             temp_audio = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
