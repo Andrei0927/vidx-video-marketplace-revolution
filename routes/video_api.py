@@ -89,24 +89,42 @@ def generate_video():
             img = Image.new('RGB', (1920, 1080), color='#1f2937')
             draw = ImageDraw.Draw(img)
             
-            # Add text to placeholder
+            # Use default font (works on all platforms)
+            # Note: For better fonts on Linux, install: fonts-dejavu-core
             try:
-                font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 120)
-                small_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 60)
-            except:
+                # Try common font paths (Linux/Mac/Windows)
+                font_paths = [
+                    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",  # Linux (Azure)
+                    "/System/Library/Fonts/Helvetica.ttc",  # macOS
+                    "C:\\Windows\\Fonts\\Arial.ttf",  # Windows
+                ]
+                font = None
+                small_font = None
+                for font_path in font_paths:
+                    try:
+                        font = ImageFont.truetype(font_path, 120)
+                        small_font = ImageFont.truetype(font_path, 60)
+                        break
+                    except:
+                        continue
+                
+                if not font:
+                    # Fallback to default font
+                    font = ImageFont.load_default()
+                    small_font = ImageFont.load_default()
+            except Exception as e:
+                print(f"⚠️ Font loading error: {e}, using default font")
                 font = ImageFont.load_default()
                 small_font = ImageFont.load_default()
             
             # Center text
             text = title[:40]  # Limit text length
-            bbox = draw.textbbox((0, 0), text, font=font)
-            text_width = bbox[2] - bbox[0]
-            text_height = bbox[3] - bbox[1]
-            x = (1920 - text_width) / 2
-            y = (1080 - text_height) / 2 - 50
+            text_width = len(text) * 50  # Approximate width
+            x = max(100, (1920 - text_width) / 2)
+            y = 400
             
             draw.text((x, y), text, fill='#ffffff', font=font)
-            draw.text((960 - 150, y + 150), f"€{price:,.0f}", fill='#6366f1', font=small_font)
+            draw.text((860, y + 150), f"€{price:,.0f}", fill='#6366f1', font=small_font)
             
             # Save placeholder
             temp_img = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False)
