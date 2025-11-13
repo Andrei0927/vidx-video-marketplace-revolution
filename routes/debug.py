@@ -5,8 +5,52 @@ Debug routes - Temporary for troubleshooting
 from flask import Blueprint, jsonify
 import os
 import json
+import subprocess
+import shutil
 
 bp = Blueprint('debug', __name__, url_prefix='/debug')
+
+@bp.route('/ffmpeg')
+def check_ffmpeg():
+    """Check if FFmpeg is installed and working"""
+    info = {
+        'ffmpeg': {},
+        'ffprobe': {},
+        'imagemagick': {}
+    }
+    
+    # Check ffmpeg
+    ffmpeg_path = shutil.which('ffmpeg')
+    info['ffmpeg']['path'] = ffmpeg_path
+    info['ffmpeg']['installed'] = ffmpeg_path is not None
+    
+    if ffmpeg_path:
+        try:
+            result = subprocess.run(['ffmpeg', '-version'], 
+                                  capture_output=True, text=True, timeout=5)
+            info['ffmpeg']['version'] = result.stdout.split('\n')[0] if result.stdout else None
+        except Exception as e:
+            info['ffmpeg']['error'] = str(e)
+    
+    # Check ffprobe
+    ffprobe_path = shutil.which('ffprobe')
+    info['ffprobe']['path'] = ffprobe_path
+    info['ffprobe']['installed'] = ffprobe_path is not None
+    
+    if ffprobe_path:
+        try:
+            result = subprocess.run(['ffprobe', '-version'], 
+                                  capture_output=True, text=True, timeout=5)
+            info['ffprobe']['version'] = result.stdout.split('\n')[0] if result.stdout else None
+        except Exception as e:
+            info['ffprobe']['error'] = str(e)
+    
+    # Check ImageMagick
+    convert_path = shutil.which('convert')
+    info['imagemagick']['path'] = convert_path
+    info['imagemagick']['installed'] = convert_path is not None
+    
+    return jsonify(info)
 
 @bp.route('/files')
 def list_files():
