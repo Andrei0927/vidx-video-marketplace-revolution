@@ -80,13 +80,39 @@ def generate_video():
             temp_img.close()
             image_files.append(temp_img.name)
         
-        # If no images provided, use placeholder
+        # If no images provided, create placeholder images
         if not image_files:
-            # TODO: Generate placeholder images or use default automotive images
-            return jsonify({
-                'success': False,
-                'error': 'At least one image is required'
-            }), 400
+            print("⚠️ No images provided, creating placeholder image...")
+            from PIL import Image, ImageDraw, ImageFont
+            
+            # Create a simple placeholder image
+            img = Image.new('RGB', (1920, 1080), color='#1f2937')
+            draw = ImageDraw.Draw(img)
+            
+            # Add text to placeholder
+            try:
+                font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 120)
+                small_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 60)
+            except:
+                font = ImageFont.load_default()
+                small_font = ImageFont.load_default()
+            
+            # Center text
+            text = title[:40]  # Limit text length
+            bbox = draw.textbbox((0, 0), text, font=font)
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
+            x = (1920 - text_width) / 2
+            y = (1080 - text_height) / 2 - 50
+            
+            draw.text((x, y), text, fill='#ffffff', font=font)
+            draw.text((960 - 150, y + 150), f"€{price:,.0f}", fill='#6366f1', font=small_font)
+            
+            # Save placeholder
+            temp_img = tempfile.NamedTemporaryFile(suffix='.jpg', delete=False)
+            img.save(temp_img.name, 'JPEG', quality=85)
+            temp_img.close()
+            image_files.append(temp_img.name)
         
         # Generate video using the pipeline
         print(f"🎬 Generating video for: {title}")

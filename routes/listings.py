@@ -1,42 +1,68 @@
 """
-API routes for listings/uploads
-Handles creating, updating, deleting listings
+Listings API routes
+Handles CRUD operations for marketplace listings
 """
 
 from flask import Blueprint, request, jsonify
-import secrets
 import os
 import json
-import uuid
 from datetime import datetime
+import uuid
 
-bp = Blueprint('api_listings', __name__, url_prefix='/api/listings')
+bp = Blueprint('listings', __name__, url_prefix='/api/listings')
+
 
 @bp.route('', methods=['POST'])
 def create_listing():
-    """Create a new listing"""
+    """
+    Create a new listing
+    
+    Expected JSON payload:
+    {
+        "id": "listing-123",
+        "title": "Product Title",
+        "category": "automotive",
+        "description": "Product description",
+        "price": 6500,
+        "currency": "EUR",
+        "location": "Cluj-Napoca",
+        "videoUrl": "https://...",
+        "thumbnailUrl": "https://...",
+        "condition": "good",
+        "metadata": {...}
+    }
+    
+    Returns:
+    {
+        "success": true,
+        "listing_id": "listing-123",
+        "message": "Listing created successfully"
+    }
+    """
     try:
         data = request.get_json()
         
         # Validate required fields
-        if not data or not data.get('title') or not data.get('price'):
-            return jsonify({
-                'success': False,
-                'error': 'Title and price are required'
-            }), 400
+        required_fields = ['title', 'category', 'price']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({
+                    'success': False,
+                    'error': f'Missing required field: {field}'
+                }), 400
         
         # Generate ID if not provided
         listing_id = data.get('id', f'listing-{uuid.uuid4()}')
         
-        # Extract data with defaults
+        # Extract data
         title = data['title']
-        category = data.get('category', 'other')
+        category = data['category']
         description = data.get('description', '')
         price = float(data['price'])
         currency = data.get('currency', 'EUR')
         location = data.get('location', '')
-        video_url = data.get('videoUrl', data.get('video_url', ''))
-        thumbnail_url = data.get('thumbnailUrl', data.get('thumbnail_url', video_url))
+        video_url = data.get('videoUrl', '')
+        thumbnail_url = data.get('thumbnailUrl', video_url)
         condition = data.get('condition', 'good')
         status = data.get('status', 'active')
         metadata = data.get('metadata', {})
@@ -48,10 +74,8 @@ def create_listing():
         DATABASE_URL = os.environ.get('DATABASE_URL')
         if DATABASE_URL:
             try:
-                import psycopg2
-                from psycopg2.extras import RealDictCursor
-                
-                conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+                from app import get_db
+                conn = get_db()
                 cur = conn.cursor()
                 
                 cur.execute("""
@@ -72,8 +96,7 @@ def create_listing():
                         description = EXCLUDED.description,
                         price = EXCLUDED.price,
                         video_url = EXCLUDED.video_url,
-                        updated_at = CURRENT_TIMESTAMP
-                    RETURNING id;
+                        updated_at = CURRENT_TIMESTAMP;
                 """, (
                     listing_id,
                     user_id,
@@ -106,8 +129,6 @@ def create_listing():
                 
             except Exception as db_error:
                 print(f"⚠️ Database error: {db_error}")
-                import traceback
-                traceback.print_exc()
                 # Fall through to localStorage fallback
         
         # Fallback: Save to db.json
@@ -170,83 +191,53 @@ def create_listing():
             'error': str(e)
         }), 500
 
+
 @bp.route('/<listing_id>', methods=['GET'])
 def get_listing(listing_id):
-    """Get a specific listing"""
-    listing = listings.get(listing_id)
-    
-    if not listing:
-        return jsonify({'error': 'Listing not found'}), 404
-    
-    return jsonify(listing)
-
-@bp.route('/<listing_id>', methods=['PUT'])
-def update_listing(listing_id):
-    """Update a listing"""
-    listing = listings.get(listing_id)
-    
-    if not listing:
-        return jsonify({'error': 'Listing not found'}), 404
-    
-    data = request.get_json()
-    
-    # Update fields
-    if 'title' in data:
-        listing['title'] = data['title']
-    if 'description' in data:
-        listing['description'] = data['description']
-    if 'price' in data:
-        listing['price'] = data['price']
-    if 'status' in data:
-        listing['status'] = data['status']
-    
-    listing['updated_at'] = datetime.now().isoformat()
-    
-    return jsonify({
-        'success': True,
-        'message': 'Listing updated successfully'
-    })
-
-@bp.route('/<listing_id>', methods=['DELETE'])
-def delete_listing(listing_id):
-    """Delete a listing"""
-    if listing_id not in listings:
-        return jsonify({'error': 'Listing not found'}), 404
-    
-    del listings[listing_id]
-    
-    return jsonify({
-        'success': True,
-        'message': 'Listing deleted successfully'
-    })
-
-@bp.route('/upload', methods=['POST'])
-def upload_files():
-    """Handle file uploads"""
-    # Check if files are present
-    if 'files' not in request.files:
-        return jsonify({'error': 'No files provided'}), 400
-    
-    files = request.files.getlist('files')
-    uploaded_files = []
-    
-    for file in files:
-        if file.filename:
-            # Generate unique filename
-            file_id = secrets.token_hex(8)
-            file_ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
-            filename = f"{file_id}.{file_ext}"
-            
-            # In production, save to S3 or similar
-            # For now, just return the filename
-            uploaded_files.append({
-                'id': file_id,
-                'filename': filename,
-                'original_name': file.filename,
-                'url': f'/uploads/{filename}'  # Placeholder URL
-            })
-    
-    return jsonify({
-        'success': True,
-        'files': uploaded_files
-    })
+    """Get a specific listing by ID"""
+    try:
+        # Try database first
+        DATABASE_URL = os.environ.get('DATABASE_URL')
+        if DATABASE_URL:
+            try:
+                from app import get_db
+                conn = get_db()
+                cur = conn.cursor()
+                
+                cur.execute("SELECT * FROM listings WHERE id = %s", (listing_id,))
+                listing = cur.fetchone()
+                
+                cur.close()
+                conn.close()
+                
+                if listing:
+                    return jsonify({
+                        'success': True,
+                        'listing': dict(listing)
+                    })
+            except Exception as db_error:
+                print(f"⚠️ Database error: {db_error}")
+        
+        # Fallback to db.json
+        db_file = os.path.join(os.path.dirname(__file__), '..', 'db.json')
+        if os.path.exists(db_file):
+            with open(db_file, 'r') as f:
+                db_data = json.load(f)
+                
+            for listing in db_data.get('listings', []):
+                if listing.get('id') == listing_id:
+                    return jsonify({
+                        'success': True,
+                        'listing': listing
+                    })
+        
+        return jsonify({
+            'success': False,
+            'error': 'Listing not found'
+        }), 404
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500

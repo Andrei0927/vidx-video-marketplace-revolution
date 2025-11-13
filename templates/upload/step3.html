@@ -379,27 +379,48 @@
         try {
             // Prepare listing data
             const listingData = generatedAdData || {
-                ...adData,
-                videoUrl: adData.videoUrl,
-                publishedAt: new Date().toISOString()
+                id: 'listing-' + Date.now(),
+                title: adData.title,
+                category: adData.category,
+                price: parseFloat(adData.price),
+                currency: 'EUR',
+                description: adData.description,
+                location: adData.location,
+                condition: adData.condition,
+                videoUrl: adData.videoUrl || '',
+                thumbnailUrl: adData.thumbnailUrl || '',
+                publishedAt: new Date().toISOString(),
+                status: 'active',
+                metadata: {
+                    condition: adData.condition,
+                    features: []
+                }
             };
             
             console.log('📤 Publishing listing:', listingData);
             
-            // Save to localStorage for display on homepage/my-ads
+            // Save to localStorage for immediate display
             const publishedAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
-            publishedAds.unshift(listingData); // Add to beginning of array
+            publishedAds.unshift(listingData);
             localStorage.setItem('publishedAds', JSON.stringify(publishedAds));
             
-            // TODO: Send data to API when available
-            // const response = await fetch('/api/listings', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(listingData)
-            // });
-            
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Save to database via API
+            try {
+                const response = await fetch('/api/listings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(listingData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Listing saved to database:', result);
+                } else {
+                    console.warn('⚠️ Failed to save to database, using localStorage only');
+                }
+            } catch (apiError) {
+                console.warn('⚠️ API error, using localStorage only:', apiError);
+            }
             
             // Show success
             publishingStatus.classList.add('hidden');

@@ -243,7 +243,8 @@ class VideoCardRenderer {
      * Setup hover-to-play functionality for a video card
      */
     setupVideoHover(card, videoId) {
-        const video = card.querySelector(`#${videoId}`);
+        // Use querySelector with attribute selector to avoid issues with dots in IDs
+        const video = card.querySelector(`video[id="${videoId}"]`);
         const playOverlay = card.querySelector('.play-overlay');
         
         if (!video) return;
