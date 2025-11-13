@@ -1,22 +1,14 @@
 #!/bin/bash
 # VidX Production Startup Script
 
-echo "🚀 VidX Marketplace - Starting initialization..."
+echo "🚀 VidX Marketplace - Starting..."
 
-# Install FFmpeg and dependencies (required for video processing)
-echo "📦 Checking for FFmpeg..."
-if ! command -v ffmpeg &> /dev/null; then
-    echo "🎬 Installing FFmpeg..."
-    apt-get update -qq
-    apt-get install -y ffmpeg imagemagick > /dev/null 2>&1
-    
-    if command -v ffmpeg &> /dev/null; then
-        echo "✅ FFmpeg installed: $(ffmpeg -version | head -n 1)"
-    else
-        echo "❌ FFmpeg installation failed"
-    fi
+# Check if FFmpeg is available (but don't try to install it)
+if command -v ffmpeg &> /dev/null; then
+    echo "✅ FFmpeg available: $(ffmpeg -version | head -n 1)"
 else
-    echo "✅ FFmpeg already installed: $(ffmpeg -version | head -n 1)"
+    echo "⚠️ FFmpeg not available - video generation will be disabled"
+    echo "   To enable video generation, use a custom Docker container with FFmpeg pre-installed"
 fi
 
 # Load production environment variables

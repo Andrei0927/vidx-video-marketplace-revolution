@@ -1,5 +1,6 @@
-# Python 3.11 base image
-FROM python:3.11-slim
+# VidX Video Marketplace - Production Docker Image
+# Python 3.12 with FFmpeg support
+FROM python:3.12-slim
 
 # Set working directory
 WORKDIR /app
@@ -9,25 +10,26 @@ RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
     ffmpeg \
+    imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements file
+# Copy requirements file first for better caching
 COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY app.py .
-COPY video_pipeline.py .
-COPY database/ ./database/
+# Copy entire application code
+COPY . .
 
-# Expose port
-EXPOSE 8080
+# Make startup script executable
+RUN chmod +x startup.sh
+
+# Expose port (Azure will set PORT env var)
+EXPOSE 8000
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8080
 
-# Run the Flask application
-CMD ["python", "app.py"]
+# Run using the startup script (which starts Gunicorn)
+CMD ["./startup.sh"]
