@@ -149,15 +149,30 @@ def require_auth(f):
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
-    try:
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute('SELECT 1')
-        cur.close()
-        conn.close()
-        return jsonify({'status': 'healthy', 'database': 'connected'}), 200
-    except Exception as e:
-        return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+    health_status = {
+        'status': 'healthy',
+        'timestamp': datetime.now().isoformat(),
+        'app': 'VidX Marketplace',
+        'version': '1.0.0'
+    }
+    
+    # Check database if configured
+    if DATABASE_URL and DB_AVAILABLE:
+        try:
+            conn = get_db()
+            cur = conn.cursor()
+            cur.execute('SELECT 1')
+            cur.close()
+            conn.close()
+            health_status['database'] = 'connected'
+        except Exception as e:
+            health_status['database'] = f'error: {str(e)}'
+            health_status['status'] = 'degraded'
+    else:
+        health_status['database'] = 'not configured'
+    
+    status_code = 200 if health_status['status'] in ['healthy', 'degraded'] else 500
+    return jsonify(health_status), status_code
 
 # Test seed page (development only)
 @app.route('/test-seed')
