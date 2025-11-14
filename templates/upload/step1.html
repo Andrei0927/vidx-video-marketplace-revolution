@@ -268,9 +268,37 @@
         previewContainer.appendChild(previewItem);
     }
     
-    // Next button - save to session and navigate
-    nextBtn.addEventListener('click', () => {
-        // TODO: Save files to session storage or upload to server
+    // Next button - save files to session and navigate
+    nextBtn.addEventListener('click', async () => {
+        // Convert uploaded files to base64 for storage
+        const filesData = [];
+        
+        for (const file of uploadedFiles) {
+            try {
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+                
+                filesData.push({
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    dataUrl: base64
+                });
+                
+                console.log(`✓ Converted ${file.name} to base64 (${(base64.length / 1024).toFixed(2)} KB)`);
+            } catch (error) {
+                console.error(`Failed to convert ${file.name}:`, error);
+            }
+        }
+        
+        // Save to sessionStorage
+        sessionStorage.setItem('uploadedFiles', JSON.stringify(filesData));
+        console.log(`📸 Saved ${filesData.length} files to sessionStorage`);
+        
         sessionStorage.setItem('uploadStep', '2');
         window.location.href = "{{ url_for('upload.upload_step2') }}";
     });

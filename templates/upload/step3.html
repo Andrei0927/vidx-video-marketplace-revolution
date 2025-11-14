@@ -282,8 +282,34 @@
         }, 500);
         
         try {
-            // Get uploaded images (we'll use placeholder for now)
-            const images = []; // TODO: Get actual uploaded images from Step 1
+            // Get uploaded images from sessionStorage
+            const images = [];
+            const uploadedFiles = sessionStorage.getItem('uploadedFiles');
+            
+            if (uploadedFiles) {
+                try {
+                    const files = JSON.parse(uploadedFiles);
+                    console.log('📸 Found uploaded files:', files.length);
+                    
+                    // Extract base64 data or URLs from uploaded files
+                    for (const file of files) {
+                        if (file.dataUrl) {
+                            // Already have base64 data
+                            images.push(file.dataUrl);
+                            console.log('  ✓ Added image from dataUrl');
+                        } else if (file.url) {
+                            // Have URL - would need to fetch and convert
+                            console.warn('  ⚠️ File has URL but no dataUrl:', file.url);
+                        }
+                    }
+                    
+                    console.log(`📸 Prepared ${images.length} images for video generation`);
+                } catch (e) {
+                    console.error('Error parsing uploaded files:', e);
+                }
+            } else {
+                console.warn('⚠️ No uploaded files found in sessionStorage');
+            }
             
             // Prepare request payload
             const payload = {
