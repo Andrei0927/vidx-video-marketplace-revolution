@@ -88,3 +88,11 @@ data/*.bak
 .env.production
 azure-logs.zip
 azure-logs/
+
+# Azure log files
+azure-logs-*.zip
+latest_logs.zip
+recent_logs.zip
+logs-check.zip
+LogFiles/
+deployments/

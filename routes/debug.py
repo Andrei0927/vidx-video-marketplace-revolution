@@ -98,3 +98,12 @@ def db_info():
             info['data_dir_exists'] = False
     
     return jsonify(info)
+
+@bp.route('/port')
+def check_port():
+    """Check what PORT the application is configured with"""
+    return jsonify({
+        'PORT_env': os.environ.get('PORT'),
+        'WEBSITES_PORT_env': os.environ.get('WEBSITES_PORT'),
+        'all_port_vars': {k: v for k, v in os.environ.items() if 'PORT' in k.upper()}
+    })

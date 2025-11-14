@@ -227,6 +227,40 @@
         document.getElementById('preview-condition').textContent = capitalizeCondition(adData.condition);
         document.getElementById('preview-location').textContent = adData.location;
         document.getElementById('preview-description').textContent = adData.description;
+        
+        // Display uploaded media preview
+        if (uploadedFiles) {
+            try {
+                const files = JSON.parse(uploadedFiles);
+                const mediaPreview = document.getElementById('media-preview');
+                
+                if (files && files.length > 0) {
+                    const firstFile = files[0];
+                    
+                    // Check if it's a video or image
+                    if (firstFile.type && firstFile.type.startsWith('video/')) {
+                        mediaPreview.innerHTML = `
+                            <video 
+                                src="${firstFile.url || firstFile.dataUrl}" 
+                                class="w-full h-full object-cover" 
+                                controls 
+                                muted 
+                                loop>
+                            </video>
+                        `;
+                    } else if (firstFile.type && firstFile.type.startsWith('image/')) {
+                        mediaPreview.innerHTML = `
+                            <img 
+                                src="${firstFile.url || firstFile.dataUrl}" 
+                                class="w-full h-full object-cover" 
+                                alt="Preview">
+                        `;
+                    }
+                }
+            } catch (e) {
+                console.error('Error displaying media preview:', e);
+            }
+        }
     } else {
         // No data, redirect to step 1
         window.location.href = "{{ url_for('upload.upload_step1') }}";

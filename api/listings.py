@@ -42,7 +42,8 @@ def create_listing():
         metadata = data.get('metadata', {})
         
         # Get user_id from session (for now use demo user)
-        user_id = 'demo-user'  # TODO: Get from session/auth
+        # Note: Using numeric ID 1 for demo user (matches users.id in database)
+        user_id = 1  # TODO: Get from session/auth
         
         # Try to save to database
         DATABASE_URL = os.environ.get('DATABASE_URL')

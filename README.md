@@ -52,16 +52,18 @@ az webapp up --name vidx-marketplace --runtime "PYTHON:3.12" --sku B1 --location
 ## 🌐 Live Production Site
 
 **URL**: https://vidx-marketplace.azurewebsites.net  
-**Status**: ✅ Live and deployed on Azure App Service  
-**Last Deployed**: November 11, 2025  
-**Deployment Time**: 266 seconds (Build: 187s, Startup: 79s)
+**Status**: ✅ Live and deployed with Docker  
+**Last Deployed**: November 14, 2025 (Build cb9)  
+**Deployment Method**: Azure Container Registry + Docker
 
 ### Production Stack
-- **Hosting**: Azure App Service (Basic B1)
-- **Runtime**: Python 3.12.12
+- **Hosting**: Azure App Service (Container)
+- **Container**: Docker with FFmpeg 7.1.2
+- **Runtime**: Python 3.12-slim
 - **Server**: Gunicorn with 2 workers
-- **Storage**: Cloudflare R2 (S3-compatible)
+- **Database**: Azure PostgreSQL 14.19
 - **Video Pipeline**: OpenAI TTS + FFmpeg
+- **Registry**: vidxmarketplace.azurecr.io
 - **Region**: West Europe
 
 ## 🚀 Key Features

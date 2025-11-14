@@ -265,19 +265,83 @@
     </div>
 </div>
 
-<!-- Published Ads Section (All Screens) -->
-<div class="bg-white dark:bg-dark-100 py-6" id="published-ads-section" style="display: none;">
+<!-- Recently Published Section (All Screens) -->
+{% if featured_items %}
+<div class="bg-white dark:bg-dark-100 py-6" id="published-ads-section">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold text-gray-900 dark:text-dark-600">Recently Published</h2>
-            <a href="/my-ads.html" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
-                View all <i data-feather="arrow-right" class="inline h-4 w-4"></i>
-            </a>
         </div>
-        <!-- Video cards will be dynamically inserted here -->
-        <div id="published-ads-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
+        <!-- Video cards grid - responsive: 2 on mobile, 4 on desktop -->
+        <div id="published-ads-container" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {% for item in featured_items %}
+            <!-- Show all 4 on desktop, only first 2 on mobile -->
+            <div class="video-card {% if loop.index > 2 %}hidden lg:block{% endif %}" data-video-id="{{ item.id }}">
+                <div class="relative bg-white dark:bg-dark-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <!-- Video Container -->
+                    <div class="relative aspect-video bg-gray-900">
+                        <video 
+                            id="video-{{ item.id }}"
+                            class="w-full h-full object-cover"
+                            src="{{ item.video_url }}"
+                            {% if item.thumbnail %}poster="{{ item.thumbnail }}"{% endif %}
+                            muted
+                            loop
+                            playsinline
+                            preload="metadata">
+                        </video>
+                        
+                        <!-- Play/Pause Overlay -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <button class="play-button pointer-events-auto w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all">
+                                <i data-feather="play" class="text-indigo-600 ml-1"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Category Badge -->
+                        <div class="absolute top-2 left-2">
+                            <span class="px-2 py-1 text-xs font-semibold bg-black/50 text-white rounded-full backdrop-blur-sm">
+                                {{ item.category|title }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Content -->
+                    <div class="p-3">
+                        <h3 class="font-semibold text-gray-900 dark:text-dark-600 text-sm line-clamp-2 mb-1">
+                            {{ item.title }}
+                        </h3>
+                        <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                            {{ item.price }}
+                        </p>
+                        
+                        <!-- Location -->
+                        {% if item.location %}
+                        <div class="flex items-center text-xs text-gray-500 dark:text-dark-500 mb-2">
+                            <i data-feather="map-pin" class="h-3 w-3 mr-1"></i>
+                            <span>{{ item.location }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Stats -->
+                        <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-dark-500">
+                            <span class="flex items-center gap-1">
+                                <i data-feather="eye" class="h-3 w-3"></i>
+                                {{ item.stats.views }}
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <i data-feather="heart" class="h-3 w-3"></i>
+                                {{ item.stats.likes }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
+{% endif %}
 
 <!-- How It Works (Desktop Only) -->
 <div class="py-12 bg-gray-50 dark:bg-dark-50 hidden md:block">
@@ -380,84 +444,80 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<!-- Seed Test Data (Development Only) -->
-<script src="/static/js/seed-test-data.js"></script>
-<!-- Video Card Renderer -->
-<script src="/static/js/video-card-renderer.js"></script>
-<!-- Video Card Engagement -->
-<script src="/static/js/video-card-engagement.js"></script>
-
 <script>
-    // Load and display published ads from localStorage
+    // Video card interactivity
     document.addEventListener('DOMContentLoaded', () => {
-        const publishedAds = JSON.parse(localStorage.getItem('publishedAds') || '[]');
+        // Initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
         
-        if (publishedAds.length > 0) {
-            // Show the published ads section
-            const section = document.getElementById('published-ads-section');
-            if (section) {
-                section.style.display = 'block';
-            }
+        // Handle video card interactions
+        document.querySelectorAll('.video-card').forEach(card => {
+            const video = card.querySelector('video');
+            const playButton = card.querySelector('.play-button');
+            const playIcon = playButton?.querySelector('[data-feather="play"]');
             
-            // Initialize video card renderer
-            const container = document.getElementById('published-ads-container');
-            if (container) {
-                // Homepage: Muted videos, autoplay first video
-                const renderer = new VideoCardRenderer(container, {
-                    enableSound: false,
-                    autoplayFirst: true
+            if (!video || !playButton) return;
+            
+            let isPlaying = false;
+            
+            // Toggle play/pause
+            const togglePlay = () => {
+                if (isPlaying) {
+                    video.pause();
+                    playButton.style.opacity = '1';
+                    if (playIcon) playIcon.setAttribute('data-feather', 'play');
+                } else {
+                    video.play();
+                    playButton.style.opacity = '0';
+                    if (playIcon) playIcon.setAttribute('data-feather', 'pause');
+                }
+                isPlaying = !isPlaying;
+                feather.replace();
+            };
+            
+            // Click to play/pause
+            playButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                togglePlay();
+            });
+            
+            video.addEventListener('click', togglePlay);
+            
+            // Video ended
+            video.addEventListener('ended', () => {
+                isPlaying = false;
+                playButton.style.opacity = '1';
+                if (playIcon) playIcon.setAttribute('data-feather', 'play');
+                feather.replace();
+            });
+            
+            // Hover effects on desktop
+            if (window.innerWidth >= 1024) {
+                card.addEventListener('mouseenter', () => {
+                    if (!isPlaying) {
+                        video.play();
+                        playButton.style.opacity = '0';
+                    }
                 });
                 
-                // Get current user
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                const userEmail = currentUser.email;
-                
-                // Simple recommendation logic:
-                // - For testlive@example.com: show automotive category
-                // - For others: show all recent videos
-                let recommendedAds = publishedAds;
-                
-                if (userEmail === 'testlive@example.com') {
-                    // Recommend automotive videos for test user
-                    recommendedAds = publishedAds.filter(ad => ad.category === 'automotive');
-                    console.log(`🎯 Recommending ${recommendedAds.length} automotive video(s) for ${userEmail}`);
-                    
-                    // Update section title
-                    const sectionTitle = section.querySelector('h2');
-                    if (sectionTitle && recommendedAds.length > 0) {
-                        sectionTitle.textContent = 'Recommended for You';
+                card.addEventListener('mouseleave', () => {
+                    if (!isPlaying) {
+                        video.pause();
+                        video.currentTime = 0;
+                        playButton.style.opacity = '1';
                     }
-                }
-                
-                // Transform published ads data to match VideoCardRenderer format
-                const transformedAds = recommendedAds.map(ad => ({
-                    id: ad.id || `ad-${Date.now()}-${Math.random()}`,
-                    title: ad.title || ad.listing?.title || 'Untitled',
-                    category: ad.category || ad.listing?.category || 'general',
-                    description: ad.description || ad.listing?.description || '',
-                    price: ad.price || ad.listing?.price || 0,
-                    condition: ad.condition || ad.details?.condition || 'good',
-                    location: ad.location || ad.details?.location || 'Romania',
-                    video_url: ad.video_url || ad.videoUrl || '',
-                    thumbnail_url: ad.thumbnail_url || ad.videoUrl || '',
-                    created_at: ad.created_at || ad.publishedAt || new Date().toISOString(),
-                    views: ad.views || 0,
-                    likes: ad.likes || 0,
-                    favorites: ad.favorites || 0,
-                    metadata: ad.metadata || {}
-                }));
-                
-                // Display only the first 10 ads
-                renderer.addCards(transformedAds.slice(0, 10));
-                
-                // Replace feather icons
-                if (typeof feather !== 'undefined') {
-                    feather.replace();
-                }
-                
-                console.log(`✅ Loaded ${transformedAds.length} video(s) on homepage`);
+                });
             }
-        }
+            
+            // Navigate to details on card click (but not video/button)
+            card.addEventListener('click', (e) => {
+                if (e.target === video || e.target.closest('.play-button')) return;
+                window.location.href = `/product/${video.dataset.videoId || card.dataset.videoId}`;
+            });
+        });
     });
 </script>
 

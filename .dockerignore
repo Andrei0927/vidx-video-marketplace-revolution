@@ -30,20 +30,10 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Project specific
-node_modules/
-data/
-scripts/
-images/
-css/
-js/
-components/
-templates/
-*.html
-*.css
-service-worker.js
-manifest.json
-robots.txt
+# Deployment files (not needed in container)
+azure-logs*.zip
+LogFiles/
+deployments/
 
 # Credentials
 CREDENTIALS.txt

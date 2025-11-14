@@ -16,27 +16,36 @@
     <div class="border-b border-gray-200 dark:border-dark-200 mb-6">
         <nav class="-mb-px flex space-x-8">
             <button data-tab="active" class="tab-btn border-indigo-500 text-indigo-600 dark:text-indigo-400 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                Active (3)
+                Active ({{ active_listings|length }})
             </button>
             <button data-tab="pending" class="tab-btn border-transparent text-gray-500 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-500 hover:border-gray-300 dark:hover:border-dark-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                Pending (1)
+                Pending ({{ pending_listings|length }})
             </button>
             <button data-tab="sold" class="tab-btn border-transparent text-gray-500 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-500 hover:border-gray-300 dark:hover:border-dark-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                Sold (5)
+                Sold ({{ sold_listings|length }})
             </button>
             <button data-tab="archived" class="tab-btn border-transparent text-gray-500 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-500 hover:border-gray-300 dark:hover:border-dark-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                Archived (2)
+                Archived ({{ archived_listings|length }})
             </button>
         </nav>
     </div>
 
     <!-- Active Ads -->
     <div id="active-tab" class="tab-content">
+        {% if active_listings %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Demo Ad Card -->
+            {% for listing in active_listings %}
             <div class="bg-white dark:bg-dark-100 rounded-lg shadow-md dark:shadow-dark-200 overflow-hidden">
                 <div class="aspect-video bg-gray-200 dark:bg-dark-200">
-                    <img src="https://via.placeholder.com/400x300" alt="Product" class="w-full h-full object-cover">
+                    {% if listing.video_url %}
+                    <video src="{{ listing.video_url }}" class="w-full h-full object-cover" muted></video>
+                    {% elif listing.thumbnail_url %}
+                    <img src="{{ listing.thumbnail_url }}" alt="{{ listing.title }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                        <i data-feather="image" class="h-16 w-16"></i>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="p-4">
                     <div class="flex items-center justify-between mb-2">
@@ -45,37 +54,43 @@
                         </span>
                         <div class="flex items-center text-sm text-gray-500 dark:text-dark-400">
                             <i data-feather="eye" class="h-4 w-4 mr-1"></i>
-                            <span>128</span>
+                            <span>{{ listing.views or 0 }}</span>
                         </div>
                     </div>
-                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 mb-1">Sample Product Title</h3>
-                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2">€299</p>
-                    <p class="text-sm text-gray-500 dark:text-dark-400 mb-4">Posted 2 days ago</p>
+                    <h3 class="font-semibold text-gray-900 dark:text-dark-600 mb-1 line-clamp-2">{{ listing.title }}</h3>
+                    <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                        {% if listing.currency == 'EUR' %}€{% else %}${% endif %}{{ listing.price }}
+                    </p>
+                    <p class="text-sm text-gray-500 dark:text-dark-400 mb-4">
+                        Posted {{ listing.created_at.strftime('%b %d, %Y') if listing.created_at else 'recently' }}
+                    </p>
                     <div class="flex space-x-2">
                         <button class="flex-1 px-3 py-2 border border-gray-300 dark:border-dark-200 rounded-md text-sm font-medium text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200">
                             Edit
                         </button>
-                        <button class="flex-1 px-3 py-2 border border-gray-300 dark:border-dark-200 rounded-md text-sm font-medium text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200">
+                        <a href="/{{ listing.category }}/{{ listing.id }}" class="flex-1 px-3 py-2 border border-gray-300 dark:border-dark-200 rounded-md text-sm font-medium text-gray-700 dark:text-dark-500 hover:bg-gray-50 dark:hover:bg-dark-200 text-center">
                             View
-                        </button>
+                        </a>
                         <button class="px-3 py-2 border border-red-300 dark:border-red-800 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
                             <i data-feather="trash-2" class="h-4 w-4"></i>
                         </button>
                     </div>
                 </div>
             </div>
-
-            <!-- Empty State (shown when no ads) -->
-            <!-- <div class="col-span-full text-center py-16">
-                <i data-feather="package" class="h-24 w-24 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
-                <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No active ads</h3>
-                <p class="text-gray-500 dark:text-dark-400 mb-6">Get started by creating your first listing</p>
-                <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600">
-                    <i data-feather="plus" class="h-5 w-5 mr-2"></i>
-                    Create Listing
-                </a>
-            </div> -->
+            {% endfor %}
         </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="col-span-full text-center py-16">
+            <i data-feather="package" class="h-24 w-24 text-gray-400 dark:text-dark-400 mx-auto mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-dark-600 mb-2">No active ads</h3>
+            <p class="text-gray-500 dark:text-dark-400 mb-6">Get started by creating your first listing</p>
+            <a href="{{ url_for('upload.upload_step1') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600">
+                <i data-feather="plus" class="h-5 w-5 mr-2"></i>
+                Create Listing
+            </a>
+        </div>
+        {% endif %}
     </div>
 
     <!-- Pending Ads -->
