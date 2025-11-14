@@ -37,7 +37,7 @@ r2_client = boto3.client(
 R2_BUCKET = os.getenv('R2_BUCKET_NAME', 'video-marketplace-videos')
 
 
-def generate_script(description, title, category, price, details=None):
+def generate_script(description, title, category, price, details=None, language='ro'):
     """
     Generate video script using GPT-4o Mini
     
@@ -47,12 +47,42 @@ def generate_script(description, title, category, price, details=None):
         category: Product category (automotive, electronics, fashion)
         price: Product price
         details: Additional product details (dict)
+        language: Language code ('ro' for Romanian, 'en' for English)
     
     Returns:
         dict: {script: str, estimated_duration: int}
     """
-    # Build context-aware prompt
-    prompt = f"""Create a 15-second video ad script for a marketplace listing.
+    # Build Romanian C2C-friendly prompt
+    if language == 'ro':
+        prompt = f"""Creează un script video de aproximativ 30 secunde pentru o platformă C2C (vânzare între particulari).
+
+INFORMAȚII PRODUS:
+Titlu: {title}
+Categorie: {category}
+Preț: {price:,.0f} EUR
+Descriere: {description}
+
+REGULI STRICTE:
+- Folosește DOAR informațiile furnizate mai sus
+- NU inventa caracteristici, specificații sau detalii care nu sunt menționate
+- Scrie în limba română
+- Tonul trebuie să fie prietenos și personal, ca între particulari, NU ca un dealer auto
+- EVITĂ fraze de genul "sunați astăzi", "ofertă limitată", "nu ratați șansa"
+- Concentrează-te pe descrierea clară și succintă a produsului
+- Maximum 80-90 cuvinte (pentru a încăpea în 30 secunde)
+- Script-ul trebuie să sune natural când e citit cu voce tare
+- Folosește timpul prezent și descrieri concrete
+- Fără clișee de marketing sau limbaj comercial agresiv
+
+FINAL:
+- Încheie simplu și prietenos (ex: "Merită văzut!", "Perfect pentru...", "Sună-mă dacă te interesează!")
+- NU folosi "Sunați acum!", "Ofertă limitată!", etc.
+
+FORMAT OUTPUT:
+Doar textul script-ului, fără etichete sau formatare."""
+    else:
+        # English fallback
+        prompt = f"""Create a 30-second video script for a C2C marketplace listing.
 
 PRODUCT INFORMATION:
 Title: {title}
@@ -63,16 +93,22 @@ Description: {description}
 STRICT RULES:
 - Use ONLY the information provided above
 - DO NOT add features, specs, or details not mentioned
-- Keep it under 60 words (15 seconds when spoken)
-- Make it engaging and conversational
-- Focus on value proposition and key selling points
-- End with a call to action
+- Keep it under 80-90 words (30 seconds when spoken)
+- Make it friendly and conversational, like person-to-person, NOT like a car dealer
+- AVOID phrases like "call today", "limited offer", "don't miss out"
+- Focus on clear, concise description
+- Make it sound natural when read aloud
+- No marketing clichés or aggressive sales language
+
+END NOTE:
+- Close simply and friendly (e.g., "Worth checking out!", "Perfect for...", "Message me if interested!")
+- DO NOT use "Call now!", "Limited offer!", etc.
 
 OUTPUT FORMAT:
 Just the script text, no labels or formatting."""
 
     if details:
-        prompt += f"\n\nAdditional Details:\n{json.dumps(details, indent=2)}"
+        prompt += f"\n\nDetalii adiționale:\n{json.dumps(details, indent=2)}"
 
     try:
         # Use sync client for script generation
@@ -84,22 +120,25 @@ Just the script text, no labels or formatting."""
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a professional ad copywriter. Create factual, engaging scripts using only the information provided. Never hallucinate details."
+                    "content": "Ești un scriitor pentru anunțuri C2C (consumer-to-consumer). Creezi scripturi prietenoase și naturale, folosind doar informațiile furnizate. Nu inventa niciodată detalii. Evită limbajul comercial agresiv - scrie ca și cum ai descrie produsul unui prieten." if language == 'ro' else "You are a C2C marketplace ad writer. Create friendly, natural scripts using only the information provided. Never hallucinate details. Avoid aggressive sales language - write as if describing the product to a friend."
                 },
                 {
                     "role": "user",
                     "content": prompt
                 }
             ],
-            temperature=0.7,  # Some creativity, but not too much
-            max_tokens=150
+            temperature=0.6,  # Less creativity to stay factual
+            max_tokens=200
         )
         
         script = response.choices[0].message.content.strip()
         
-        # Estimate duration (average speaking rate: 150 words/minute)
+        # Estimate duration (Romanian: ~130 words/minute, English: ~150 words/minute)
         word_count = len(script.split())
-        estimated_duration = int((word_count / 150) * 60) + 2  # Add 2s buffer
+        words_per_minute = 130 if language == 'ro' else 150
+        estimated_duration = int((word_count / words_per_minute) * 60) + 2  # Add 2s buffer
+        
+        print(f"✓ Generated {language.upper()} script: {word_count} words, ~{estimated_duration}s")
         
         return {
             'script': script,
@@ -189,9 +228,12 @@ def generate_captions(audio_path):
         audio_path: Path to audio file
     
     Returns:
-        dict: {text: str, words: [{word, start, end}]}
+        dict: {text: str, words: [{word, start, end}], duration: float}
     """
     try:
+        print(f"\n[Whisper] Generating captions...")
+        print(f"  Audio: {audio_path} (exists: {os.path.exists(audio_path)})")
+        
         # Use sync client for Whisper
         from openai import OpenAI
         sync_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
@@ -201,7 +243,8 @@ def generate_captions(audio_path):
                 model="whisper-1",
                 file=audio_file,
                 response_format="verbose_json",
-                timestamp_granularities=["word"]
+                timestamp_granularities=["word"],
+                language="ro"  # Specify Romanian for better accuracy
             )
         
         # Extract word-level timestamps
@@ -215,16 +258,24 @@ def generate_captions(audio_path):
                 }
                 for w in transcript.words
             ]
+            print(f"  ✓ Extracted {len(words)} words with timestamps")
+            print(f"    First few words: {' '.join([w['word'] for w in words[:10]])}")
+        else:
+            print(f"  ⚠️ No word-level timestamps available")
         
-        print(f"✓ Generated captions: {len(words)} words")
+        duration = transcript.duration if hasattr(transcript, 'duration') else 0
+        print(f"  Full text: {transcript.text[:100]}...")
+        print(f"  Duration: {duration:.2f}s")
+        
         return {
             'text': transcript.text,
             'words': words,
-            'duration': transcript.duration if hasattr(transcript, 'duration') else 0
+            'duration': duration
         }
     
     except Exception as e:
-        print(f"Error generating captions: {e}")
+        print(f"\n✗ Error generating captions: {e}")
+        print(f"  Traceback: {type(e).__name__}")
         raise
 
 
@@ -242,6 +293,20 @@ def create_video(images, audio_path, captions, output_path):
         str: Path to generated video
     """
     try:
+        print(f"\n[FFmpeg] Creating video...")
+        print(f"  Images: {len(images)} files")
+        for i, img in enumerate(images):
+            print(f"    [{i}] {img} (exists: {os.path.exists(img)})")
+        print(f"  Audio: {audio_path} (exists: {os.path.exists(audio_path)})")
+        
+        # Verify all images exist
+        for img_path in images:
+            if not os.path.exists(img_path):
+                raise FileNotFoundError(f"Image not found: {img_path}")
+        
+        if not os.path.exists(audio_path):
+            raise FileNotFoundError(f"Audio not found: {audio_path}")
+        
         # Get audio duration
         probe_cmd = [
             'ffprobe', '-v', 'error',
@@ -250,10 +315,15 @@ def create_video(images, audio_path, captions, output_path):
             audio_path
         ]
         audio_duration = float(subprocess.check_output(probe_cmd).decode().strip())
+        print(f"  Audio duration: {audio_duration:.2f}s")
         
         # Calculate duration per image
         num_images = len(images)
-        duration_per_image = audio_duration / num_images if num_images > 0 else 3.0
+        if num_images == 0:
+            raise ValueError("No images provided for video generation")
+        
+        duration_per_image = audio_duration / num_images
+        print(f"  Duration per image: {duration_per_image:.2f}s")
         
         # Create filter complex for slideshow with Ken Burns effect
         filters = []
@@ -282,7 +352,7 @@ def create_video(images, audio_path, captions, output_path):
         # Add audio input
         cmd.extend(['-i', audio_path])
         
-        # Add filters
+        # Add filters and output options
         cmd.extend([
             '-filter_complex', filter_complex,
             '-map', '[outv]',
@@ -298,20 +368,35 @@ def create_video(images, audio_path, captions, output_path):
             output_path
         ])
         
-        print(f"Running FFmpeg: {' '.join(cmd[:10])}...")
+        print(f"\n[FFmpeg Command]")
+        print(f"  ffmpeg -y \\")
+        for i in range(0, len(cmd)-1, 2):
+            if i > 0:
+                print(f"    {cmd[i]} {cmd[i+1] if i+1 < len(cmd) else ''} \\")
+        print(f"    {cmd[-1]}")
+        
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
         
         if result.returncode != 0:
-            print(f"FFmpeg error: {result.stderr}")
-            raise RuntimeError(f"FFmpeg failed: {result.stderr}")
+            print(f"\n[FFmpeg ERROR]")
+            print(result.stderr)
+            raise RuntimeError(f"FFmpeg failed with code {result.returncode}")
         
-        print(f"✓ Created video: {output_path}")
+        # Verify output was created
+        if not os.path.exists(output_path):
+            raise RuntimeError(f"FFmpeg completed but output file not found: {output_path}")
+        
+        output_size = os.path.getsize(output_path)
+        print(f"\n✓ Video created successfully!")
+        print(f"  Output: {output_path}")
+        print(f"  Size: {output_size / 1024 / 1024:.2f} MB")
+        
         return output_path
     
     except subprocess.TimeoutExpired:
         raise RuntimeError("Video rendering timed out (5 minutes)")
     except Exception as e:
-        print(f"Error creating video: {e}")
+        print(f"\n✗ Error creating video: {e}")
         raise
 
 
@@ -388,10 +473,10 @@ def generate_video_pipeline(images, description, title, category, price, details
         print(f"Images: {len(images)}")
         print(f"Language: {language}")
         
-        # Step 1: Generate script
-        print("\n[1/5] Generating script...")
-        script_result = generate_script(description, title, category, price, details)
-        print(f"Script: {script_result['script'][:100]}...")
+        # Step 1: Generate script in Romanian
+        print("\n[1/5] Generating Romanian script...")
+        script_result = generate_script(description, title, category, price, details, language)
+        print(f"Script ({script_result['word_count']} words): {script_result['script'][:150]}...")
         
         # Step 2: Generate voiceover with Romanian instructions
         print("\n[2/5] Generating Romanian voiceover...")

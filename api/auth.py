@@ -14,6 +14,10 @@ bp = Blueprint('api_auth', __name__, url_prefix='/api/auth')
 users = {}
 sessions = {}
 
+# Map emails to integer user IDs for database compatibility
+user_id_counter = 1
+email_to_user_id = {}
+
 @bp.route('/register', methods=['POST'])
 def register():
     """Register a new user"""
@@ -29,8 +33,11 @@ def register():
     if email in users:
         return jsonify({'error': 'User already exists'}), 409
     
-    # Create user
-    user_id = secrets.token_hex(16)
+    # Create user with incremental integer ID
+    global user_id_counter
+    user_id = user_id_counter
+    user_id_counter += 1
+    
     password_hash = hashlib.sha256(data['password'].encode()).hexdigest()
     
     users[email] = {
@@ -40,6 +47,9 @@ def register():
         'password_hash': password_hash,
         'created_at': datetime.now().isoformat()
     }
+    
+    # Map email to integer user ID
+    email_to_user_id[email] = user_id
     
     # Create session token
     token = secrets.token_hex(32)
@@ -83,6 +93,8 @@ def login():
         'email': email,
         'expires_at': (datetime.now() + timedelta(days=30)).isoformat()
     }
+    
+    print(f"[AUTH] User logged in: {email}, user_id: {user['id']}, token: {token[:16]}...")
     
     return jsonify({
         'success': True,

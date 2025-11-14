@@ -12,6 +12,19 @@ from datetime import datetime
 
 bp = Blueprint('api_listings', __name__, url_prefix='/api/listings')
 
+# Import sessions from auth module
+from api.auth import sessions
+
+def get_current_user_id():
+    """Get user ID from authorization token"""
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    
+    if token and token in sessions:
+        return sessions[token].get('user_id')
+    
+    # Default to user_id 1 if no auth token
+    return 1
+
 @bp.route('', methods=['POST'])
 def create_listing():
     """Create a new listing"""
@@ -41,9 +54,9 @@ def create_listing():
         status = data.get('status', 'active')
         metadata = data.get('metadata', {})
         
-        # Get user_id from session (for now use demo user)
-        # Note: Using numeric ID 1 for demo user (matches users.id in database)
-        user_id = 1  # TODO: Get from session/auth
+        # Get user_id from auth token
+        user_id = get_current_user_id()
+        print(f"[DEBUG] Creating listing with user_id: {user_id}")
         
         # Try to save to database
         DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -59,12 +72,12 @@ def create_listing():
                     INSERT INTO listings (
                         id, user_id, title, description, category, 
                         price, currency, location, video_url, thumbnail_url,
-                        seller_name, seller_avatar, status, metadata, 
+                        status, metadata, 
                         created_at, updated_at
                     ) VALUES (
                         %s, %s, %s, %s, %s, 
                         %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s::jsonb,
+                        %s, %s::jsonb,
                         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
                     )
                     ON CONFLICT (id) 
@@ -73,6 +86,7 @@ def create_listing():
                         description = EXCLUDED.description,
                         price = EXCLUDED.price,
                         video_url = EXCLUDED.video_url,
+                        thumbnail_url = EXCLUDED.thumbnail_url,
                         updated_at = CURRENT_TIMESTAMP
                     RETURNING id;
                 """, (
@@ -86,8 +100,6 @@ def create_listing():
                     location,
                     video_url,
                     thumbnail_url,
-                    'VidX User',  # Default seller name
-                    'https://api.dicebear.com/7.x/avataaars/svg?seed=vidx',  # Default avatar
                     status,
                     json.dumps(metadata)
                 ))
