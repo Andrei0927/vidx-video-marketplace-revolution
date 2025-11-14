@@ -279,25 +279,124 @@ def generate_captions(audio_path):
         raise
 
 
+def generate_caption_filter(captions):
+    """
+    Generate ASS subtitle file for TikTok-style word-by-word captions
+    
+    Args:
+        captions: Caption data with word-level timestamps
+    
+    Returns:
+        str: Path to generated ASS subtitle file
+    """
+    if not captions.get('words'):
+        print("  ⚠️ No word-level timestamps, skipping captions")
+        return None
+    
+    words = captions['words']
+    print(f"  Generating TikTok-style captions for {len(words)} words...")
+    
+    # Create ASS subtitle file with word-by-word highlighting
+    # ASS format supports inline styling for word-level color changes
+    
+    ass_content = """[Script Info]
+Title: Video Captions
+ScriptType: v4.00+
+WrapStyle: 0
+PlayResX: 1080
+PlayResY: 1920
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,52,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,250,1
+Style: Highlight,Arial,52,&H006633FF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,250,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+    
+    # Group words into phrases (3-5 words at a time)
+    window_size = 4
+    events = []
+    
+    for i in range(0, len(words), window_size):
+        phrase_words = words[i:i + window_size]
+        if not phrase_words:
+            continue
+        
+        start_time = phrase_words[0]['start']
+        end_time = phrase_words[-1]['end']
+        
+        # For each word in the phrase, create a separate event with highlighting
+        for j, word_data in enumerate(phrase_words):
+            word_start = word_data['start']
+            word_end = word_data['end']
+            
+            # Build the phrase with inline color tags
+            phrase_parts = []
+            for k, w in enumerate(phrase_words):
+                word_text = w['word'].strip()
+                if k == j:
+                    # Highlight current word in red
+                    phrase_parts.append(f"{{\\c&H6633FF&}}{word_text}{{\\c&HFFFFFF&}}")
+                else:
+                    # Normal white text
+                    phrase_parts.append(word_text)
+            
+            phrase_text = " ".join(phrase_parts)
+            
+            # Convert seconds to ASS timestamp format (H:MM:SS.CS)
+            start_h = int(word_start // 3600)
+            start_m = int((word_start % 3600) // 60)
+            start_s = int(word_start % 60)
+            start_cs = int((word_start % 1) * 100)
+            
+            end_h = int(word_end // 3600)
+            end_m = int((word_end % 3600) // 60)
+            end_s = int(word_end % 60)
+            end_cs = int((word_end % 1) * 100)
+            
+            start_time_str = f"{start_h}:{start_m:02d}:{start_s:02d}.{start_cs:02d}"
+            end_time_str = f"{end_h}:{end_m:02d}:{end_s:02d}.{end_cs:02d}"
+            
+            # ASS event
+            events.append(f"Dialogue: 0,{start_time_str},{end_time_str},Default,,0,0,0,,{phrase_text}")
+    
+    ass_content += "\n".join(events)
+    
+    # Save to temp file
+    ass_file = tempfile.NamedTemporaryFile(mode='w', suffix='.ass', delete=False, encoding='utf-8')
+    ass_file.write(ass_content)
+    ass_file.close()
+    
+    print(f"  ✓ Generated ASS subtitle file: {ass_file.name}")
+    print(f"  ✓ Created {len(events)} caption events")
+    
+    return ass_file.name
+
+
 def create_video(images, audio_path, captions, output_path):
     """
-    Create video using FFmpeg
+    Create video using FFmpeg with TikTok-style word-by-word captions
     
     Args:
         images: List of image file paths
         audio_path: Path to audio file
-        captions: Caption data from generate_captions()
+        captions: Caption data from generate_captions() with word-level timestamps
         output_path: Where to save final video
     
     Returns:
-        str: Path to generated video
+        tuple: (str: Path to generated video, str: Path to ASS subtitle file or None)
     """
+    ass_subtitle_file = None
     try:
-        print(f"\n[FFmpeg] Creating video...")
+        print(f"\n[FFmpeg] Creating video with word-by-word captions...")
         print(f"  Images: {len(images)} files")
         for i, img in enumerate(images):
             print(f"    [{i}] {img} (exists: {os.path.exists(img)})")
         print(f"  Audio: {audio_path} (exists: {os.path.exists(audio_path)})")
+        print(f"  Caption words: {len(captions.get('words', []))}")
         
         # Verify all images exist
         for img_path in images:
@@ -317,37 +416,63 @@ def create_video(images, audio_path, captions, output_path):
         audio_duration = float(subprocess.check_output(probe_cmd).decode().strip())
         print(f"  Audio duration: {audio_duration:.2f}s")
         
-        # Calculate duration per image
+        # Calculate how many times to loop through images
         num_images = len(images)
         if num_images == 0:
             raise ValueError("No images provided for video generation")
         
-        duration_per_image = audio_duration / num_images
-        print(f"  Duration per image: {duration_per_image:.2f}s")
+        # Duration per image (minimum 2 seconds, maximum 4 seconds)
+        base_duration_per_image = max(2.0, min(4.0, audio_duration / num_images))
+        
+        # Calculate how many loops we need
+        single_loop_duration = base_duration_per_image * num_images
+        num_loops = int(audio_duration / single_loop_duration) + 1
+        
+        print(f"  Duration per image: {base_duration_per_image:.2f}s")
+        print(f"  Single loop: {single_loop_duration:.2f}s")
+        print(f"  Number of loops: {num_loops} (to cover {audio_duration:.2f}s audio)")
         
         # Create filter complex for slideshow with Ken Burns effect
         filters = []
-        for i, img_path in enumerate(images):
-            # Zoompan effect (subtle zoom)
-            filters.append(
-                f"[{i}:v]scale=1080:1920:force_original_aspect_ratio=increase,"
-                f"crop=1080:1920,"
-                f"zoompan=z='zoom+0.001':d={int(duration_per_image * 30)}:s=1080x1920,"
-                f"fade=t=in:st=0:d=0.3,fade=t=out:st={duration_per_image - 0.3}:d=0.3[v{i}]"
-            )
+        all_clips = []
+        
+        # Generate clips for each loop
+        for loop in range(num_loops):
+            for i, img_path in enumerate(images):
+                clip_index = loop * num_images + i
+                # Zoompan effect (subtle zoom in/out alternating)
+                zoom_direction = 'zoom+0.001' if clip_index % 2 == 0 else 'zoom-0.001'
+                filters.append(
+                    f"[{i}:v]scale=1080:1920:force_original_aspect_ratio=increase,"
+                    f"crop=1080:1920,"
+                    f"zoompan=z='{zoom_direction}':d={int(base_duration_per_image * 30)}:s=1080x1920,"
+                    f"fade=t=in:st=0:d=0.3,fade=t=out:st={base_duration_per_image - 0.3}:d=0.3[v{clip_index}]"
+                )
+                all_clips.append(f"[v{clip_index}]")
         
         # Concatenate all clips
-        concat_inputs = ''.join([f"[v{i}]" for i in range(num_images)])
-        filters.append(f"{concat_inputs}concat=n={num_images}:v=1:a=0[outv]")
+        total_clips = len(all_clips)
+        concat_inputs = ''.join(all_clips)
+        filters.append(f"{concat_inputs}concat=n={total_clips}:v=1:a=0[vid]")
+        
+        # Generate TikTok-style captions with word-by-word highlighting
+        ass_subtitle_file = generate_caption_filter(captions)
+        if ass_subtitle_file:
+            # Burn subtitles into video
+            # Escape the path for FFmpeg filter
+            escaped_path = ass_subtitle_file.replace('\\', '\\\\\\\\').replace(':', '\\\\:')
+            filters.append(f"[vid]ass='{escaped_path}'[outv]")
+        else:
+            filters.append(f"[vid]copy[outv]")
         
         filter_complex = ';'.join(filters)
         
         # Build FFmpeg command
         cmd = ['ffmpeg', '-y']  # -y to overwrite output
         
-        # Add image inputs
+        # Add image inputs (only once, we'll loop them in filter)
         for img_path in images:
-            cmd.extend(['-loop', '1', '-t', str(duration_per_image), '-i', img_path])
+            cmd.extend(['-loop', '1', '-t', str(base_duration_per_image), '-i', img_path])
         
         # Add audio input
         cmd.extend(['-i', audio_path])
@@ -391,11 +516,23 @@ def create_video(images, audio_path, captions, output_path):
         print(f"  Output: {output_path}")
         print(f"  Size: {output_size / 1024 / 1024:.2f} MB")
         
-        return output_path
+        return output_path, ass_subtitle_file
     
     except subprocess.TimeoutExpired:
+        # Cleanup subtitle file on error
+        if ass_subtitle_file and os.path.exists(ass_subtitle_file):
+            try:
+                os.unlink(ass_subtitle_file)
+            except:
+                pass
         raise RuntimeError("Video rendering timed out (5 minutes)")
     except Exception as e:
+        # Cleanup subtitle file on error
+        if ass_subtitle_file and os.path.exists(ass_subtitle_file):
+            try:
+                os.unlink(ass_subtitle_file)
+            except:
+                pass
         print(f"\n✗ Error creating video: {e}")
         raise
 
@@ -492,7 +629,11 @@ def generate_video_pipeline(images, description, title, category, price, details
         output_video = tempfile.NamedTemporaryFile(suffix='.mp4', delete=False)
         temp_files.append(output_video.name)
         
-        create_video(images, audio_path, captions, output_video.name)
+        video_path, subtitle_file = create_video(images, audio_path, captions, output_video.name)
+        
+        # Add subtitle file to cleanup list
+        if subtitle_file:
+            temp_files.append(subtitle_file)
         
         # Step 5: Upload to R2
         print("\n[5/5] Uploading to cloud storage...")
@@ -513,7 +654,8 @@ def generate_video_pipeline(images, description, title, category, price, details
             'duration': captions['duration'],
             'cost': total_cost,
             'thumbnail_url': thumbnail_url,
-            'captions': captions['text']
+            'captions': captions['text'],
+            'caption_words': captions.get('words', [])  # Include word-level timestamps
         }
     
     finally:
